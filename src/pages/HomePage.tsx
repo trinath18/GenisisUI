@@ -12,11 +12,17 @@ export function HomePage() {
   )
 }
 
-export function NotMigratedPage({ title }: { title: string }) {
+export function NotMigratedPage({
+  title,
+  message = 'This screen has not been migrated yet.',
+}: {
+  title: string
+  message?: string
+}) {
   return (
     <section>
       <h2>{title}</h2>
-      <p className="muted">This screen has not been migrated yet.</p>
+      <p className="muted">{message}</p>
     </section>
   )
 }

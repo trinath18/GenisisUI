@@ -294,6 +294,9 @@ export function EnquiryPage() {
           Show
         </button>
       </form>
+      {input.trim().length > 0 && input.trim().length < 3 && (
+        <p className="error">Enter at least 3 characters to search.</p>
+      )}
       {search.isFetching && <p className="muted">Searching…</p>}
       {search.error && <p className="error">{errorMessage(search.error)}</p>}
       {search.data && search.data.length !== 1 && (

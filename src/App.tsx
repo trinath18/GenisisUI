@@ -13,7 +13,7 @@ function RequireAuth({ children }: { children: ReactNode }) {
 
 function RequireAccess({ position, children }: { position: number; children: ReactNode }) {
   const { hasAccess } = useAuth()
-  return hasAccess(position) ? children : <NotMigratedPage title="Access Denied!" />
+  return hasAccess(position) ? children : <NotMigratedPage title="Access Denied!" message="You do not have access to this screen. Ask your administrator to grant it." />
 }
 
 export default function App() {
