@@ -17,6 +17,16 @@ export function LoginPage() {
 
   if (session) return <Navigate to="/" replace />
 
+  function editCredentials(update: () => void) {
+    update()
+    if (mustChange) {
+      setMustChange(false)
+      setNewPassword('')
+      setConfirm('')
+      setError('')
+    }
+  }
+
   async function submit(e: FormEvent) {
     e.preventDefault()
     setError('')
@@ -46,11 +56,11 @@ export function LoginPage() {
         <p className="muted">Sign in with your MedixHIS user</p>
         <label>
           User Name
-          <input autoFocus value={userCode} onChange={(e) => setUserCode(e.target.value)} maxLength={10} />
+          <input autoFocus value={userCode} onChange={(e) => editCredentials(() => setUserCode(e.target.value))} maxLength={10} />
         </label>
         <label>
           Password
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} maxLength={10} />
+          <input type="password" value={password} onChange={(e) => editCredentials(() => setPassword(e.target.value))} maxLength={10} />
         </label>
         {mustChange && (
           <>

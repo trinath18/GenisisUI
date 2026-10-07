@@ -266,11 +266,12 @@ export function EnquiryPage() {
     queryKey: ['membership-search', criteria],
     queryFn: async () => {
       const { data } = await api.get<Row[]>('/api/membership/search', { params: criteria })
-      if (data.length === 1) setSelected(String(data[0].MBMNumber))
       return data
     },
     enabled: criteria !== null,
   })
+  const singleHit = search.data?.length === 1 ? String(search.data[0].MBMNumber) : null
+  const member = selected ?? singleHit
 
   function submit(e: FormEvent) {
     e.preventDefault()
@@ -303,7 +304,7 @@ export function EnquiryPage() {
           <DataTable columns={searchColumns} rows={search.data} rowKey="MBMNumber" selectedKey={selected ?? undefined} onSelect={(r) => setSelected(String(r.MBMNumber))} />
         </>
       )}
-      {selected && <MemberView key={selected} mbmNumber={selected} />}
+      {member && <MemberView key={member} mbmNumber={member} />}
     </section>
   )
 }
