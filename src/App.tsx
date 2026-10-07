@@ -1,0 +1,59 @@
+import { Navigate, Route, Routes } from 'react-router-dom'
+import type { ReactNode } from 'react'
+import { Access, useAuth } from './auth/access'
+import { AppLayout } from './components/AppLayout'
+import { HomePage, NotMigratedPage } from './pages/HomePage'
+import { LoginPage } from './pages/LoginPage'
+import { EnquiryPage } from './pages/membership/EnquiryPage'
+
+function RequireAuth({ children }: { children: ReactNode }) {
+  const { session } = useAuth()
+  return session ? children : <Navigate to="/login" replace />
+}
+
+function RequireAccess({ position, children }: { position: number; children: ReactNode }) {
+  const { hasAccess } = useAuth()
+  return hasAccess(position) ? children : <NotMigratedPage title="Access Denied!" />
+}
+
+export default function App() {
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        element={
+          <RequireAuth>
+            <AppLayout />
+          </RequireAuth>
+        }
+      >
+        <Route index element={<HomePage />} />
+        <Route
+          path="membership/enquiry"
+          element={
+            <RequireAccess position={Access.MembershipEnquiry}>
+              <EnquiryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/registration"
+          element={
+            <RequireAccess position={Access.MembershipRegistration}>
+              <NotMigratedPage title="Membership Registration" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/adjustment"
+          element={
+            <RequireAccess position={Access.MembershipAdjustment}>
+              <NotMigratedPage title="Membership Adjustment" />
+            </RequireAccess>
+          }
+        />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Route>
+    </Routes>
+  )
+}
