@@ -18,7 +18,7 @@ export function AppLayout() {
     <div className="shell">
       <header className="topbar">
         <strong>Genisis</strong>
-        <span className="muted">MedixHIS web</span>
+        <span className="muted">Genisis</span>
         <span className="spacer" />
         <span>
           {session?.user.userName} ({session?.user.userCode})

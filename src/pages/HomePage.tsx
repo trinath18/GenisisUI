@@ -6,7 +6,7 @@ export function HomePage() {
   return (
     <section>
       <h2>Welcome, {session?.user.userName}</h2>
-      <p>Membership is the first module migrated from the MedixHIS desktop application.</p>
+      <p>Membership is the first module migrated from the legacy desktop application.</p>
       {hasAccess(Access.MembershipEnquiry) && <Link to="/membership/enquiry">Open Membership Enquiry</Link>}
     </section>
   )
