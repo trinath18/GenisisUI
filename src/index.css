@@ -50,3 +50,17 @@ table.grid { border-collapse: collapse; width: 100%; white-space: nowrap; }
 .field.wide { grid-column: 1 / -1; }
 .field dt { font-size: 12px; color: #6b7785; }
 .field dd { margin: 2px 0 0; border-bottom: 1px solid #eef1f4; padding-bottom: 2px; white-space: pre-wrap; }
+.success { color: #067647; background: #ecfdf3; border: 1px solid #abefc6; padding: 8px 12px; border-radius: 4px; }
+.warning { color: #93370d; margin: 6px 0 0; }
+.registration { display: grid; gap: 12px; }
+.registration fieldset { background: #fff; border: 1px solid var(--border); border-radius: 4px; padding: 12px; margin: 0;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 8px 16px; }
+.registration fieldset.covered, .registration fieldset.quote { display: block; }
+.registration fieldset.covered > button { margin-top: 8px; }
+.registration legend { font-weight: 600; color: var(--accent); padding: 0 4px; }
+.form-field { display: grid; gap: 2px; font-size: 13px; }
+.form-field > span { font-size: 12px; color: #52606d; }
+.form-field.wide { grid-column: 1 / -1; }
+.form-field input, .form-field select, .form-field textarea { width: 100%; box-sizing: border-box; }
+.registration .grid input, .registration .grid select { width: 100%; min-width: 90px; box-sizing: border-box; }
+.actions { display: flex; gap: 8px; }

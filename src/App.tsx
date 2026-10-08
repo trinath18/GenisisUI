@@ -5,6 +5,7 @@ import { AppLayout } from './components/AppLayout'
 import { HomePage, NotMigratedPage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { EnquiryPage } from './pages/membership/EnquiryPage'
+import { RegistrationPage } from './pages/membership/RegistrationPage'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -40,7 +41,7 @@ export default function App() {
           path="membership/registration"
           element={
             <RequireAccess position={Access.MembershipRegistration}>
-              <NotMigratedPage title="Membership Registration" />
+              <RegistrationPage />
             </RequireAccess>
           }
         />
