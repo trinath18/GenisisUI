@@ -32,6 +32,8 @@ export function AppLayout() {
         {item('/membership/registration', 'Registration', Access.MembershipRegistration)}
         {item('/membership/adjustment', 'Adjustment', Access.MembershipAdjustment)}
         {item('/membership/enquiry', 'Enquiry', Access.MembershipEnquiry)}
+        <h4>Maintenance</h4>
+        {item('/maintenance/plan', 'Plan', Access.PlanMaintenance)}
         {notMigrated.map((m) => (
           <h4 key={m} className="disabled" title="Not migrated yet">
             {m}

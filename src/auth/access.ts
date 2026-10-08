@@ -6,6 +6,8 @@ export const Access = {
   MembershipRegistration: 1,
   MembershipAdjustment: 2,
   MembershipEnquiry: 3,
+  // Maintenance > Plan shares position 1 with Registration in the desktop menu.
+  PlanMaintenance: 1,
 } as const
 
 export class MustChangePasswordError extends Error {}

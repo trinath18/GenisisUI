@@ -6,6 +6,7 @@ import { HomePage, NotMigratedPage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { EnquiryPage } from './pages/membership/EnquiryPage'
 import { RegistrationPage } from './pages/membership/RegistrationPage'
+import { PlanMaintenancePage } from './pages/maintenance/PlanMaintenancePage'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -50,6 +51,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipAdjustment}>
               <NotMigratedPage title="Membership Adjustment" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/plan"
+          element={
+            <RequireAccess position={Access.PlanMaintenance}>
+              <PlanMaintenancePage />
             </RequireAccess>
           }
         />
