@@ -1,17 +1,10 @@
-import { NavLink, Outlet } from "react-router-dom";
-import { Access, useAuth } from "../auth/access";
+import { NavLink, Outlet } from 'react-router-dom'
+import { Access, useAuth } from '../auth/access'
 
-const notMigrated = [
-  "Case",
-  "Invoice",
-  "Worksheet",
-  "Claims",
-  "Claim Bordx",
-  "Monitoring",
-];
+const notMigrated = ['Case', 'Invoice', 'Worksheet', 'Claims', 'Claim Bordx', 'Monitoring']
 
 export function AppLayout() {
-  const { session, logout, hasAccess } = useAuth();
+  const { session, logout, hasAccess } = useAuth()
   const item = (to: string, label: string, access: number) =>
     hasAccess(access) ? (
       <NavLink to={to}>{label}</NavLink>
@@ -19,7 +12,7 @@ export function AppLayout() {
       <span className="disabled" title="Access Denied!">
         {label}
       </span>
-    );
+    )
 
   return (
     <div className="shell">
@@ -36,24 +29,12 @@ export function AppLayout() {
       </header>
       <nav className="sidebar">
         <h4>Membership</h4>
-        {item(
-          "/membership/registration",
-          "Registration",
-          Access.MembershipRegistration,
-        )}
-        {item(
-          "/membership/adjustment",
-          "Adjustment",
-          Access.MembershipAdjustment,
-        )}
-        {item("/membership/enquiry", "Enquiry", Access.MembershipEnquiry)}
+        {item('/membership/registration', 'Registration', Access.MembershipRegistration)}
+        {item('/membership/adjustment', 'Adjustment', Access.MembershipAdjustment)}
+        {item('/membership/enquiry', 'Enquiry', Access.MembershipEnquiry)}
         <h4>Maintenance</h4>
-        {item("/maintenance/plan", "Plan", Access.PlanMaintenance)}
-        {item(
-          "/maintenance/annual-limit",
-          "Annual Limit",
-          Access.PlanMaintenance,
-        )}
+        {item('/maintenance/plan', 'Plan', Access.PlanMaintenance)}
+        {item('/maintenance/annual-limit', 'Annual Limit', Access.PlanMaintenance)}
         {notMigrated.map((m) => (
           <h4 key={m} className="disabled" title="Not migrated yet">
             {m}
@@ -64,5 +45,5 @@ export function AppLayout() {
         <Outlet />
       </main>
     </div>
-  );
+  )
 }
