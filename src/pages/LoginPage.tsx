@@ -53,7 +53,7 @@ export function LoginPage() {
     <div className="login">
       <form onSubmit={submit} className="card">
         <h2>Genisis</h2>
-        <p className="muted">Sign in with your MedixHIS user</p>
+        <p className="muted">Sign in with your Genisis user</p>
         <label>
           User Name
           <input autoFocus value={userCode} onChange={(e) => editCredentials(() => setUserCode(e.target.value))} maxLength={10} />

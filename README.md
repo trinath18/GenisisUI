@@ -1,6 +1,6 @@
 # GenisisUI
 
-React (Vite + TypeScript) front end for Genisis, the browser replacement of the MedixHIS VB6 desktop app.
+React (Vite + TypeScript) front end for Genisis, the browser replacement of the legacy VB6 desktop app.
 It talks to the [Genisis API](https://github.com/trinath18/Genisis); users only need a browser.
 
 ## Run locally
@@ -12,12 +12,12 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:5173 and log in with a MedixHIS user (`HISMaintenance.dbo.USR`). The dev server proxies `/api`
+Open http://localhost:5173 and log in with an existing desktop user (`USR` table). The dev server proxies `/api`
 to the API; set `GENISIS_API_URL` to point the proxy elsewhere, or `VITE_API_URL` to call an API on another origin.
 
 ## Screens
 
-- Login (same users/passwords as MedixHIS; forced password change supported)
+- Login (same users/passwords as the desktop app; forced password change supported)
 - Menu shell, with items enabled from `USR.USRAccess` like the VB6 `CheckAccess`
 - Membership > Enquiry: search by membership no / IC / name / policy no, then Prin Detail, Supp, Adjust History,
   Current Case, Case History, Mem History, Account and Notes tabs
