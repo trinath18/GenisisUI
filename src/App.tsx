@@ -1,21 +1,35 @@
-import { Navigate, Route, Routes } from 'react-router-dom'
-import type { ReactNode } from 'react'
-import { Access, useAuth } from './auth/access'
-import { AppLayout } from './components/AppLayout'
-import { HomePage, NotMigratedPage } from './pages/HomePage'
-import { LoginPage } from './pages/LoginPage'
-import { EnquiryPage } from './pages/membership/EnquiryPage'
-import { RegistrationPage } from './pages/membership/RegistrationPage'
-import { PlanMaintenancePage } from './pages/maintenance/PlanMaintenancePage'
+import { Navigate, Route, Routes } from "react-router-dom";
+import type { ReactNode } from "react";
+import { Access, useAuth } from "./auth/access";
+import { AppLayout } from "./components/AppLayout";
+import { HomePage, NotMigratedPage } from "./pages/HomePage";
+import { LoginPage } from "./pages/LoginPage";
+import { EnquiryPage } from "./pages/membership/EnquiryPage";
+import { RegistrationPage } from "./pages/membership/RegistrationPage";
+import { PlanMaintenancePage } from "./pages/maintenance/PlanMaintenancePage";
+import { AnnualLimitPage } from "./pages/maintenance/AnnualLimitPage";
 
 function RequireAuth({ children }: { children: ReactNode }) {
-  const { session } = useAuth()
-  return session ? children : <Navigate to="/login" replace />
+  const { session } = useAuth();
+  return session ? children : <Navigate to="/login" replace />;
 }
 
-function RequireAccess({ position, children }: { position: number; children: ReactNode }) {
-  const { hasAccess } = useAuth()
-  return hasAccess(position) ? children : <NotMigratedPage title="Access Denied!" message="You do not have access to this screen. Ask your administrator to grant it." />
+function RequireAccess({
+  position,
+  children,
+}: {
+  position: number;
+  children: ReactNode;
+}) {
+  const { hasAccess } = useAuth();
+  return hasAccess(position) ? (
+    children
+  ) : (
+    <NotMigratedPage
+      title="Access Denied!"
+      message="You do not have access to this screen. Ask your administrator to grant it."
+    />
+  );
 }
 
 export default function App() {
@@ -62,8 +76,16 @@ export default function App() {
             </RequireAccess>
           }
         />
+        <Route
+          path="maintenance/annual-limit"
+          element={
+            <RequireAccess position={Access.PlanMaintenance}>
+              <AnnualLimitPage />
+            </RequireAccess>
+          }
+        />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Route>
     </Routes>
-  )
+  );
 }
