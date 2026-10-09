@@ -356,67 +356,69 @@ export function PremiumPage() {
             {search.data.truncated &&
               ` (showing the latest ${search.data.limit}; narrow the search to see more)`}
           </p>
-          <table>
-            <thead>
-              <tr>
-                <th>Code</th>
-                <th>Insured</th>
-                <th>Payor</th>
-                <th>Health</th>
-                <th>Age</th>
-                <th>Plan</th>
-                <th>Premium</th>
-                <th>Supp</th>
-                <th>Effective</th>
-                <th>Ver.</th>
-                <th>Status</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {search.data.rows.map((r) => (
-                <tr key={r.code}>
-                  <td>{r.code}</td>
-                  <td>{r.insuredCode}</td>
-                  <td>{r.payorCode}</td>
-                  <td>{r.healthCode}</td>
-                  <td>{r.ageCode}</td>
-                  <td>{r.planCode}</td>
-                  <td>{money(r.amount)}</td>
-                  <td>{money(r.suppAmount)}</td>
-                  <td>{r.effectiveDate?.slice(0, 10)}</td>
-                  <td>{r.version}</td>
-                  <td>{r.suppStatus}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="link"
-                      disabled={save.isPending}
-                      onClick={() => onEdit(r)}
-                    >
-                      Edit
-                    </button>{" "}
-                    <button
-                      type="button"
-                      className="link"
-                      disabled={remove.isPending}
-                      onClick={() => {
-                        resetFeedback();
-                        if (
-                          window.confirm(
-                            `Do you want to delete premium record ${r.code}?`,
-                          )
-                        )
-                          remove.mutate(r.code);
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
+          <div className="table-wrap">
+            <table className="grid">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Insured</th>
+                  <th>Payor</th>
+                  <th>Health</th>
+                  <th>Age</th>
+                  <th>Plan</th>
+                  <th className="num">Premium</th>
+                  <th className="num">Supp</th>
+                  <th>Effective</th>
+                  <th>Ver.</th>
+                  <th>Status</th>
+                  <th className="action-cell" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {search.data.rows.map((r) => (
+                  <tr key={r.code}>
+                    <td>{r.code}</td>
+                    <td>{r.insuredCode}</td>
+                    <td>{r.payorCode}</td>
+                    <td>{r.healthCode}</td>
+                    <td>{r.ageCode}</td>
+                    <td>{r.planCode}</td>
+                    <td className="num">{money(r.amount)}</td>
+                    <td className="num">{money(r.suppAmount)}</td>
+                    <td>{r.effectiveDate?.slice(0, 10)}</td>
+                    <td>{r.version}</td>
+                    <td>{r.suppStatus}</td>
+                    <td className="action-cell">
+                      <button
+                        type="button"
+                        className="link"
+                        disabled={save.isPending}
+                        onClick={() => onEdit(r)}
+                      >
+                        Edit
+                      </button>{" "}
+                      <button
+                        type="button"
+                        className="link"
+                        disabled={remove.isPending}
+                        onClick={() => {
+                          resetFeedback();
+                          if (
+                            window.confirm(
+                              `Do you want to delete premium record ${r.code}?`,
+                            )
+                          )
+                            remove.mutate(r.code);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </section>

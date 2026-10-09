@@ -28,6 +28,23 @@ interface PlanRow {
   mcoInd: string | null
   policyWording: string | null
   clientPlan: string | null
+  topUpStatus: string | null
+  coPayment: string | null
+  specialGracePeriod: string | null
+  specialGracePeriodDays: number | null
+  smPlan: string | null
+  lifetimeStatus: string | null
+  sof: string | null
+  meal: string | null
+  nursing: string | null
+  tax: string | null
+  mri: string | null
+  managementFee: string | null
+  disIndicator: string | null
+  startAge: number | null
+  endAge: number | null
+  clientPolicyNo: string | null
+  coPayPercent: number | null
 }
 interface SearchResult {
   rows: PlanRow[]
@@ -76,6 +93,8 @@ export function PlanMaintenancePage() {
   const [lines, setLines] = useState(emptyLines)
   const [filter, setFilter] = useState<Form | null>(null)
   const [created, setCreated] = useState<CreatedPlan[] | null>(null)
+  const [editing, setEditing] = useState<PlanRow | null>(null)
+  const [updated, setUpdated] = useState<string | null>(null)
   const set = (key: string) => (e: { target: { value: string } }) => setForm((f) => ({ ...f, [key]: e.target.value }))
 
   const lookups = useQuery({ queryKey: ['plan-lookups'], queryFn: async () => (await api.get<Lookups>('/api/maintenance/plans/lookups')).data })
@@ -91,7 +110,7 @@ export function PlanMaintenancePage() {
 
   const isN = form.healthCode === 'N'
   const isS = form.healthCode === 'S'
-  const count = isN ? Number(form.numberOfPlans || 0) : 6
+  const count = editing ? 1 : isN ? Number(form.numberOfPlans || 0) : 6
 
   const save = useMutation({
     mutationFn: async () => {
@@ -106,10 +125,16 @@ export function PlanMaintenancePage() {
         effectiveDate: form.effectiveDate || null,
         plans: lines.slice(0, count).map((l) => ({ code: isS ? l.code : null, description: l.description })),
       }
+      if (editing) {
+        await api.put(`/api/maintenance/plans/${editing.index}`, { ...body, numberOfPlans: isN ? 1 : null })
+        return null
+      }
       return (await api.post<CreatedPlan[]>('/api/maintenance/plans', body)).data
     },
     onSuccess: (data) => {
-      setCreated(data)
+      if (data) setCreated(data)
+      else setUpdated(`Record Updated... Plan code: ${editing?.code}`)
+      setEditing(null)
       setForm({})
       setLines(emptyLines())
       queryClient.invalidateQueries({ queryKey: ['plans'] })
@@ -117,13 +142,52 @@ export function PlanMaintenancePage() {
   })
   const remove = useMutation({
     mutationFn: async (index: number) => api.delete(`/api/maintenance/plans/${index}`),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['plans'] }),
+    onSuccess: (_, index) => {
+      if (editing?.index === index) clear()
+      queryClient.invalidateQueries({ queryKey: ['plans'] })
+    },
   })
+
+  const clear = () => {
+    setEditing(null)
+    setForm({})
+    setLines(emptyLines())
+    setCreated(null)
+    setUpdated(null)
+    save.reset()
+    remove.reset()
+  }
+  const onEdit = (r: PlanRow) => {
+    const text = (v: string | number | null) => (v === null || v === undefined ? '' : String(v).trim())
+    const f: Form = {
+      healthCode: text(r.healthCode),
+      payorCode: text(r.payorCode),
+      groupCompany: text(r.groupCompany),
+      specialGracePeriodDays: text(r.specialGracePeriodDays),
+      effectiveDate: r.effectiveDate?.slice(0, 10) ?? '',
+      productCategory: text(r.productCategory),
+      startAge: text(r.startAge),
+      endAge: text(r.endAge),
+      policyWording: text(r.policyWording),
+      clientPlan: text(r.clientPlan),
+      clientPolicyNo: text(r.clientPolicyNo),
+      coPayPercent: text(r.coPayPercent),
+    }
+    for (const [key] of yesNo) f[key] = text(r[key]).toUpperCase()
+    setEditing(r)
+    setForm(f)
+    setLines([{ code: r.code, description: r.description ?? '' }, ...emptyLines().slice(1)])
+    setCreated(null)
+    setUpdated(null)
+    save.reset()
+    remove.reset()
+  }
 
   const onSave = (e: FormEvent) => {
     e.preventDefault()
     setCreated(null)
-    if (window.confirm('Do you want to save the record?')) save.mutate()
+    setUpdated(null)
+    if (window.confirm(editing ? `Do you want to update plan ${editing.code}?` : 'Do you want to save the record?')) save.mutate()
   }
   const onSearch = () => {
     const f: Form = {}
@@ -136,8 +200,8 @@ export function PlanMaintenancePage() {
   }
 
   const l = lookups.data
-  const select = (key: string, options: Option[] | undefined) => (
-    <select value={form[key] ?? ''} onChange={set(key)}>
+  const select = (key: string, options: Option[] | undefined, locked = false) => (
+    <select value={form[key] ?? ''} onChange={set(key)} disabled={locked}>
       <option value="" />
       {options?.map((o) => (
         <option key={o.code} value={o.code}>
@@ -152,14 +216,14 @@ export function PlanMaintenancePage() {
       <h2>Plan Maintenance</h2>
       {lookups.isError && <p className="error">{errorMessage(lookups.error)}</p>}
       <form onSubmit={onSave}>
-        <fieldset>
-          <legend>Plan</legend>
-          <Field label="Health Type *">{select('healthCode', l?.healthCodes)}</Field>
-          <Field label={isN ? 'Payor *' : 'Payor'}>{select('payorCode', l?.payors)}</Field>
+        <fieldset disabled={save.isPending}>
+          <legend>{editing ? `Editing plan ${editing.code} (plan code, health type and payor can't be changed)` : 'Plan'}</legend>
+          <Field label="Health Type *">{select('healthCode', l?.healthCodes, !!editing)}</Field>
+          <Field label={isN ? 'Payor *' : 'Payor'}>{select('payorCode', l?.payors, !!editing)}</Field>
           <Field label="Group Company *">
             <input value={form.groupCompany ?? ''} maxLength={200} onChange={set('groupCompany')} />
           </Field>
-          {isN && (
+          {isN && !editing && (
             <Field label="No of Plan *">
               <select value={form.numberOfPlans ?? ''} onChange={set('numberOfPlans')}>
                 <option value="" />
@@ -219,8 +283,8 @@ export function PlanMaintenancePage() {
           </Field>
         </fieldset>
         {(isN || isS) && (
-          <fieldset>
-            <legend>{isN ? 'Plan descriptions (codes are generated)' : 'Plan codes'}</legend>
+          <fieldset disabled={save.isPending}>
+            <legend>{editing ? 'Plan description' : isN ? 'Plan descriptions (codes are generated)' : 'Plan codes'}</legend>
             {lines.slice(0, count).map((line, i) => (
               <div key={i} className="covered">
                 {isS && (
@@ -228,6 +292,7 @@ export function PlanMaintenancePage() {
                     aria-label={`Plan Code ${i + 1}`}
                     placeholder="Code"
                     maxLength={4}
+                    disabled={!!editing}
                     value={line.code}
                     onChange={(e) => setLines((ls) => ls.map((x, j) => (j === i ? { ...x, code: e.target.value } : x)))}
                   />
@@ -249,24 +314,16 @@ export function PlanMaintenancePage() {
             Record Saved... Plan code{created.length > 1 ? 's' : ''}: {created.map((c) => c.code).join(', ')}
           </p>
         )}
+        {updated && <p className="success">{updated}</p>}
         <div className="actions">
           <button type="submit" disabled={save.isPending}>
-            Save
+            {editing ? 'Update' : 'Save'}
           </button>
           <button type="button" onClick={onSearch}>
             Search
           </button>
-          <button
-            type="button"
-            onClick={() => {
-              setForm({})
-              setLines(emptyLines())
-              setCreated(null)
-              save.reset()
-              remove.reset()
-            }}
-          >
-            Clear
+          <button type="button" disabled={save.isPending} onClick={clear}>
+            {editing ? 'Cancel Edit' : 'Clear'}
           </button>
         </div>
       </form>
@@ -278,49 +335,56 @@ export function PlanMaintenancePage() {
             {search.data.rows.length === 0 ? 'Record not found' : `${search.data.rows.length} record(s)`}
             {search.data.truncated && ` (showing the latest ${search.data.limit}; narrow the search to see more)`}
           </p>
-          <table>
-            <thead>
-              <tr>
-                <th>Health</th>
-                <th>Plan</th>
-                <th>Description</th>
-                <th>Payor</th>
-                <th>Group Company</th>
-                <th>Prod. Cat.</th>
-                <th>Effective</th>
-                <th>Ann/Prm/MCO</th>
-                <th>Client Plan</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {search.data.rows.map((r) => (
-                <tr key={r.index}>
-                  <td>{r.healthCode}</td>
-                  <td>{r.code}</td>
-                  <td>{r.description}</td>
-                  <td>{r.payorCode}</td>
-                  <td>{r.groupCompany}</td>
-                  <td>{r.productCategory}</td>
-                  <td>{r.effectiveDate?.slice(0, 10)}</td>
-                  <td>
-                    {r.annualLimitInd}/{r.premiumInd}/{r.mcoInd}
-                  </td>
-                  <td>{r.clientPlan}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="link"
-                      disabled={remove.isPending}
-                      onClick={() => window.confirm(`Do you want to delete plan ${r.code}?`) && remove.mutate(r.index)}
-                    >
-                      Delete
-                    </button>
-                  </td>
+          <div className="table-wrap">
+            <table className="grid plan-results">
+              <thead>
+                <tr>
+                  <th className="center">Health</th>
+                  <th>Plan</th>
+                  <th>Description</th>
+                  <th>Payor</th>
+                  <th>Group Company</th>
+                  <th className="center">Prod. Cat.</th>
+                  <th>Effective</th>
+                  <th className="center" title="Annual Limit / Premium / MCO indicators">
+                    Ann / Prm / MCO
+                  </th>
+                  <th>Client Plan</th>
+                  <th className="action-cell" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {search.data.rows.map((r) => (
+                  <tr key={r.index} className={editing?.index === r.index ? 'selected' : ''}>
+                    <td className="center">{r.healthCode}</td>
+                    <td>{r.code}</td>
+                    <td className="wrap">{r.description}</td>
+                    <td>{r.payorCode}</td>
+                    <td className="wrap">{r.groupCompany}</td>
+                    <td className="center">{r.productCategory}</td>
+                    <td>{r.effectiveDate?.slice(0, 10)}</td>
+                    <td className="center">
+                      {r.annualLimitInd ?? '-'} / {r.premiumInd ?? '-'} / {r.mcoInd ?? '-'}
+                    </td>
+                    <td>{r.clientPlan}</td>
+                    <td className="action-cell">
+                      <button type="button" className="link" disabled={save.isPending} onClick={() => onEdit(r)}>
+                        Edit
+                      </button>
+                      <button
+                        type="button"
+                        className="link"
+                        disabled={remove.isPending || save.isPending}
+                        onClick={() => window.confirm(`Do you want to delete plan ${r.code}?`) && remove.mutate(r.index)}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </section>
