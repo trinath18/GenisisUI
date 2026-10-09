@@ -155,7 +155,7 @@ export function PlanMaintenancePage() {
     setCreated(null)
     setUpdated(null)
     save.reset()
-    remove.reset()
+    if (!remove.isPending) remove.reset()
   }
   const onEdit = (r: PlanRow) => {
     const text = (v: string | number | null) => (v === null || v === undefined ? '' : String(v).trim())
@@ -180,7 +180,7 @@ export function PlanMaintenancePage() {
     setCreated(null)
     setUpdated(null)
     save.reset()
-    remove.reset()
+    if (!remove.isPending) remove.reset()
   }
 
   const onSave = (e: FormEvent) => {
@@ -368,7 +368,7 @@ export function PlanMaintenancePage() {
                     </td>
                     <td>{r.clientPlan}</td>
                     <td className="action-cell">
-                      <button type="button" className="link" disabled={save.isPending} onClick={() => onEdit(r)}>
+                      <button type="button" className="link" disabled={save.isPending || remove.isPending} onClick={() => onEdit(r)}>
                         Edit
                       </button>
                       <button
