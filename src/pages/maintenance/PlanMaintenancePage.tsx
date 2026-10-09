@@ -131,7 +131,8 @@ export function PlanMaintenancePage() {
       if (form[k]) f[k] = form[k]
     if (isS && lines[0].code) f.planCode = lines[0].code
     remove.reset()
-    setFilter(f)
+    if (JSON.stringify(f) === JSON.stringify(filter)) search.refetch()
+    else setFilter(f)
   }
 
   const l = lookups.data
