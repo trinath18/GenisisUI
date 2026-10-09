@@ -134,7 +134,7 @@ export function AnnualLimitPage() {
 
   const resetFeedback = () => {
     setSaved(null);
-    save.reset();
+    if (!save.isPending) save.reset();
     remove.reset();
   };
   const onSave = (e: FormEvent) => {
@@ -187,7 +187,7 @@ export function AnnualLimitPage() {
         </p>
       )}
       <form onSubmit={onSave}>
-        <fieldset>
+        <fieldset disabled={save.isPending}>
           <legend>
             {editing === null
               ? "New annual limit"
