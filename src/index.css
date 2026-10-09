@@ -38,6 +38,12 @@ input, select { border: 1px solid var(--border); border-radius: 4px; padding: 6p
 .table-wrap { overflow: auto; max-height: 420px; background: #fff; border: 1px solid var(--border); border-radius: 4px; }
 table.grid { border-collapse: collapse; width: 100%; white-space: nowrap; }
 .grid th, .grid td { padding: 5px 8px; border-bottom: 1px solid #eef1f4; text-align: left; }
+.grid th.num, .grid td.num { text-align: right; font-variant-numeric: tabular-nums; }
+.grid th.center, .grid td.center { text-align: center; }
+.grid td.wrap { white-space: normal; min-width: 180px; max-width: 320px; }
+.grid th.action-cell, .grid td.action-cell { width: 1%; text-align: right; }
+.grid td.action-cell button + button { margin-left: 12px; }
+.grid td { vertical-align: top; }
 .grid th { position: sticky; top: 0; background: #f0f3f6; font-weight: 600; }
 .grid tr.clickable { cursor: pointer; }
 .grid tr.clickable:hover { background: #f5f9fd; }

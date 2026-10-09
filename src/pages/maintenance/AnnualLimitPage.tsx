@@ -314,69 +314,71 @@ export function AnnualLimitPage() {
             {search.data.truncated &&
               ` (showing the latest ${search.data.limit}; narrow the search to see more)`}
           </p>
-          <table>
-            <thead>
-              <tr>
-                <th>Health</th>
-                <th>Plan</th>
-                <th>Insured</th>
-                <th>Payor</th>
-                <th>Group Company</th>
-                <th>Annual</th>
-                <th>Life Time</th>
-                <th>Status</th>
-                <th>Supp</th>
-                <th>Supp Life Time</th>
-                <th>Effective</th>
-                <th>Ver.</th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {search.data.rows.map((r) => (
-                <tr key={r.index}>
-                  <td>{r.healthCode}</td>
-                  <td>{r.planCode}</td>
-                  <td>{r.insuredCode}</td>
-                  <td>{r.payorCode}</td>
-                  <td>{r.groupCompany}</td>
-                  <td>{money(r.annualLimit)}</td>
-                  <td>{money(r.lifetimeLimit)}</td>
-                  <td>{r.suppLimitStatus}</td>
-                  <td>{money(r.suppLimit)}</td>
-                  <td>{money(r.suppLifetimeLimit)}</td>
-                  <td>{r.effectiveDate?.slice(0, 10)}</td>
-                  <td>{r.version}</td>
-                  <td>
-                    <button
-                      type="button"
-                      className="link"
-                      disabled={save.isPending}
-                      onClick={() => onEdit(r)}
-                    >
-                      Edit
-                    </button>{" "}
-                    <button
-                      type="button"
-                      className="link"
-                      disabled={remove.isPending}
-                      onClick={() => {
-                        resetFeedback();
-                        if (
-                          window.confirm(
-                            `Do you want to delete the annual limit for plan ${r.planCode}?`,
-                          )
-                        )
-                          remove.mutate(r.index);
-                      }}
-                    >
-                      Delete
-                    </button>
-                  </td>
+          <div className="table-wrap">
+            <table className="grid">
+              <thead>
+                <tr>
+                  <th>Health</th>
+                  <th>Plan</th>
+                  <th>Insured</th>
+                  <th>Payor</th>
+                  <th>Group Company</th>
+                  <th className="num">Annual</th>
+                  <th className="num">Life Time</th>
+                  <th>Status</th>
+                  <th className="num">Supp</th>
+                  <th className="num">Supp Life Time</th>
+                  <th>Effective</th>
+                  <th>Ver.</th>
+                  <th className="action-cell" />
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {search.data.rows.map((r) => (
+                  <tr key={r.index}>
+                    <td>{r.healthCode}</td>
+                    <td>{r.planCode}</td>
+                    <td>{r.insuredCode}</td>
+                    <td>{r.payorCode}</td>
+                    <td>{r.groupCompany}</td>
+                    <td className="num">{money(r.annualLimit)}</td>
+                    <td className="num">{money(r.lifetimeLimit)}</td>
+                    <td>{r.suppLimitStatus}</td>
+                    <td className="num">{money(r.suppLimit)}</td>
+                    <td className="num">{money(r.suppLifetimeLimit)}</td>
+                    <td>{r.effectiveDate?.slice(0, 10)}</td>
+                    <td>{r.version}</td>
+                    <td className="action-cell">
+                      <button
+                        type="button"
+                        className="link"
+                        disabled={save.isPending}
+                        onClick={() => onEdit(r)}
+                      >
+                        Edit
+                      </button>{" "}
+                      <button
+                        type="button"
+                        className="link"
+                        disabled={remove.isPending}
+                        onClick={() => {
+                          resetFeedback();
+                          if (
+                            window.confirm(
+                              `Do you want to delete the annual limit for plan ${r.planCode}?`,
+                            )
+                          )
+                            remove.mutate(r.index);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </>
       )}
     </section>
