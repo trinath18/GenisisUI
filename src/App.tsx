@@ -7,6 +7,7 @@ import { LoginPage } from './pages/LoginPage'
 import { EnquiryPage } from './pages/membership/EnquiryPage'
 import { RegistrationPage } from './pages/membership/RegistrationPage'
 import { PlanMaintenancePage } from './pages/maintenance/PlanMaintenancePage'
+import { AnnualLimitPage } from './pages/maintenance/AnnualLimitPage'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -59,6 +60,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.PlanMaintenance}>
               <PlanMaintenancePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/annual-limit"
+          element={
+            <RequireAccess position={Access.PlanMaintenance}>
+              <AnnualLimitPage />
             </RequireAccess>
           }
         />
