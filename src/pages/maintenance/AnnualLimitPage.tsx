@@ -151,11 +151,11 @@ export function AnnualLimitPage() {
       "payorCode",
       "groupCompany",
     ];
-    setFilter(
-      Object.fromEntries(
-        keys.filter((k) => form[k]?.trim()).map((k) => [k, form[k].trim()]),
-      ),
+    const f: Form = Object.fromEntries(
+      keys.filter((k) => form[k]?.trim()).map((k) => [k, form[k].trim()]),
     );
+    if (JSON.stringify(f) === JSON.stringify(filter)) search.refetch();
+    else setFilter(f);
   };
   const onEdit = (r: AnnualLimitRow) => {
     resetFeedback();
@@ -292,6 +292,7 @@ export function AnnualLimitPage() {
           </button>
           <button
             type="button"
+            disabled={save.isPending}
             onClick={() => {
               setForm({ suppLimitStatus: "A" });
               setEditing(null);
@@ -350,6 +351,7 @@ export function AnnualLimitPage() {
                     <button
                       type="button"
                       className="link"
+                      disabled={save.isPending}
                       onClick={() => onEdit(r)}
                     >
                       Edit
