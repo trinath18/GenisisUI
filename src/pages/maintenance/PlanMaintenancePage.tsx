@@ -194,7 +194,7 @@ export function PlanMaintenancePage() {
     for (const k of ['healthCode', 'payorCode', 'groupCompany', 'productCategory', 'topUpStatus', 'coPayment', 'sof', 'specialGracePeriod', 'meal', 'nursing', 'tax', 'mri', 'disIndicator'])
       if (form[k]) f[k] = form[k]
     if (isS && lines[0].code) f.planCode = lines[0].code
-    remove.reset()
+    if (!remove.isPending) remove.reset()
     if (JSON.stringify(f) === JSON.stringify(filter)) search.refetch()
     else setFilter(f)
   }
