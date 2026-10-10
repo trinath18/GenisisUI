@@ -185,6 +185,7 @@ export function PlanMaintenancePage() {
 
   const onSave = (e: FormEvent) => {
     e.preventDefault()
+    if (save.isPending || remove.isPending) return
     setCreated(null)
     setUpdated(null)
     if (window.confirm(editing ? `Do you want to update plan ${editing.code}?` : 'Do you want to save the record?')) save.mutate()
@@ -316,7 +317,7 @@ export function PlanMaintenancePage() {
         )}
         {updated && <p className="success">{updated}</p>}
         <div className="actions">
-          <button type="submit" disabled={save.isPending}>
+          <button type="submit" disabled={save.isPending || remove.isPending}>
             {editing ? 'Update' : 'Save'}
           </button>
           <button type="button" onClick={onSearch}>
