@@ -155,7 +155,7 @@ export function PlanMaintenancePage() {
     setCreated(null)
     setUpdated(null)
     save.reset()
-    remove.reset()
+    if (!remove.isPending) remove.reset()
   }
   const onEdit = (r: PlanRow) => {
     const text = (v: string | number | null) => (v === null || v === undefined ? '' : String(v).trim())
@@ -180,7 +180,7 @@ export function PlanMaintenancePage() {
     setCreated(null)
     setUpdated(null)
     save.reset()
-    remove.reset()
+    if (!remove.isPending) remove.reset()
   }
 
   const onSave = (e: FormEvent) => {
@@ -194,7 +194,7 @@ export function PlanMaintenancePage() {
     for (const k of ['healthCode', 'payorCode', 'groupCompany', 'productCategory', 'topUpStatus', 'coPayment', 'sof', 'specialGracePeriod', 'meal', 'nursing', 'tax', 'mri', 'disIndicator'])
       if (form[k]) f[k] = form[k]
     if (isS && lines[0].code) f.planCode = lines[0].code
-    remove.reset()
+    if (!remove.isPending) remove.reset()
     if (JSON.stringify(f) === JSON.stringify(filter)) search.refetch()
     else setFilter(f)
   }
@@ -368,7 +368,7 @@ export function PlanMaintenancePage() {
                     </td>
                     <td>{r.clientPlan}</td>
                     <td className="action-cell">
-                      <button type="button" className="link" disabled={save.isPending} onClick={() => onEdit(r)}>
+                      <button type="button" className="link" disabled={save.isPending || remove.isPending} onClick={() => onEdit(r)}>
                         Edit
                       </button>
                       <button
