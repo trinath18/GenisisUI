@@ -214,7 +214,6 @@ export function PlanMaintenancePage() {
 
   return (
     <section className="registration">
-      <h2>Plan Maintenance</h2>
       {lookups.isError && <p className="error">{errorMessage(lookups.error)}</p>}
       <form onSubmit={onSave}>
         <fieldset disabled={save.isPending}>

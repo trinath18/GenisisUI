@@ -180,7 +180,6 @@ export function AnnualLimitPage() {
 
   return (
     <section>
-      <h2>Plan Maintenance: Annual Limit</h2>
       {(lookups.isError || insuredTypes.isError) && (
         <p className="error">
           {errorMessage(lookups.error ?? insuredTypes.error)}
