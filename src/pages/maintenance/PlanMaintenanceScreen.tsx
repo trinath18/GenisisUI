@@ -6,6 +6,7 @@ import { AnnualLimitPage } from './AnnualLimitPage'
 import { CodeListTab } from './CodeListTab'
 import { SpecialNoteTab } from './SpecialNoteTab'
 import { BenefitLimitTab, MgmtFeeTab } from './PlanKeyedTabs'
+import { McoFeeTab } from './McoFeeTab'
 
 const tabs: { id: string; label: string; body?: () => ReactNode }[] = [
   {
@@ -21,7 +22,7 @@ const tabs: { id: string; label: string; body?: () => ReactNode }[] = [
   { id: 'plan', label: 'Plan Code', body: () => <PlanMaintenancePage /> },
   { id: 'premium', label: 'Premium', body: () => <PremiumPage /> },
   { id: 'annual-limit', label: 'Annual Limit', body: () => <AnnualLimitPage /> },
-  { id: 'mco-fee', label: 'MCO Fee' },
+  { id: 'mco-fee', label: 'MCO Fee', body: () => <McoFeeTab /> },
   { id: 'special-note', label: 'Special Note', body: () => <SpecialNoteTab /> },
   { id: 'annual-limit-benefit', label: 'Annual Limit (Benefit)', body: () => <BenefitLimitTab /> },
   {
