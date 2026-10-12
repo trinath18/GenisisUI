@@ -5,6 +5,7 @@ import { PremiumPage } from './PremiumPage'
 import { AnnualLimitPage } from './AnnualLimitPage'
 import { CodeListTab } from './CodeListTab'
 import { SpecialNoteTab } from './SpecialNoteTab'
+import { BenefitLimitTab, MgmtFeeTab } from './PlanKeyedTabs'
 
 const tabs: { id: string; label: string; body?: () => ReactNode }[] = [
   {
@@ -22,7 +23,7 @@ const tabs: { id: string; label: string; body?: () => ReactNode }[] = [
   { id: 'annual-limit', label: 'Annual Limit', body: () => <AnnualLimitPage /> },
   { id: 'mco-fee', label: 'MCO Fee' },
   { id: 'special-note', label: 'Special Note', body: () => <SpecialNoteTab /> },
-  { id: 'annual-limit-benefit', label: 'Annual Limit (Benefit)' },
+  { id: 'annual-limit-benefit', label: 'Annual Limit (Benefit)', body: () => <BenefitLimitTab /> },
   {
     id: 'product-category',
     label: 'Product Category',
@@ -33,7 +34,7 @@ const tabs: { id: string; label: string; body?: () => ReactNode }[] = [
     label: 'Supp. MCO Status',
     body: () => <CodeListTab list="supp-mco-statuses" codeLabel="MCO Code" descriptionLabel="MCO Status" codeLength={1} descriptionLength={200} />,
   },
-  { id: 'case-mgmt-fee', label: 'Case Mgmt. Fee' },
+  { id: 'case-mgmt-fee', label: 'Case Mgmt. Fee', body: () => <MgmtFeeTab /> },
 ]
 
 export function PlanMaintenanceScreen() {
