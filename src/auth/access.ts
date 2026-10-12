@@ -8,6 +8,8 @@ export const Access = {
   MembershipEnquiry: 3,
   // Maintenance > Plan shares position 1 with Registration in the desktop menu.
   PlanMaintenance: 1,
+  // Maintenance > Benefits also checks position 1 (mnuBenefits_Click).
+  BenefitsMaintenance: 1,
 } as const
 
 export class MustChangePasswordError extends Error {}
