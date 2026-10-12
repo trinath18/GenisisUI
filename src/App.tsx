@@ -7,6 +7,7 @@ import { LoginPage } from './pages/LoginPage'
 import { EnquiryPage } from './pages/membership/EnquiryPage'
 import { RegistrationPage } from './pages/membership/RegistrationPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
+import { BenefitsMaintenanceScreen } from './pages/maintenance/BenefitsMaintenanceScreen'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -59,6 +60,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.PlanMaintenance}>
               <PlanMaintenanceScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/benefits"
+          element={
+            <RequireAccess position={Access.BenefitsMaintenance}>
+              <BenefitsMaintenanceScreen />
             </RequireAccess>
           }
         />
