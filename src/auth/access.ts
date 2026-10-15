@@ -10,6 +10,11 @@ export const Access = {
   PlanMaintenance: 1,
   // Maintenance > Benefits also checks position 1 (mnuBenefits_Click).
   BenefitsMaintenance: 1,
+  // Case menu positions in mdiMain.frm (CaseEntry=11, CASInMBM=7, CaseAdjustment=12, CaseTracking=15).
+  CaseRegistration: 11,
+  CaseEnquiry: 7,
+  CaseAdjustment: 12,
+  CaseTracking: 15,
 } as const
 
 export class MustChangePasswordError extends Error {}
