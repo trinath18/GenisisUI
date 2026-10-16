@@ -6,6 +6,7 @@ export const Access = {
   MembershipRegistration: 1,
   MembershipAdjustment: 2,
   MembershipEnquiry: 3,
+  MembershipUploadBordx: 4,
   // Maintenance > Plan shares position 1 with Registration in the desktop menu.
   PlanMaintenance: 1,
   // Maintenance > Benefits also checks position 1 (mnuBenefits_Click).

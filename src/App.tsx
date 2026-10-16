@@ -7,6 +7,7 @@ import { LoginPage } from './pages/LoginPage'
 import { EnquiryPage } from './pages/membership/EnquiryPage'
 import { RegistrationPage } from './pages/membership/RegistrationPage'
 import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
+import { UploadBordxPage } from './features/membership/bordx/pages/UploadBordxPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
@@ -55,6 +56,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipAdjustment}>
               <AdjustmentPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/upload-bordx"
+          element={
+            <RequireAccess position={Access.MembershipUploadBordx}>
+              <UploadBordxPage />
             </RequireAccess>
           }
         />

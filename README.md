@@ -24,6 +24,7 @@ to the API; set `GENISIS_API_URL` to point the proxy elsewhere, or `VITE_API_URL
   - Adjustment (`frmNewMBMAdjustment`): every endorsement type, Others Details, Supplementary, history and fees tabs
   - Enquiry (`frmNewMBMEnquiry`): all desktop tabs, including HIS Benefits, Acc History, Fees, Non Disclosure, Policy Terms,
     LT Limit, Policy Wording, T/O Claims and WS
+  - Upload Bordx (`FrmNewMBMEndt10`): Verify, Upload, Stop, Print and Generate ASCII
 - Maintenance: Plan, Benefits, Entity and Accounts
 
 ## Code structure
@@ -44,7 +45,7 @@ src/
     types.ts               request / response contracts
 ```
 
-`features/membership/{adjustment,enquiry}` and `features/maintenance/{benefits,entity,accounts}` use it; the older
+`features/membership/{adjustment,bordx,enquiry}` and `features/maintenance/{benefits,entity,accounts}` use it; the older
 screens in `pages/` keep their original layout.
 
 Conventions:
