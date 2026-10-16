@@ -89,6 +89,7 @@ export function AppLayout() {
         {item('/membership/registration', 'Registration', Access.MembershipRegistration)}
         {item('/membership/adjustment', 'Adjustment', Access.MembershipAdjustment)}
         {item('/membership/enquiry', 'Enquiry', Access.MembershipEnquiry)}
+        {item('/membership/upload-bordx', 'Upload Bordx', Access.MembershipUploadBordx)}
         <h4>Maintenance</h4>
         {item('/maintenance/plan', 'Plan Maintenance', Access.PlanMaintenance)}
         {item('/maintenance/benefits', 'Benefits Maintenance', Access.BenefitsMaintenance)}
