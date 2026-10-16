@@ -8,6 +8,7 @@ import { EnquiryPage } from './pages/membership/EnquiryPage'
 import { RegistrationPage } from './pages/membership/RegistrationPage'
 import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
 import { UploadBordxPage } from './features/membership/bordx/pages/UploadBordxPage'
+import { TrackingPage } from './features/membership/tracking/pages/TrackingPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
@@ -97,6 +98,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.CaseTracking}>
               <CaseTrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/tracking"
+          element={
+            <RequireAccess position={Access.MembershipTracking}>
+              <TrackingPage />
             </RequireAccess>
           }
         />
