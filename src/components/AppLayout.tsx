@@ -24,6 +24,8 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/membership/registration', label: 'Registration', access: Access.MembershipRegistration },
       { to: '/membership/adjustment', label: 'Adjustment', access: Access.MembershipAdjustment },
       { to: '/membership/enquiry', label: 'Enquiry', access: Access.MembershipEnquiry },
+      { to: '/membership/tracking', label: 'Tracking', access: Access.MembershipTracking },
+      { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
     ],
   },
   {
@@ -42,6 +44,8 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
     items: [
       { to: '/maintenance/plan', label: 'Plan Maintenance', access: Access.PlanMaintenance },
       { to: '/maintenance/benefits', label: 'Benefits Maintenance', access: Access.BenefitsMaintenance },
+      { to: '/maintenance/entity', label: 'Entity Maintenance', access: Access.EntityMaintenance },
+      { to: '/maintenance/accounts', label: 'Accounts', access: Access.AccountsMaintenance },
     ],
   },
 ]
@@ -84,23 +88,6 @@ export function AppLayout() {
           Log out
         </button>
       </header>
-      <nav className="sidebar">
-        <h4>Membership</h4>
-        {item('/membership/registration', 'Registration', Access.MembershipRegistration)}
-        {item('/membership/adjustment', 'Adjustment', Access.MembershipAdjustment)}
-        {item('/membership/enquiry', 'Enquiry', Access.MembershipEnquiry)}
-        {item('/membership/tracking', 'Tracking', Access.MembershipTracking)}
-        {item('/membership/upload-bordx', 'Upload Bordx', Access.MembershipUploadBordx)}
-        <h4>Maintenance</h4>
-        {item('/maintenance/plan', 'Plan Maintenance', Access.PlanMaintenance)}
-        {item('/maintenance/benefits', 'Benefits Maintenance', Access.BenefitsMaintenance)}
-        {item('/maintenance/entity', 'Entity Maintenance', Access.EntityMaintenance)}
-        {item('/maintenance/accounts', 'Accounts', Access.AccountsMaintenance)}
-        {notMigrated.map((m) => (
-          <h4 key={m} className="disabled" title="Not migrated yet">
-            {m}
-          </h4>
-        ))}
       <nav className="rail" aria-label="Modules">
         {rail.map((r) =>
           r.to && (r.access === undefined || hasAccess(r.access)) ? (
