@@ -25,6 +25,7 @@ to the API; set `GENISIS_API_URL` to point the proxy elsewhere, or `VITE_API_URL
   - Enquiry (`frmNewMBMEnquiry`): all desktop tabs, including HIS Benefits, Acc History, Fees, Non Disclosure, Policy Terms,
     LT Limit, Policy Wording, T/O Claims and WS
   - Upload Bordx (`FrmNewMBMEndt10`): Verify, Upload, Stop, Print and Generate ASCII
+  - Tracking (`FrmNewMBMTracking`): all 22 report types, every filter, Search and Print to File (CSV)
 - Maintenance: Plan, Benefits, Entity and Accounts
 
 ## Code structure
@@ -45,7 +46,7 @@ src/
     types.ts               request / response contracts
 ```
 
-`features/membership/{adjustment,bordx,enquiry}` and `features/maintenance/{benefits,entity,accounts}` use it; the older
+`features/membership/{adjustment,bordx,tracking,enquiry}` and `features/maintenance/{benefits,entity,accounts}` use it; the older
 screens in `pages/` keep their original layout.
 
 Conventions:
