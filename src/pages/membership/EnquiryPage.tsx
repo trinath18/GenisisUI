@@ -8,6 +8,10 @@ import { FieldGrid } from '../../components/FieldGrid'
 import type { Field } from '../../components/FieldGrid'
 import { formatDate, formatMoney, formatValue } from '../../lib/format'
 import type { Row } from '../../lib/format'
+import { PolicyWordingTab } from '../../features/membership/enquiry/components/PolicyWordingTab'
+import {
+  accountHistoryColumns, benefitColumns, feeFields, lifetimeColumns, nonDisclosureColumns, policyTermFields, takeoverColumns, worksheetColumns,
+} from '../../features/membership/enquiry/enquiryTabColumns'
 
 type SearchBy = 'number' | 'name' | 'ic' | 'policy'
 
@@ -150,7 +154,10 @@ const accountColumns: Column[] = [
   ),
 ]
 
-const tabs = ['Prin Detail', 'Supp', 'Adjust History', 'Current Case', 'Case History', 'Mem History', 'Account', 'Notes', 'All Fields'] as const
+const tabs = [
+  'Prin Detail', 'Supp', 'Adjust History', 'HIS Benefits', 'Current Case', 'Case History', 'Mem History', 'Account', 'Acc History', 'Fees',
+  'Non Disclosure', 'Policy Terms', 'LT Limit', 'Policy Wording', 'T/O Claims', 'Notes', 'WS', 'All Fields',
+] as const
 type Tab = (typeof tabs)[number]
 
 function useMemberData<T>(mbmNumber: string, path: string, enabled: boolean) {
@@ -179,6 +186,14 @@ function MemberView({ mbmNumber }: { mbmNumber: string }) {
   const memHistory = useMemberData<{ principal: Row[]; supplementary: Row[] }>(mbmNumber, 'member-history', tab === 'Mem History')
   const account = useMemberData<Row[]>(mbmNumber, 'account', tab === 'Account')
   const notes = useMemberData<{ exclusions: Row[]; remarks: Row[] }>(mbmNumber, 'notes', tab === 'Notes')
+  const benefits = useMemberData<{ principal: Row[]; supplementary: Row[] }>(mbmNumber, 'benefits', tab === 'HIS Benefits')
+  const accountHistory = useMemberData<Row[]>(mbmNumber, 'account-history', tab === 'Acc History')
+  const fees = useMemberData<Row>(mbmNumber, 'fees', tab === 'Fees')
+  const nonDisclosure = useMemberData<Row[]>(mbmNumber, 'non-disclosure', tab === 'Non Disclosure')
+  const policyTerms = useMemberData<Row | null>(mbmNumber, 'policy-terms', tab === 'Policy Terms')
+  const lifetime = useMemberData<Row[]>(mbmNumber, 'lifetime-limits', tab === 'LT Limit')
+  const takeover = useMemberData<Row[]>(mbmNumber, 'takeover-claims', tab === 'T/O Claims')
+  const worksheets = useMemberData<Row[]>(mbmNumber, 'worksheets', tab === 'WS')
 
   return (
     <Loading query={detail}>
@@ -245,6 +260,38 @@ function MemberView({ mbmNumber }: { mbmNumber: string }) {
                   )}
                 </Loading>
               )}
+              {tab === 'HIS Benefits' && (
+                <Loading query={benefits}>
+                  {() => (
+                    <>
+                      <h4>Principal</h4>
+                      <DataTable columns={benefitColumns} rows={benefits.data!.principal} empty="No benefit schedule for this plan." />
+                      {benefits.data!.supplementary.length > 0 && (
+                        <>
+                          <h4>Supplementary</h4>
+                          <DataTable columns={benefitColumns} rows={benefits.data!.supplementary} />
+                        </>
+                      )}
+                    </>
+                  )}
+                </Loading>
+              )}
+              {tab === 'Acc History' && (
+                <Loading query={accountHistory}>{() => <DataTable columns={accountHistoryColumns} rows={accountHistory.data!} />}</Loading>
+              )}
+              {tab === 'Fees' && <Loading query={fees}>{() => <FieldGrid fields={feeFields} row={fees.data!} />}</Loading>}
+              {tab === 'Non Disclosure' && (
+                <Loading query={nonDisclosure}>{() => <DataTable columns={nonDisclosureColumns} rows={nonDisclosure.data!} />}</Loading>
+              )}
+              {tab === 'Policy Terms' && (
+                <Loading query={policyTerms}>
+                  {() => (policyTerms.data ? <FieldGrid fields={policyTermFields} row={policyTerms.data} /> : <p className="muted">No policy terms for this plan.</p>)}
+                </Loading>
+              )}
+              {tab === 'LT Limit' && <Loading query={lifetime}>{() => <DataTable columns={lifetimeColumns} rows={lifetime.data!} />}</Loading>}
+              {tab === 'Policy Wording' && <PolicyWordingTab membershipNo={mbmNumber} />}
+              {tab === 'T/O Claims' && <Loading query={takeover}>{() => <DataTable columns={takeoverColumns} rows={takeover.data!} />}</Loading>}
+              {tab === 'WS' && <Loading query={worksheets}>{() => <DataTable columns={worksheetColumns} rows={worksheets.data!} />}</Loading>}
               {tab === 'All Fields' && (
                 <FieldGrid fields={Object.keys(d.principal).map((k) => ({ label: k, key: k }))} row={d.principal} />
               )}

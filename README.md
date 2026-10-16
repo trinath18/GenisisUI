@@ -21,7 +21,9 @@ to the API; set `GENISIS_API_URL` to point the proxy elsewhere, or `VITE_API_URL
 - Menu shell, with items enabled from `USR.USRAccess` like the VB6 `CheckAccess` (the API checks the same rights)
 - Membership
   - Registration (`frmMemberEntry`)
-  - Enquiry (`frmNewMBMEnquiry`)
+  - Adjustment (`frmNewMBMAdjustment`): every endorsement type, Others Details, Supplementary, history and fees tabs
+  - Enquiry (`frmNewMBMEnquiry`): all desktop tabs, including HIS Benefits, Acc History, Fees, Non Disclosure, Policy Terms,
+    LT Limit, Policy Wording, T/O Claims and WS
 - Maintenance: Plan, Benefits, Entity and Accounts
 
 ## Code structure
@@ -42,7 +44,7 @@ src/
     types.ts               request / response contracts
 ```
 
-`features/maintenance/{benefits,entity,accounts}` use it; the older
+`features/membership/{adjustment,enquiry}` and `features/maintenance/{benefits,entity,accounts}` use it; the older
 screens in `pages/` keep their original layout.
 
 Conventions:
@@ -50,7 +52,7 @@ Conventions:
 - Server state goes through TanStack Query; query keys are defined next to the feature's API module.
 - No magic values: endorsement types, member types, export options and similar codes are named in `constants.ts`.
 - A loaded record is edited in a component rendered with a `key` per load, so it starts from the stored values without
-  syncing state in effects.
+  syncing state in effects (see `AdjustmentEditor`).
 - Every data view handles loading, empty and error states; errors show the API's Problem Details `message`.
 - Validation messages come from the API (the server validates every request); the UI repeats only the checks the desktop
   made before calling the server.
