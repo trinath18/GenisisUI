@@ -10,6 +10,11 @@ import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
 import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
+import { BenefitsMaintenanceScreen } from './pages/maintenance/BenefitsMaintenanceScreen'
+import { CaseEnquiryPage } from './pages/case/CaseEnquiryPage'
+import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
+import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
+import { CaseTrackingPage } from './pages/case/CaseTrackingPage'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -54,6 +59,38 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipAdjustment}>
               <NotMigratedPage title="Membership Adjustment" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/registration"
+          element={
+            <RequireAccess position={Access.CaseRegistration}>
+              <CaseRegistrationPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/adjustment"
+          element={
+            <RequireAccess position={Access.CaseAdjustment}>
+              <CaseAdjustmentPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/enquiry"
+          element={
+            <RequireAccess position={Access.CaseEnquiry}>
+              <CaseEnquiryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/tracking"
+          element={
+            <RequireAccess position={Access.CaseTracking}>
+              <CaseTrackingPage />
             </RequireAccess>
           }
         />
