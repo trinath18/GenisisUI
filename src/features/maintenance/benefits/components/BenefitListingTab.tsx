@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { api, errorMessage } from '../../api/client'
-import { formatDate } from '../../lib/format'
-import type { AmountsForm, Option } from './benefitLookups'
-import { amountsBody, benefitsUrl, emptyAmounts, optionLabel, useBenefitLookups, withProduct } from './benefitLookups'
+import { errorMessage } from '../../../../api/client'
+import { benefitsApi } from '../api/benefitsApi'
+import { formatDate } from '../../../../lib/format'
+import type { AmountsForm, Option } from '../benefitLookups'
+import { amountsBody, emptyAmounts, optionLabel, useBenefitLookups, withProduct } from '../benefitLookups'
 
 interface BenefitRow {
   subCategoryCode: string
@@ -44,7 +45,6 @@ export function BenefitListingTab() {
   const [editing, setEditing] = useState<string | null>(null)
   const [filter, setFilter] = useState<{ form: Form; n: number } | null>(null)
   const [done, setDone] = useState<string | null>(null)
-  const url = `${benefitsUrl}/rows`
 
   const search = useQuery({
     queryKey: ['benefit-rows', filter],
@@ -60,7 +60,7 @@ export function BenefitListingTab() {
         payorCode: f.payorCode || undefined,
         groupCompany: f.groupCompany.trim() || undefined,
       }
-      return (await api.get<{ rows: BenefitRow[]; truncated: boolean; limit: number }>(url, { params })).data
+      return benefitsApi.searchRows<{ rows: BenefitRow[]; truncated: boolean; limit: number }>(params)
     },
   })
   const refresh = () => queryClient.invalidateQueries({ queryKey: ['benefit-rows'] })
@@ -75,7 +75,7 @@ export function BenefitListingTab() {
         effectiveDate: form.effectiveDate || null,
         ...amountsBody(form),
       }
-      return editing === null ? api.post(url, body) : api.put(url, body)
+      return benefitsApi.saveRow(editing === null, body)
     },
     onSuccess: () => {
       setDone(editing === null ? 'Record Saved...' : 'Record Updated...')
@@ -86,9 +86,7 @@ export function BenefitListingTab() {
   })
   const remove = useMutation({
     mutationFn: async (r: BenefitRow) =>
-      api.delete(url, {
-        params: { subCategoryCode: r.subCategoryCode, insuredCode: r.insuredCode, planCode: r.planCode, effectiveDate: r.effectiveDate.slice(0, 10) },
-      }),
+      benefitsApi.deleteRow({ subCategoryCode: r.subCategoryCode, insuredCode: r.insuredCode, planCode: r.planCode, effectiveDate: r.effectiveDate.slice(0, 10) }),
     onSuccess: (_, r) => {
       setDone('Record Deleted...')
       if (editing === rowKey(r)) clear()

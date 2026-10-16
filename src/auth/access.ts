@@ -10,6 +10,9 @@ export const Access = {
   PlanMaintenance: 1,
   // Maintenance > Benefits also checks position 1 (mnuBenefits_Click).
   BenefitsMaintenance: 1,
+  // Maintenance > Entity (mnuAgent_Click) and Accounts (MaintenanceAccounts_Click) check position 1 too.
+  EntityMaintenance: 1,
+  AccountsMaintenance: 1,
 } as const
 
 export class MustChangePasswordError extends Error {}

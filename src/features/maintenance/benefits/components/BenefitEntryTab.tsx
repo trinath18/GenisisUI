@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useMutation } from '@tanstack/react-query'
-import { api, errorMessage } from '../../api/client'
-import type { AmountsForm } from './benefitLookups'
-import { amountsBody, benefitsUrl, emptyAmounts, optionLabel, useBenefitLookups, withProduct } from './benefitLookups'
+import { errorMessage } from '../../../../api/client'
+import { benefitsApi } from '../api/benefitsApi'
+import type { AmountsForm } from '../benefitLookups'
+import { amountsBody, emptyAmounts, optionLabel, useBenefitLookups, withProduct } from '../benefitLookups'
 
 interface EntryLine {
   code: string
@@ -34,14 +35,12 @@ export function BenefitEntryTab() {
 
   const load = useMutation({
     mutationFn: async (k: Key) =>
-      (await api.get<{ lines: EntryLine[]; setExists: boolean }>(`${benefitsUrl}/entry`, {
-        params: {
-          healthCode: k.healthCode || undefined,
-          insuredCode: k.insuredCode || undefined,
-          planCode: k.planCode.trim() || undefined,
-          effectiveDate: k.effectiveDate || undefined,
-        },
-      })).data,
+      benefitsApi.loadEntry<{ lines: EntryLine[]; setExists: boolean }>({
+        healthCode: k.healthCode || undefined,
+        insuredCode: k.insuredCode || undefined,
+        planCode: k.planCode.trim() || undefined,
+        effectiveDate: k.effectiveDate || undefined,
+      }),
     onSuccess: (data, k) => {
       setAmounts(Object.fromEntries(data.lines.map((l) => [l.code, { days: l.days?.toString() ?? '', ratePerDay: l.ratePerDay ?? '', perDisability: l.perDisability ?? '' }])))
       setLoaded({ key: k, setExists: data.setExists, names: Object.fromEntries(data.lines.map((l) => [l.code, l.name])) })
@@ -49,13 +48,11 @@ export function BenefitEntryTab() {
   })
   const save = useMutation({
     mutationFn: async () =>
-      (
-        await api.post<{ saved: number }>(`${benefitsUrl}/entry`, {
-          ...key,
-          effectiveDate: key.effectiveDate || null,
-          lines: Object.entries(amounts).map(([code, a]) => ({ subCategoryCode: code, ...amountsBody(a) })),
-        })
-      ).data,
+      benefitsApi.saveEntry({
+        ...key,
+        effectiveDate: key.effectiveDate || null,
+        lines: Object.entries(amounts).map(([code, a]) => ({ subCategoryCode: code, ...amountsBody(a) })),
+      }),
     onSuccess: (data) => {
       setDone(`Record Saved... (${data.saved} benefit${data.saved === 1 ? '' : 's'})`)
       load.mutate(key)

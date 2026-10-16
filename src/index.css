@@ -70,3 +70,13 @@ table.grid { border-collapse: collapse; width: 100%; white-space: nowrap; }
 .form-field input, .form-field select, .form-field textarea { width: 100%; box-sizing: border-box; }
 .registration .grid input, .registration .grid select { width: 100%; min-width: 90px; box-sizing: border-box; }
 .actions { display: flex; gap: 8px; }
+
+/* Text for screen readers only (e.g. headers of icon / action columns). */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
