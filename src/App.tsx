@@ -6,6 +6,7 @@ import { HomePage, NotMigratedPage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { EnquiryPage } from './pages/membership/EnquiryPage'
 import { RegistrationPage } from './pages/membership/RegistrationPage'
+import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
@@ -53,7 +54,7 @@ export default function App() {
           path="membership/adjustment"
           element={
             <RequireAccess position={Access.MembershipAdjustment}>
-              <NotMigratedPage title="Membership Adjustment" />
+              <AdjustmentPage />
             </RequireAccess>
           }
         />
