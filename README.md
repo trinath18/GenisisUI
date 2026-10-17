@@ -19,14 +19,11 @@ to the API; set `GENISIS_API_URL` to point the proxy elsewhere, or `VITE_API_URL
 
 - Login (same users/passwords as the desktop app; forced password change supported)
 - Menu shell, with items enabled from `USR.USRAccess` like the VB6 `CheckAccess` (the API checks the same rights)
-- Membership
-  - Registration (`frmMemberEntry`)
-  - Adjustment (`frmNewMBMAdjustment`): every endorsement type, Others Details, Supplementary, history and fees tabs
-  - Enquiry (`frmNewMBMEnquiry`): all desktop tabs, including HIS Benefits, Acc History, Fees, Non Disclosure, Policy Terms,
-    LT Limit, Policy Wording, T/O Claims and WS
-  - Upload Bordx (`FrmNewMBMEndt10`): Verify, Upload, Stop, Print and Generate ASCII
-  - Tracking (`FrmNewMBMTracking`): all 22 report types, every filter, Search and Print to File (CSV)
+- Case: Registration, Adjustment, Enquiry and Tracking
 - Maintenance: Plan, Benefits, Entity and Accounts
+
+The Membership screens (Registration, Adjustment, Enquiry, Upload Bordx, Tracking) are kept on the `modules/membership`
+branch and are not part of `main`.
 
 ## Code structure
 
@@ -34,10 +31,9 @@ New screens follow a feature-based layout:
 
 ```
 src/
-  api/client.ts            shared Axios client (JWT, errorMessage, rethrowBlobError)
+  api/client.ts            shared Axios client (JWT, errorMessage)
   components/              shared presentational components (DataTable, FieldGrid)
-  components/common/       FormField, CodeSelect
-  lib/                     formatting, file download / CSV helpers
+  lib/                     formatting and other shared helpers
   features/<area>/<feature>/
     api/                   the feature's HTTP calls (components never call axios directly)
     components/            one component per tab / panel
@@ -46,15 +42,15 @@ src/
     types.ts               request / response contracts
 ```
 
-`features/membership/{adjustment,bordx,tracking,enquiry}` and `features/maintenance/{benefits,entity,accounts}` use it; the older
+`features/maintenance/{benefits,entity,accounts}` use it; the older
 screens in `pages/` keep their original layout.
 
 Conventions:
 
 - Server state goes through TanStack Query; query keys are defined next to the feature's API module.
-- No magic values: endorsement types, member types, export options and similar codes are named in `constants.ts`.
+- No magic values: code values, option lists and messages are named in `constants.ts`.
 - A loaded record is edited in a component rendered with a `key` per load, so it starts from the stored values without
-  syncing state in effects (see `AdjustmentEditor`).
+  syncing state in effects.
 - Every data view handles loading, empty and error states; errors show the API's Problem Details `message`.
 - Validation messages come from the API (the server validates every request); the UI repeats only the checks the desktop
   made before calling the server.

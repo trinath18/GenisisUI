@@ -6,7 +6,6 @@ import { NotifyHost } from './notify'
 
 const rail: { icon: IconName; label: string; prefix?: string; to?: string; access?: number }[] = [
   { icon: 'home', label: 'Home', to: '/', prefix: '/' },
-  { icon: 'users', label: 'Membership', to: '/membership/enquiry', prefix: '/membership', access: Access.MembershipEnquiry },
   { icon: 'folder', label: 'Case', to: '/case/registration', prefix: '/case', access: Access.CaseRegistration },
   { icon: 'tool', label: 'Maintenance', to: '/maintenance/plan', prefix: '/maintenance', access: Access.PlanMaintenance },
   { icon: 'file', label: 'Invoice' },
@@ -17,17 +16,6 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
 ]
 
 const sections: { label: string; prefix: string; items: { to: string; label: string; access: number }[] }[] = [
-  {
-    label: 'Membership',
-    prefix: '/membership',
-    items: [
-      { to: '/membership/registration', label: 'Registration', access: Access.MembershipRegistration },
-      { to: '/membership/adjustment', label: 'Adjustment', access: Access.MembershipAdjustment },
-      { to: '/membership/enquiry', label: 'Enquiry', access: Access.MembershipEnquiry },
-      { to: '/membership/tracking', label: 'Tracking', access: Access.MembershipTracking },
-      { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
-    ],
-  },
   {
     label: 'Case',
     prefix: '/case',

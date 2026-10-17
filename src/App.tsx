@@ -4,11 +4,6 @@ import { Access, useAuth } from './auth/access'
 import { AppLayout } from './components/AppLayout'
 import { HomePage, NotMigratedPage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
-import { EnquiryPage } from './pages/membership/EnquiryPage'
-import { RegistrationPage } from './pages/membership/RegistrationPage'
-import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
-import { UploadBordxPage } from './features/membership/bordx/pages/UploadBordxPage'
-import { TrackingPage } from './features/membership/tracking/pages/TrackingPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
@@ -41,38 +36,6 @@ export default function App() {
       >
         <Route index element={<HomePage />} />
         <Route
-          path="membership/enquiry"
-          element={
-            <RequireAccess position={Access.MembershipEnquiry}>
-              <EnquiryPage />
-            </RequireAccess>
-          }
-        />
-        <Route
-          path="membership/registration"
-          element={
-            <RequireAccess position={Access.MembershipRegistration}>
-              <RegistrationPage />
-            </RequireAccess>
-          }
-        />
-        <Route
-          path="membership/adjustment"
-          element={
-            <RequireAccess position={Access.MembershipAdjustment}>
-              <AdjustmentPage />
-            </RequireAccess>
-          }
-        />
-        <Route
-          path="membership/upload-bordx"
-          element={
-            <RequireAccess position={Access.MembershipUploadBordx}>
-              <UploadBordxPage />
-            </RequireAccess>
-          }
-        />
-        <Route
           path="case/registration"
           element={
             <RequireAccess position={Access.CaseRegistration}>
@@ -101,14 +64,6 @@ export default function App() {
           element={
             <RequireAccess position={Access.CaseTracking}>
               <CaseTrackingPage />
-            </RequireAccess>
-          }
-        />
-        <Route
-          path="membership/tracking"
-          element={
-            <RequireAccess position={Access.MembershipTracking}>
-              <TrackingPage />
             </RequireAccess>
           }
         />

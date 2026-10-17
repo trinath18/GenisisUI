@@ -46,26 +46,6 @@ api.interceptors.response.use(undefined, (error: AxiosError) => {
   return Promise.reject(error)
 })
 
-/**
- * For requests made with responseType 'blob': the server's Problem Details body arrives as a Blob, so read it and rethrow an
- * Error carrying its message. Other errors are rethrown unchanged.
- */
-export async function rethrowBlobError(error: unknown): Promise<never> {
-  const data = error instanceof AxiosError ? error.response?.data : undefined
-  if (data instanceof Blob) {
-    const text = await data.text()
-    let message = text
-    try {
-      const body = JSON.parse(text) as { message?: string; title?: string }
-      message = body.message ?? body.title ?? text
-    } catch {
-      // Not JSON: show the text as it is.
-    }
-    throw new Error(message)
-  }
-  throw error
-}
-
 export function errorMessage(error: unknown): string {
   if (error instanceof AxiosError) {
     const data = error.response?.data as { message?: string; title?: string } | undefined

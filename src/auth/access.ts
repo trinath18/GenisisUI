@@ -3,11 +3,6 @@ import { AuthContext } from './context'
 
 /** Menu access positions in USR.USRAccess (VB6 CheckAccess). */
 export const Access = {
-  MembershipRegistration: 1,
-  MembershipAdjustment: 2,
-  MembershipEnquiry: 3,
-  MembershipUploadBordx: 4,
-  MembershipTracking: 14,
   // Maintenance > Plan shares position 1 with Registration in the desktop menu.
   PlanMaintenance: 1,
   // Maintenance > Benefits also checks position 1 (mnuBenefits_Click).
