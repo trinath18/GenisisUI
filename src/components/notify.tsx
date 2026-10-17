@@ -19,7 +19,7 @@ export function NotifyHost() {
       </div>
       {s.pending && (
         <Modal title="Please confirm" onClose={() => answerConfirm(false)}>
-          <p style={{ marginTop: 0, whiteSpace: 'pre-wrap' }}>{s.pending.text}</p>
+          <p className="confirm-text">{s.pending.text}</p>
           <div className="modal-actions">
             <button type="button" data-autofocus onClick={() => answerConfirm(true)}>
               Yes

@@ -8,7 +8,8 @@ import type { Column } from '../../components/DataTable'
 import { ask, notify } from '../../lib/notifyStore'
 import { formatDate, formatMoney, formatValue } from '../../lib/format'
 import type { Row } from '../../lib/format'
-import { maskDate, maskTime, digitsOnly } from '../../lib/masks'
+import { maskTime, digitsOnly } from '../../lib/masks'
+import { DateInput } from '../../components/DateInput'
 import { isoDmy, num, S } from './caseShared'
 import type { LetterResult } from './CaseLetters'
 
@@ -116,7 +117,7 @@ export function GlDialog({ cas, request, defaultAmount, onIssued, onClose }: {
       {children}
     </label>
   )
-  const date = (k: string) => <input value={v(k)} placeholder="dd/mm/yyyy" maxLength={10} inputMode="numeric" onChange={(e) => set(k, maskDate(e.target.value))} />
+  const date = (k: string) => <DateInput value={v(k)} onChange={(x) => set(k, x)} />
   const time = (k: string) => <input value={v(k)} placeholder="hh:mm" maxLength={5} inputMode="numeric" onChange={(e) => set(k, maskTime(e.target.value))} />
   const pick = (k: string, list: string[]) => (
     <select value={v(k)} onChange={(e) => set(k, e.target.value)}>

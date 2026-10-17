@@ -1,7 +1,8 @@
-import { useState } from 'react'
+import { Fragment, useState, type MouseEvent } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { Access, useAuth } from '../auth/access'
 import { Icon, type IconName } from './icons'
+import { ErrorBoundary } from './ErrorBoundary'
 import { NotifyHost } from './notify'
 
 const rail: { icon: IconName; label: string; prefix?: string; to?: string; access?: number }[] = [
@@ -16,7 +17,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'activity', label: 'Monitoring' },
 ]
 
-const sections: { label: string; prefix: string; items: { to: string; label: string; access: number }[] }[] = [
+const sections: { label: string; prefix: string; items: { to: string; label: string; access: number; group?: string }[] }[] = [
   {
     label: 'Membership',
     prefix: '/membership',
@@ -30,10 +31,19 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
     label: 'Case',
     prefix: '/case',
     items: [
-      { to: '/case/registration', label: 'Registration', access: Access.CaseRegistration },
-      { to: '/case/adjustment', label: 'Adjustment', access: Access.CaseAdjustment },
-      { to: '/case/enquiry', label: 'Enquiry', access: Access.CaseEnquiry },
-      { to: '/case/tracking', label: 'Tracking', access: Access.CaseTracking },
+      { to: '/case/registration', label: 'Registration', access: Access.CaseRegistration, group: 'Case Workflow' },
+      { to: '/case/adjustment', label: 'Adjustment', access: Access.CaseAdjustment, group: 'Case Workflow' },
+      { to: '/case/enquiry', label: 'Enquiry', access: Access.CaseEnquiry, group: 'Case Workflow' },
+      { to: '/case/tracking', label: 'Tracking', access: Access.CaseTracking, group: 'Case Workflow' },
+      { to: '/case/listing', label: 'Inpatient Case Listing', access: Access.CaseListing, group: 'Review & Listing' },
+      { to: '/case/audit-review', label: 'Audit Review', access: Access.CaseAuditReview, group: 'Review & Listing' },
+      { to: '/case/pay-claim', label: 'Pay & Claim', access: Access.CasePayClaim, group: 'Review & Listing' },
+      { to: '/case/non-disclosure', label: 'Non-Disclosure Info', access: Access.CaseNonDisclosure, group: 'Review & Listing' },
+      { to: '/case/transfer', label: 'Case Transfer', access: Access.CaseTransfer, group: 'Transfers & Reference' },
+      { to: '/case/panel-hospitals', label: 'Panel Hospitals', access: Access.PanelHospitals, group: 'Transfers & Reference' },
+      { to: '/case/mma-cpt', label: 'MMA / CPT', access: Access.MmaCpt, group: 'Transfers & Reference' },
+      { to: '/case/claim-ascii', label: 'Claim ASCII', access: Access.ClaimAscii, group: 'Exports' },
+      { to: '/case/case-ascii', label: 'Case ASCII', access: Access.CaseAscii, group: 'Exports' },
     ],
   },
   {
@@ -49,14 +59,24 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
 export function AppLayout() {
   const { session, logout, hasAccess } = useAuth()
   const { pathname } = useLocation()
-  const [collapsed, setCollapsed] = useState(() => localStorage.getItem('nav-collapsed') === '1')
-  const section = sections.find((s) => pathname.startsWith(s.prefix))
+  const [open, setOpen] = useState(() => localStorage.getItem('nav-collapsed') !== '1')
+  const [hoverSection, setHoverSection] = useState<string | null>(null)
+  const routeSection = sections.find((s) => pathname.startsWith(s.prefix))
+  const section = (hoverSection && sections.find((s) => s.prefix === hoverSection)) ?? routeSection
 
   function toggleNav() {
-    setCollapsed((c) => {
-      localStorage.setItem('nav-collapsed', c ? '0' : '1')
-      return !c
+    setOpen((o) => {
+      localStorage.setItem('nav-collapsed', o ? '1' : '0')
+      return !o
     })
+  }
+
+  /** Hide when the pointer leaves the rail + sidebar (but not when moving between them). */
+  function navLeave(e: MouseEvent) {
+    if (!(e.relatedTarget instanceof Element && e.relatedTarget.closest('.rail, .sidebar'))) {
+      setOpen(false)
+      setHoverSection(null)
+    }
   }
 
   const item = (to: string, label: string, access: number) =>
@@ -69,13 +89,23 @@ export function AppLayout() {
     )
 
   return (
-    <div className={`shell${section ? '' : ' no-sidebar'}${collapsed && section ? ' nav-collapsed' : ''}`}>
+    <div className={`shell${section ? '' : ' no-sidebar'}${!open && section ? ' nav-collapsed' : ''}`}>
       <header className="topbar">
+        <button
+          type="button"
+          className="nav-toggle"
+          onClick={toggleNav}
+          title={open ? 'Hide sidebar' : 'Show sidebar'}
+          aria-label={open ? 'Hide sidebar' : 'Show sidebar'}
+          aria-expanded={open}
+        >
+          <Icon name={open ? 'chevLeft' : 'chevRight'} />
+        </button>
         <span className="brand-mark">
           <Icon name="cross" size={14} />
         </span>
         <strong>Genisis</strong>
-        <span className="muted">Healthcare Information System</span>
+        <span className="muted">TPA Management system</span>
         <span className="spacer" />
         <span>
           {session?.user.userName} ({session?.user.userCode})
@@ -84,7 +114,7 @@ export function AppLayout() {
           Log out
         </button>
       </header>
-      <nav className="rail" aria-label="Modules">
+      <nav className="rail" aria-label="Modules" onMouseEnter={() => setOpen(true)} onMouseLeave={navLeave}>
         {rail.map((r) =>
           r.to && (r.access === undefined || hasAccess(r.access)) ? (
             <NavLink
@@ -94,34 +124,38 @@ export function AppLayout() {
               title={r.label}
               aria-label={r.label}
               className={r.prefix === '/' ? (pathname === '/' ? 'active' : '') : r.prefix && pathname.startsWith(r.prefix) ? 'active' : ''}
+              onMouseEnter={() => r.prefix && r.prefix !== '/' && setHoverSection(r.prefix)}
             >
               <Icon name={r.icon} />
             </NavLink>
           ) : (
-            <span key={r.label} className="disabled" title={r.to ? 'Access Denied!' : `${r.label} — not migrated yet`} aria-label={r.label}>
+            <span
+              key={r.label}
+              className="disabled"
+              title={r.to ? 'Access Denied!' : `${r.label} — not migrated yet`}
+              aria-label={r.label}
+              onMouseEnter={() => r.prefix && r.prefix !== '/' && setHoverSection(r.prefix)}
+            >
               <Icon name={r.icon} />
             </span>
           ),
         )}
-        <button
-          type="button"
-          className="rail-toggle"
-          onClick={toggleNav}
-          title={collapsed ? 'Show sidebar' : 'Hide sidebar'}
-          aria-label={collapsed ? 'Show sidebar' : 'Hide sidebar'}
-          aria-expanded={!collapsed}
-        >
-          <Icon name={collapsed ? 'chevRight' : 'chevLeft'} />
-        </button>
       </nav>
       {section && (
-        <nav className="sidebar" aria-label="Pages">
+        <nav className="sidebar" aria-label="Pages" onMouseEnter={() => setOpen(true)} onMouseLeave={navLeave}>
           <h4>{section.label}</h4>
-          {section.items.map((i) => item(i.to, i.label, i.access))}
+          {section.items.map((i, n) => (
+            <Fragment key={i.to}>
+              {i.group && i.group !== section.items[n - 1]?.group && <h5 className="nav-group">{i.group}</h5>}
+              {item(i.to, i.label, i.access)}
+            </Fragment>
+          ))}
         </nav>
       )}
       <main className="content">
-        <Outlet />
+        <ErrorBoundary resetKey={pathname}>
+          <Outlet />
+        </ErrorBoundary>
       </main>
       <NotifyHost />
     </div>

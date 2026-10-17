@@ -30,7 +30,10 @@ export function saveSession(session: Session | null) {
   else localStorage.removeItem(SESSION_KEY)
 }
 
-export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? '' })
+/** Longest a request may take (the biggest worksheet searches and exports run for a while). */
+const REQUEST_TIMEOUT_MS = 90_000
+
+export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? '', timeout: REQUEST_TIMEOUT_MS })
 
 api.interceptors.request.use((config) => {
   const session = loadSession()
@@ -51,6 +54,7 @@ export function errorMessage(error: unknown): string {
     const data = error.response?.data as { message?: string; title?: string } | undefined
     if (data?.message) return data.message
     if (data?.title) return data.title
+    if (error.code === AxiosError.ECONNABORTED || error.code === AxiosError.ETIMEDOUT) return 'The request took too long. Try again, or narrow the search.'
     if (!error.response) return 'Cannot reach the Genisis API. Is it running?'
   }
   return error instanceof Error ? error.message : 'Unexpected error'
