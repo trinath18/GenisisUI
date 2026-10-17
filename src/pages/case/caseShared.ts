@@ -5,6 +5,7 @@ import type { KeyboardEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../../api/client'
 import { formatMoney, formatValue } from '../../lib/format'
+import { parseDmy } from '../../lib/masks'
 import type { Column } from '../../components/DataTable'
 import type { Row } from '../../lib/format'
 
@@ -78,12 +79,7 @@ export const DEFAULTS: Form = {
 
 export const S = (v: unknown) => (v == null ? '' : String(v).trim())
 export const toDate = (v: unknown) => (typeof v === 'string' && v ? new Date(v.length === 10 ? `${v}T00:00:00` : v) : null)
-export function parseDmy(s: string) {
-  const m = /^(\d{2})\/(\d{2})\/(\d{4})$/.exec(s)
-  if (!m) return null
-  const d = new Date(+m[3], +m[2] - 1, +m[1])
-  return d.getDate() === +m[1] && d.getMonth() === +m[2] - 1 ? d : null
-}
+export { parseDmy }
 export const isoDmy = (s: string) => {
   const d = parseDmy(s)
   return d ? `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}` : null

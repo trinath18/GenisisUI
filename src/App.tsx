@@ -18,6 +18,14 @@ import { CaseEnquiryPage } from './pages/case/CaseEnquiryPage'
 import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
 import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
 import { CaseTrackingPage } from './pages/case/CaseTrackingPage'
+import { CaseListingPage } from './pages/case/CaseListingPage'
+import { CaseTransferPage } from './pages/case/CaseTransferPage'
+import { PanelHospitalsPage } from './pages/case/PanelHospitalsPage'
+import { CaseAuditReviewPage } from './pages/case/CaseAuditReviewPage'
+import { MmaCptPage } from './pages/case/MmaCptPage'
+import { CasePayClaimPage } from './pages/case/CasePayClaimPage'
+import { CaseNonDisclosurePage } from './pages/case/CaseNonDisclosurePage'
+import { CaseAsciiPage, ClaimAsciiPage } from './pages/case/AsciiExportPages'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -102,6 +110,74 @@ export default function App() {
           }
         />
         <Route
+          path="case/listing"
+          element={
+            <RequireAccess position={Access.CaseListing}>
+              <CaseListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/audit-review"
+          element={
+            <RequireAccess position={Access.CaseAuditReview}>
+              <CaseAuditReviewPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/pay-claim"
+          element={
+            <RequireAccess position={Access.CasePayClaim}>
+              <CasePayClaimPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/non-disclosure"
+          element={
+            <RequireAccess position={Access.CaseNonDisclosure}>
+              <CaseNonDisclosurePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/transfer"
+          element={
+            <RequireAccess position={Access.CaseTransfer}>
+              <CaseTransferPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/panel-hospitals"
+          element={
+            <RequireAccess position={Access.PanelHospitals}>
+              <PanelHospitalsPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/mma-cpt"
+          element={
+            <RequireAccess position={Access.MmaCpt}>
+              <MmaCptPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/claim-ascii"
+          element={
+            <RequireAccess position={Access.ClaimAscii}>
+              <ClaimAsciiPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="case/case-ascii"
+          element={
+            <RequireAccess position={Access.CaseAscii}>
+              <CaseAsciiPage />
           path="membership/tracking"
           element={
             <RequireAccess position={Access.MembershipTracking}>

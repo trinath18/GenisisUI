@@ -1,0 +1,26 @@
+# Build output and dependencies
+dist
+node_modules
+
+# Stylesheet: hand-written compact rules
+src/index.css
+
+# Modules written before Prettier was adopted. They are formatted when each one is next changed
+# (remove the line in the same change); everything else must pass `npm run format:check`.
+src/App.tsx
+src/components/icons.tsx
+src/components/Modal.tsx
+src/pages/HomePage.tsx
+src/pages/maintenance
+src/pages/membership
+src/pages/case/CaseAdjustmentDialogs.tsx
+src/pages/case/CaseAdjustmentPage.tsx
+src/pages/case/CaseEnquiryPage.tsx
+src/pages/case/CaseLetters.tsx
+src/pages/case/CaseRegistrationDialogs.tsx
+src/pages/case/CaseRegistrationPage.tsx
+src/pages/case/CaseSections.tsx
+src/pages/case/CaseTrackingPage.tsx
+src/pages/case/caseShared.ts
+src/pages/case/useCaseEditor.tsx
+.vs
