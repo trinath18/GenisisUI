@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
-import { api, errorMessage } from '../../api/client'
-import { benefitsUrl, lookupsKey, optionLabel, useBenefitLookups } from './benefitLookups'
+import { errorMessage } from '../../../../api/client'
+import { benefitsApi } from '../api/benefitsApi'
+import { lookupsKey, optionLabel, useBenefitLookups } from '../benefitLookups'
 
 interface CategoryRow {
   code: string
@@ -17,13 +18,12 @@ export function BenefitCategoryTab() {
   const [editing, setEditing] = useState<string | null>(null)
   const [filter, setFilter] = useState<{ code: string; description: string; n: number } | null>(null)
   const [done, setDone] = useState<string | null>(null)
-  const url = `${benefitsUrl}/categories`
 
   const search = useQuery({
     queryKey: ['benefit-categories', filter],
     enabled: filter !== null,
     queryFn: async () =>
-      (await api.get<CategoryRow[]>(url, { params: { code: filter!.code || undefined, description: filter!.description || undefined } })).data,
+      benefitsApi.searchCategories<CategoryRow>({ code: filter!.code || undefined, description: filter!.description || undefined }),
   })
   const refresh = () => {
     queryClient.invalidateQueries({ queryKey: ['benefit-categories'] })
@@ -33,7 +33,7 @@ export function BenefitCategoryTab() {
   const save = useMutation({
     mutationFn: async () => {
       const body = { code, description }
-      return editing === null ? api.post(url, body) : api.put(`${url}/${encodeURIComponent(editing)}`, body)
+      return benefitsApi.saveCategory(editing, body)
     },
     onSuccess: () => {
       setDone(editing === null ? 'Record Saved...' : 'Record Updated...')
@@ -43,7 +43,7 @@ export function BenefitCategoryTab() {
     },
   })
   const remove = useMutation({
-    mutationFn: async (c: string) => api.delete(`${url}/${encodeURIComponent(c)}`),
+    mutationFn: async (c: string) => benefitsApi.deleteCategory(c),
     onSuccess: (_, c) => {
       setDone('Record Deleted...')
       if (editing === c) clear()
@@ -158,21 +158,16 @@ export function BenefitSubCategoryTab() {
   const [editing, setEditing] = useState<string | null>(null)
   const [filter, setFilter] = useState<{ form: typeof emptySub; n: number } | null>(null)
   const [done, setDone] = useState<string | null>(null)
-  const url = `${benefitsUrl}/sub-categories`
 
   const search = useQuery({
     queryKey: ['benefit-sub-categories', filter],
     enabled: filter !== null,
     queryFn: async () =>
-      (
-        await api.get<SubCategoryRow[]>(url, {
-          params: {
-            categoryCode: filter!.form.categoryCode || undefined,
-            code: filter!.form.code.trim() || undefined,
-            name: filter!.form.name.trim() || undefined,
-          },
-        })
-      ).data,
+      benefitsApi.searchSubCategories<SubCategoryRow>({
+        categoryCode: filter!.form.categoryCode || undefined,
+        code: filter!.form.code.trim() || undefined,
+        name: filter!.form.name.trim() || undefined,
+      }),
   })
   const refresh = () => {
     queryClient.invalidateQueries({ queryKey: ['benefit-sub-categories'] })
@@ -180,7 +175,7 @@ export function BenefitSubCategoryTab() {
   }
 
   const save = useMutation({
-    mutationFn: async () => (editing === null ? api.post(url, form) : api.put(`${url}/${encodeURIComponent(editing)}`, form)),
+    mutationFn: async () => benefitsApi.saveSubCategory(editing, form),
     onSuccess: () => {
       setDone(editing === null ? 'Record Saved...' : 'Record Updated...')
       if (filter === null) setFilter({ form: { ...emptySub, categoryCode: form.categoryCode }, n: 0 })
@@ -189,7 +184,7 @@ export function BenefitSubCategoryTab() {
     },
   })
   const remove = useMutation({
-    mutationFn: async (c: string) => api.delete(`${url}/${encodeURIComponent(c)}`),
+    mutationFn: async (c: string) => benefitsApi.deleteSubCategory(c),
     onSuccess: (_, c) => {
       setDone('Record Deleted...')
       if (editing === c) clear()
