@@ -6,7 +6,13 @@ import { HomePage, NotMigratedPage } from './pages/HomePage'
 import { LoginPage } from './pages/LoginPage'
 import { EnquiryPage } from './pages/membership/EnquiryPage'
 import { RegistrationPage } from './pages/membership/RegistrationPage'
+import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
+import { UploadBordxPage } from './features/membership/bordx/pages/UploadBordxPage'
+import { TrackingPage } from './features/membership/tracking/pages/TrackingPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
+import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
+import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
+import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
 import { BenefitsMaintenanceScreen } from './pages/maintenance/BenefitsMaintenanceScreen'
 import { CaseEnquiryPage } from './pages/case/CaseEnquiryPage'
 import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
@@ -67,11 +73,15 @@ export default function App() {
           path="membership/adjustment"
           element={
             <RequireAccess position={Access.MembershipAdjustment}>
-              <NotMigratedPage title="Membership Adjustment" />
+              <AdjustmentPage />
             </RequireAccess>
           }
         />
         <Route
+          path="membership/upload-bordx"
+          element={
+            <RequireAccess position={Access.MembershipUploadBordx}>
+              <UploadBordxPage />
           path="case/registration"
           element={
             <RequireAccess position={Access.CaseRegistration}>
@@ -172,6 +182,10 @@ export default function App() {
           element={
             <RequireAccess position={Access.CaseAscii}>
               <CaseAsciiPage />
+          path="membership/tracking"
+          element={
+            <RequireAccess position={Access.MembershipTracking}>
+              <TrackingPage />
             </RequireAccess>
           }
         />
@@ -236,6 +250,22 @@ export default function App() {
           element={
             <RequireAccess position={Access.BenefitsMaintenance}>
               <BenefitsMaintenanceScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/entity"
+          element={
+            <RequireAccess position={Access.EntityMaintenance}>
+              <EntityMaintenanceScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/accounts"
+          element={
+            <RequireAccess position={Access.AccountsMaintenance}>
+              <AccountsScreen />
             </RequireAccess>
           }
         />

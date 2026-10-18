@@ -1,7 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { api } from '../../api/client'
-
-export const benefitsUrl = '/api/maintenance/benefits'
+import { benefitsApi } from './api/benefitsApi'
 
 export interface Option {
   code: string
@@ -23,7 +21,7 @@ export const lookupsKey = ['benefit-lookups']
 export function useBenefitLookups() {
   return useQuery({
     queryKey: lookupsKey,
-    queryFn: async () => (await api.get<BenefitLookups>(`${benefitsUrl}/lookups`)).data,
+    queryFn: () => benefitsApi.getLookups<BenefitLookups>(),
     staleTime: 5 * 60_000,
   })
 }

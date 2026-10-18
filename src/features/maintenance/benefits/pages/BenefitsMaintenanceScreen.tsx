@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react'
 import { useSearchParams } from 'react-router-dom'
-import { BenefitCategoryTab, BenefitSubCategoryTab } from './BenefitCategoryTabs'
-import { BenefitEntryTab } from './BenefitEntryTab'
-import { BenefitListingTab } from './BenefitListingTab'
+import { BenefitCategoryTab, BenefitSubCategoryTab } from '../components/BenefitCategoryTabs'
+import { BenefitEntryTab } from '../components/BenefitEntryTab'
+import { BenefitListingTab } from '../components/BenefitListingTab'
 
 const tabs: { id: string; label: string; body: () => ReactNode }[] = [
   { id: 'category', label: 'Category', body: () => <BenefitCategoryTab /> },
