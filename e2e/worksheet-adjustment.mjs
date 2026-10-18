@@ -1,5 +1,5 @@
-// Worksheet > Worksheet Adjustment: the saved worksheet with the editable payment details and remarks, and the credit / debit note and Excess letter. It reads real data; the
-// requests that write (the save, the debit note numbering, the excess letter, which marks the case) are intercepted and answered here, so nothing is written (the database writes are covered by the API's rolled-back database tests).
+// Worksheet > Worksheet Adjustment: the saved worksheet with the editable payment details and remarks, and the credit / debit note and Excess letter, and Final LG. It reads real data; the
+// requests that write (the save, the debit note numbering, the excess letter, which marks the case, and the Final LG, which numbers a letter) are intercepted and answered here, so nothing is written (the database writes are covered by the API's rolled-back database tests).
 import { start, BASE } from './lib.mjs'
 import { mint } from './mint.mjs'
 
@@ -13,11 +13,16 @@ const loaded = () =>
 
 const puts = []
 const posts = []
-const fixture = { note: null, debit: null, excess: null }
+const fixture = { note: null, debit: null, excess: null, finalChecks: [], finalLg: null }
+const finalPosts = []
 const json = (status, body) => ({ status, contentType: 'application/json', body: JSON.stringify(body) })
 await page.setRequestInterception(true)
 page.on('request', (req) => {
   const path = new URL(req.url()).pathname
+  if (req.method() === 'POST' && /\/api\/worksheet\/adjustment\/[^/]+\/\d+\/final-lg(\/check)?$/.test(path)) {
+    finalPosts.push({ path, body: JSON.parse(req.postData()) })
+    return req.respond(json(200, path.endsWith('/check') ? fixture.finalChecks.shift() : fixture.finalLg))
+  }
   if (req.method() === 'GET' && fixture.note && /\/api\/worksheet\/adjustment\/[^/]+\/\d+\/note$/.test(path)) return req.respond(json(200, fixture.note))
   if (req.method() === 'POST' && /\/api\/worksheet\/adjustment\/[^/]+\/\d+\/(debit-note|excess-letter)$/.test(path)) {
     posts.push(path.split('/').pop())
@@ -130,7 +135,7 @@ const baseNote = {
   state: 'WILAYAH PERSEKUTUAN',
   remarks: 'PLEASE REFUND',
 }
-const dialogText = () => page.$eval('[role=dialog]', (d) => d.textContent)
+const dialogText = () => page.$$eval('[role=dialog]', (ds) => ds.at(-1).textContent)
 const closeDialog = async () => {
   await page.evaluate(() => [...document.querySelectorAll('[role=dialog] button')].find((b) => b.textContent.trim() === 'Close')?.click())
   await t.waitFor(async () => (await page.$('[role=dialog]')) === null)
@@ -232,6 +237,93 @@ check(
   JSON.stringify(await t.toasts()),
 )
 fixture.note = null
+
+// ---------------- Final LG
+const finalTotal = Number(v1.summary.payableToHospital)
+fixture.note = null
+await t.go(`/worksheet/adjustment?cas=${cas}`)
+await loaded()
+await t.click('Final LG', 800)
+text = await dialogText().catch(() => '')
+check(
+  'final LG: the guarantee letter dialog opens for this case',
+  text.includes(`Final Guarantee Letter — ${cas}`) && text.includes('Issue Final LG'),
+  text.slice(0, 120),
+)
+const purposes = await options('Purpose')
+const modes = await options('Request Mode')
+check(
+  'final LG: the drop-down lists come from the Adjustment endpoints',
+  purposes.includes('Discharge') && purposes.includes('Follow-up') && modes.includes('Email'),
+  JSON.stringify(purposes),
+)
+check(
+  'final LG: the GL amount starts as the worksheet final total payable to the hospital',
+  (await t.value('GL Amount')) === finalTotal.toFixed(2),
+  `${await t.value('GL Amount')} vs ${finalTotal.toFixed(2)}`,
+)
+
+await t.select('Purpose', 'Follow-up')
+await t.select('Request Mode', 'Email')
+await t.select('Request By', 'Hospital')
+await t.type('Remarks', 'E2E FINAL LG')
+const finalLetter = {
+  lgNumber: 'LZN00007106-4',
+  letter: {
+    letter: 'L',
+    title: 'Letter of Guarantee — Follow-up',
+    fields: { caseNo: cas, lgNo: 'LZN00007106-4', patient: 'ALI BIN ABU', hospital: 'PRINCE COURT MEDICAL CENTRE', lgAmount: '123.45', remark: 'E2E FINAL LG' },
+  },
+}
+fixture.finalLg = finalLetter
+
+// the amount does not match the worksheet: the desktop warns and lets the user go on
+fixture.finalChecks = [{ withinLimit: false, matchesWorksheet: false, finalTotal, prompt: 'Please check LG Amount, do you want to continue?' }]
+await t.click('Issue Final LG', 600)
+text = await dialogText().catch(() => '')
+check(
+  'final LG: a mismatch asks "Please check LG Amount, do you want to continue?" and nothing is issued yet',
+  text.includes('Please check LG Amount, do you want to continue?') && finalPosts.length === 1 && finalPosts[0].path.endsWith('/final-lg/check'),
+  JSON.stringify(finalPosts.map((x) => x.path)),
+)
+await page.evaluate(() => [...document.querySelectorAll('[role=dialog] button')].find((b) => b.textContent.trim() === 'No')?.click())
+await new Promise((r) => setTimeout(r, 500))
+check('final LG: answering No issues nothing', finalPosts.length === 1 && (await dialogText().catch(() => '')).includes('Issue Final LG'))
+
+// the user goes on: payor AX asks the take-over clause first, then "Are you sure?"
+fixture.finalChecks = [
+  { takeOverCheck: true, withinLimit: false, matchesWorksheet: true, finalTotal, prompt: 'Have you checked Take Over clause?' },
+  { withinLimit: true, matchesWorksheet: true, finalTotal, prompt: 'Are you sure?' },
+]
+await t.click('Issue Final LG', 600)
+text = await dialogText().catch(() => '')
+check('final LG: the take-over clause is asked first', text.includes('Have you checked Take Over clause?'))
+await t.yes()
+text = await dialogText().catch(() => '')
+check(
+  'final LG: after Yes the check is made again with the take-over answer and "Are you sure?" follows',
+  finalPosts.length === 3 && finalPosts[2].body.takeOverChecked === true && text.includes('Are you sure?'),
+  JSON.stringify(finalPosts.map((x) => x.body.takeOverChecked)),
+)
+await t.yes()
+await t.waitFor(async () => (await dialogText().catch(() => '')).includes('LZN00007106-4'))
+text = await dialogText().catch(() => '')
+check(
+  'final LG: the confirmed issue sends one request for this version with what was typed',
+  finalPosts.length === 4 &&
+    finalPosts[3].path === `/api/worksheet/adjustment/${cas}/1/final-lg` &&
+    finalPosts[3].body.purpose === 'Follow-up' &&
+    finalPosts[3].body.remarks === 'E2E FINAL LG' &&
+    Math.abs(finalPosts[3].body.lgAmount - finalTotal) < 0.005,
+  JSON.stringify(finalPosts.at(-1)),
+)
+check(
+  'final LG: the letter opens with the LG number it was given',
+  text.includes('LZN00007106-4') && (await t.toasts()).some((x) => x.includes('Final LG LZN00007106-4 issued')),
+  text.slice(0, 120),
+)
+await closeDialog()
+check('final LG: the dialog is closed after the letter', (await page.$('[role=dialog]')) === null)
 
 // ---------------- Master and the cumulative views are not versions
 await t.select('Version', 'Master')

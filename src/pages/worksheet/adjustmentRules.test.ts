@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { isSingleVersion, lastPayTo, paymentProblem, paymentSchema, toUpdateRequest } from './adjustmentRules'
+import { finalLgEndpoints, isSingleVersion, lastPayTo, paymentProblem, paymentSchema, toUpdateRequest } from './adjustmentRules'
 import type { PaymentValues } from './adjustmentRules'
 
 const values = (over: Partial<PaymentValues> = {}): PaymentValues => ({
@@ -78,6 +78,17 @@ describe('toUpdateRequest', () => {
   it('sends the date as an ISO day, or null when it is empty', () => {
     expect(toUpdateRequest(values({ lastDocumentDate: '01/10/2026' })).lastDocumentDate).toBe('2026-10-01')
     expect(toUpdateRequest(values()).lastDocumentDate).toBeNull()
+  })
+})
+
+describe('finalLgEndpoints', () => {
+  it('points the guarantee letter dialog at the worksheet endpoints of one version', () => {
+    expect(finalLgEndpoints('AH 0001/2', 3)).toEqual({
+      options: '/api/worksheet/adjustment/gl-options',
+      defaults: '/api/worksheet/adjustment/AH%200001%2F2/gl',
+      check: '/api/worksheet/adjustment/AH%200001%2F2/3/final-lg/check',
+      issue: '/api/worksheet/adjustment/AH%200001%2F2/3/final-lg',
+    })
   })
 })
 

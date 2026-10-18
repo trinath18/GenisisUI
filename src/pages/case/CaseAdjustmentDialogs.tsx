@@ -12,6 +12,8 @@ import { maskTime, digitsOnly } from '../../lib/masks'
 import { DateInput } from '../../components/DateInput'
 import { isoDmy, num, S } from './caseShared'
 import type { LetterResult } from './CaseLetters'
+import { caseEndpoints, glDecision, needsTakeOver } from './glRules'
+import type { GlCheck, GlEndpoints } from './glRules'
 
 interface GLOptions {
   purposes: string[]
@@ -37,13 +39,16 @@ const nowHm = () => {
 }
 
 /** frmGLMenu: collect the GL details, run the server-side checks, then issue the GL. */
-export function GlDialog({ cas, request, defaultAmount, onIssued, onClose }: {
+export function GlDialog({ cas, request, defaultAmount, onIssued, onClose, endpoints, final = false }: {
   cas: string
   request: () => object
   defaultAmount: string
   onIssued: (result: { lgNumber: string; letter: LetterResult }) => void
   onClose: () => void
+  endpoints?: GlEndpoints
+  final?: boolean
 }) {
+  const urls = endpoints ?? caseEndpoints(cas)
   const [f, setF] = useState<Record<string, string>>({})
   const [options, setOptions] = useState<GLOptions | null>(null)
   const [lastPurpose, setLastPurpose] = useState<string | undefined>()
@@ -54,8 +59,8 @@ export function GlDialog({ cas, request, defaultAmount, onIssued, onClose }: {
   useEffect(() => {
     let live = true
     Promise.all([
-      api.get<GLOptions>('/api/case/adjustment/gl-options'),
-      api.get<GLDefaults>(`/api/case/adjustment/${encodeURIComponent(cas)}/gl`),
+      api.get<GLOptions>(urls.options),
+      api.get<GLDefaults>(urls.defaults),
     ])
       .then(([o, d]) => {
         if (!live) return
@@ -79,7 +84,7 @@ export function GlDialog({ cas, request, defaultAmount, onIssued, onClose }: {
 
   async function issue() {
     if (busy) return
-    const body = {
+    const body: Record<string, unknown> = {
       purpose: v('purpose') || null,
       requestDate: isoDmy(v('requestDate')),
       requestTime: v('requestTime'),
@@ -96,13 +101,19 @@ export function GlDialog({ cas, request, defaultAmount, onIssued, onClose }: {
     }
     setBusy(true)
     try {
-      const { data: check } = await api.post<{ withinLimit: boolean; balance?: string }>(`/api/case/adjustment/${encodeURIComponent(cas)}/gl/check`, body)
-      if (!check.withinLimit) {
-        notify('Please check LG Amount', 'error')
+      let { data: check } = await api.post<GlCheck>(urls.check, body)
+      if (needsTakeOver(final, check)) {
+        if (!(await ask(check.prompt ?? 'Have you checked Take Over clause?'))) return
+        body.takeOverChecked = true
+        check = (await api.post<GlCheck>(urls.check, body)).data
+      }
+      const decision = glDecision(final, check)
+      if ('stop' in decision) {
+        notify(decision.stop, 'error')
         return
       }
-      if (!(await ask('Are you sure?'))) return
-      const { data: result } = await api.post<{ lgNumber: string; letter: LetterResult }>(`/api/case/adjustment/${encodeURIComponent(cas)}/gl`, body)
+      if (!(await ask(decision.ask))) return
+      const { data: result } = await api.post<{ lgNumber: string; letter: LetterResult }>(urls.issue, body)
       onIssued(result)
     } catch (e) {
       notify(errorMessage(e), 'error')
@@ -131,7 +142,7 @@ export function GlDialog({ cas, request, defaultAmount, onIssued, onClose }: {
   )
 
   return (
-    <Modal title={`Generate Guarantee Letter — ${cas}`} onClose={onClose} wide>
+    <Modal title={`${final ? 'Final Guarantee Letter' : 'Generate Guarantee Letter'} — ${cas}`} onClose={onClose} wide>
       {lastPurpose && <p className="muted">Last GL purpose on this case: {lastPurpose}</p>}
       <div className="fields gl-fields">
         {field('Purpose', pick('purpose', options?.purposes ?? []))}
@@ -152,7 +163,7 @@ export function GlDialog({ cas, request, defaultAmount, onIssued, onClose }: {
       </label>
       <div className="modal-actions">
         <button type="button" className="primary" onClick={issue} disabled={busy}>
-          {busy ? 'Working…' : 'Issue GL'}
+          {busy ? 'Working…' : final ? 'Issue Final LG' : 'Issue GL'}
         </button>
         <button type="button" className="ghost" onClick={onClose}>
           Cancel

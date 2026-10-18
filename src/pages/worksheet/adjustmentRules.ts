@@ -4,6 +4,7 @@
 import * as yup from 'yup'
 import { dmyDate, optionalText } from '../../lib/validation'
 import { isoDmy, isoToDmy, S } from '../case/caseShared'
+import type { GlEndpoints } from '../case/glRules'
 import type { EnquiryInvoice, EnquiryResult } from './enquiryRules'
 
 export interface AdjustmentLookups {
@@ -117,6 +118,13 @@ export function paymentValuesOf(result: EnquiryResult): PaymentValues {
 /** The request body: dates go as ISO days, empty text as empty text. */
 export function toUpdateRequest(v: PaymentValues) {
   return { ...v, lastDocumentDate: v.lastDocumentDate.trim() === '' ? null : isoDmy(v.lastDocumentDate) }
+}
+
+/** Final LG (cmdFinalLG_Click): the guarantee letter dialog talks to the worksheet's endpoints, for one version of the case's worksheet. */
+export const finalLgEndpoints = (cas: string, version: number): GlEndpoints => {
+  const base = '/api/worksheet/adjustment'
+  const one = `${base}/${encodeURIComponent(cas)}`
+  return { options: `${base}/gl-options`, defaults: `${one}/gl`, check: `${one}/${version}/final-lg/check`, issue: `${one}/${version}/final-lg` }
 }
 
 /** The Update button works on one saved version: Master and the cumulative views (M1, M2 ...) are not versions. */
