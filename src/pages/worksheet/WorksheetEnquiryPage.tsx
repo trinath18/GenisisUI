@@ -17,6 +17,7 @@ import { notify } from '../../lib/notifyStore'
 import { isScanCode, resolveScanCode } from '../../lib/scanCodes'
 import { api, errorMessage } from '../../api/client'
 import { EnquiryCaseDialog } from './EnquiryCaseDialog'
+import { AdjustmentEditor } from './AdjustmentEditor'
 import { InvoicesTab, LgTab, NotCoveredTab, PaymentPanel, RemarksTab, TopupTab, WorksheetTab } from './EnquiryTabs'
 import { amountText, claimTypeOptions, disabilityText, exGratiaOptions, showsBordxInd, summaryRows, versionOptions } from './enquiryRules'
 import type { EnquiryBenefit, EnquiryResult } from './enquiryRules'
@@ -76,7 +77,8 @@ function exportRows(result: EnquiryResult) {
   return [...result.benefits.map(line), total, ...summary]
 }
 
-export function WorksheetEnquiryPage() {
+/** Worksheet Enquiry; with <c>adjust</c> it is Worksheet Adjustment: the payment details and remarks can be changed and saved. */
+export function WorksheetEnquiryPage({ adjust = false }: { adjust?: boolean }) {
   const navigate = useNavigate()
   const { hasAccess } = useAuth()
   const [params] = useSearchParams()
@@ -152,7 +154,12 @@ export function WorksheetEnquiryPage() {
     : []
 
   return (
-    <PageShell title="Worksheet Enquiry" subtitle="Show a case's saved worksheet. Nothing can be changed here.">
+    <PageShell
+      title={adjust ? 'Worksheet Adjustment' : 'Worksheet Enquiry'}
+      subtitle={
+        adjust ? "Show a case's saved worksheet and change its payment details and remarks." : "Show a case's saved worksheet. Nothing can be changed here."
+      }
+    >
       <form onSubmit={go} noValidate className="screen-form">
         <fieldset>
           <legend>Case</legend>
@@ -226,7 +233,15 @@ export function WorksheetEnquiryPage() {
             </p>
           ))}
           <Tabs label="Worksheet sections" tabs={TABS} panels={panels} active={tab} onChange={setTab} />
-          <PaymentPanel header={result.header} others={result.others} showBordxInd={showsBordxInd(result.header.payor)} />
+          {adjust ? (
+            <AdjustmentEditor
+              key={`${result.header.caseNo}-${result.selectedVersion}-${enquiry.dataUpdatedAt}`}
+              result={result}
+              onSaved={() => enquiry.refetch()}
+            />
+          ) : (
+            <PaymentPanel header={result.header} others={result.others} showBordxInd={showsBordxInd(result.header.payor)} />
+          )}
         </>
       )}
       {searching && <EnquiryCaseDialog onPick={pick} onClose={() => setSearching(false)} />}

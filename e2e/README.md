@@ -3,7 +3,7 @@
 Headless Chrome drives the real UI against a real API and the development databases on `MYDELL`. They cover the nine Case
 screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
 Case Audit Review, Case Transfer, Inpatient Case Listing, Claim ASCII and Case ASCII (validation messages, enable/disable
-states, loading, saving, downloads), plus the Worksheet menu (`worksheet.mjs`: Tracking, Send to A/C, Send to A/R, scan codes, access; `worksheet-enquiry.mjs`: Worksheet Enquiry).
+states, loading, saving, downloads), plus the Worksheet menu (`worksheet.mjs`: Tracking, Send to A/C, Send to A/R, scan codes, access; `worksheet-enquiry.mjs`: Worksheet Enquiry; `worksheet-adjustment.mjs`: Worksheet Adjustment).
 
 ## Run
 
@@ -36,6 +36,7 @@ states, loading, saving, downloads), plus the Worksheet menu (`worksheet.mjs`: T
 - The ZZ test case `ZZ00000106` (test members `ZZHA0000518*01` / `ZZHA0000316*01`): non-disclosure, pay & claim, transfer (and back).
 - One real case's audit review (`XI00002733`, which has no audit row) and the audit status on its cross reference.
 - MMA procedures / fees: added and deleted again by the test itself.
+- Worksheet Adjustment suite: reads real worksheets and intercepts the save request, so nothing is written.
 - Worksheet Enquiry suite: read-only; it picks a case with several worksheet versions through the API and writes nothing.
 - Worksheet suite: reads real worksheets (payors `XI`, `AC`, cases `ZZ…`); the three POSTs that would change data (tracking update, send to A/C, send to A/R) are intercepted and answered by the test, so nothing is written (the database writes are covered by the API's rolled-back database tests).
 - ASCII: Claim ASCII payor `GC` (accepted) and `AN` (rejected), Case ASCII payor `BI`; this flags the exported claims / cases and takes batch numbers.

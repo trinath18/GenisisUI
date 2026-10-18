@@ -4,7 +4,14 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
-const suites = ['panel-nondisclosure-payclaim-mma.mjs', 'audit-transfer-listing.mjs', 'ascii-exports.mjs', 'worksheet.mjs', 'worksheet-enquiry.mjs']
+const suites = [
+  'panel-nondisclosure-payclaim-mma.mjs',
+  'audit-transfer-listing.mjs',
+  'ascii-exports.mjs',
+  'worksheet.mjs',
+  'worksheet-enquiry.mjs',
+  'worksheet-adjustment.mjs',
+]
 
 for (const name of ['E2E_JWT_KEY', 'E2E_ASCII_DIR']) {
   if (!process.env[name]) {

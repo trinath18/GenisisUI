@@ -181,7 +181,7 @@ await t.click('MBM Enq', 500)
 check('MBM Enq opens the membership enquiry for the member', await t.waitFor(() => page.url().includes('/membership/enquiry?mbm=')), page.url())
 
 // ---------------- Access: position 13 withheld
-const access = '1'.repeat(12) + '0' + '1'.repeat(17)
+const access = '1'.repeat(12) + '0' + '1'.repeat(9) + '0' + '1'.repeat(7)
 const limited = await t.browser.newPage()
 await limited.evaluateOnNewDocument(
   (token, a) =>
@@ -194,7 +194,7 @@ await limited.evaluateOnNewDocument(
 )
 await limited.goto(`${BASE}/worksheet/enquiry`, { waitUntil: 'networkidle0' })
 await limited.waitForSelector('h2')
-check('access: without position 13 the enquiry says Access Denied!', (await limited.$eval('h2', (e) => e.textContent)) === 'Access Denied!')
+check('access: without positions 13 and 23 the enquiry says Access Denied!', (await limited.$eval('h2', (e) => e.textContent)) === 'Access Denied!')
 const denied = await fetch(`${BASE}/api/worksheet/enquiry/${cas}`, { headers: { Authorization: `Bearer ${mint(access)}` } })
 check('access: and the API refuses with 403', denied.status === 403, String(denied.status))
 
