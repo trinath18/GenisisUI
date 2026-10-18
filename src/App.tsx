@@ -13,7 +13,6 @@ import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
 import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
-import { BenefitsMaintenanceScreen } from './pages/maintenance/BenefitsMaintenanceScreen'
 import { CaseEnquiryPage } from './pages/case/CaseEnquiryPage'
 import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
 import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
@@ -82,6 +81,18 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipUploadBordx}>
               <UploadBordxPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/tracking"
+          element={
+            <RequireAccess position={Access.MembershipTracking}>
+              <TrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
           path="case/registration"
           element={
             <RequireAccess position={Access.CaseRegistration}>
@@ -182,10 +193,6 @@ export default function App() {
           element={
             <RequireAccess position={Access.CaseAscii}>
               <CaseAsciiPage />
-          path="membership/tracking"
-          element={
-            <RequireAccess position={Access.MembershipTracking}>
-              <TrackingPage />
             </RequireAccess>
           }
         />
