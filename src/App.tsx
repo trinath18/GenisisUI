@@ -20,6 +20,10 @@ import { MmaCptPage } from './pages/case/MmaCptPage'
 import { CasePayClaimPage } from './pages/case/CasePayClaimPage'
 import { CaseNonDisclosurePage } from './pages/case/CaseNonDisclosurePage'
 import { CaseAsciiPage, ClaimAsciiPage } from './pages/case/AsciiExportPages'
+import { WorksheetEnquiryPage } from './pages/worksheet/WorksheetEnquiryPage'
+import { WorksheetTrackingPage } from './pages/worksheet/WorksheetTrackingPage'
+import { WorksheetSendToAccountsPage } from './pages/worksheet/WorksheetSendToAccountsPage'
+import { WorksheetSendToArPage } from './pages/worksheet/WorksheetSendToArPage'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -168,6 +172,54 @@ export default function App() {
           element={
             <RequireAccess position={Access.CaseAscii}>
               <CaseAsciiPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/registration"
+          element={
+            <RequireAccess position={Access.WorksheetRegistration}>
+              <NotMigratedPage title="Worksheet Registration" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/adjustment"
+          element={
+            <RequireAccess position={Access.WorksheetAdjustment}>
+              <NotMigratedPage title="Worksheet Adjustment" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/enquiry"
+          element={
+            <RequireAccess position={Access.WorksheetEnquiry}>
+              <WorksheetEnquiryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/send-to-accounts"
+          element={
+            <RequireAccess position={Access.WorksheetSendToAccounts}>
+              <WorksheetSendToAccountsPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/send-to-ar"
+          element={
+            <RequireAccess position={Access.WorksheetSendToAr}>
+              <WorksheetSendToArPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/tracking"
+          element={
+            <RequireAccess position={Access.WorksheetTracking}>
+              <WorksheetTrackingPage />
             </RequireAccess>
           }
         />

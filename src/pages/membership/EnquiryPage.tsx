@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import type { FormEvent } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { api, errorMessage } from '../../api/client'
@@ -258,9 +259,11 @@ function MemberView({ mbmNumber }: { mbmNumber: string }) {
 
 export function EnquiryPage() {
   const [by, setBy] = useState<SearchBy>('number')
-  const [input, setInput] = useState('')
+  const [params] = useSearchParams()
+  const fromUrl = params.get('mbm')
+  const [input, setInput] = useState(fromUrl ?? '')
   const [criteria, setCriteria] = useState<{ by: SearchBy; q: string } | null>(null)
-  const [selected, setSelected] = useState<string | null>(null)
+  const [selected, setSelected] = useState<string | null>(fromUrl)
 
   const search = useQuery({
     queryKey: ['membership-search', criteria],

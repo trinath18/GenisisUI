@@ -29,6 +29,15 @@ export const Access = {
   CaseNonDisclosure: 12,
   PanelHospitals: 7,
   MmaCpt: 1,
+  // Worksheet menu. Registration (22) and Adjustment (23) are the positions the desktop's scan codes LOW001 / LOW002 checked, Tracking (24)
+  // is LOW003, Enquiry (13) is mnuWSEnq_Click. Send to A/C and Send to A/R have no click handler and are gated like Tracking.
+  // Keep in step with Genisis.Api/Auth/AccessRight.cs.
+  WorksheetRegistration: 22,
+  WorksheetAdjustment: 23,
+  WorksheetTracking: 24,
+  WorksheetEnquiry: 13,
+  WorksheetSendToAccounts: 24,
+  WorksheetSendToAr: 24,
 } as const
 
 export class MustChangePasswordError extends Error {}

@@ -54,7 +54,7 @@ export async function start(downloadPath) {
       return fail === 0 && problems.length === 0
     },
     async go(route) {
-      await page.goto(`${BASE}/case/${route}`, { waitUntil: 'networkidle0' })
+      await page.goto(`${BASE}${route.startsWith('/') ? route : `/case/${route}`}`, { waitUntil: 'networkidle0' })
       await page.waitForSelector('h2')
       await sleep(300)
     },

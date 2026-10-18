@@ -11,7 +11,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'folder', label: 'Case', to: '/case/registration', prefix: '/case', access: Access.CaseRegistration },
   { icon: 'tool', label: 'Maintenance', to: '/maintenance/plan', prefix: '/maintenance', access: Access.PlanMaintenance },
   { icon: 'file', label: 'Invoice' },
-  { icon: 'grid', label: 'Worksheet' },
+  { icon: 'grid', label: 'Worksheet', to: '/worksheet/tracking', prefix: '/worksheet', access: Access.WorksheetTracking },
   { icon: 'shield', label: 'Claims' },
   { icon: 'list', label: 'Claim Bordx' },
   { icon: 'activity', label: 'Monitoring' },
@@ -44,6 +44,18 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/case/mma-cpt', label: 'MMA / CPT', access: Access.MmaCpt, group: 'Transfers & Reference' },
       { to: '/case/claim-ascii', label: 'Claim ASCII', access: Access.ClaimAscii, group: 'Exports' },
       { to: '/case/case-ascii', label: 'Case ASCII', access: Access.CaseAscii, group: 'Exports' },
+    ],
+  },
+  {
+    label: 'Worksheet',
+    prefix: '/worksheet',
+    items: [
+      { to: '/worksheet/registration', label: 'Registration', access: Access.WorksheetRegistration, group: 'Worksheet Workflow' },
+      { to: '/worksheet/adjustment', label: 'Adjustment', access: Access.WorksheetAdjustment, group: 'Worksheet Workflow' },
+      { to: '/worksheet/enquiry', label: 'Enquiry', access: Access.WorksheetEnquiry, group: 'Worksheet Workflow' },
+      { to: '/worksheet/send-to-accounts', label: 'Send to A/C', access: Access.WorksheetSendToAccounts, group: 'Accounts & Tracking' },
+      { to: '/worksheet/send-to-ar', label: 'Send to A/R', access: Access.WorksheetSendToAr, group: 'Accounts & Tracking' },
+      { to: '/worksheet/tracking', label: 'Tracking', access: Access.WorksheetTracking, group: 'Accounts & Tracking' },
     ],
   },
   {
