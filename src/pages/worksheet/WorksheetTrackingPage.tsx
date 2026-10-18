@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { CheckField, ComboField, DateField, SelectField, TextField } from '../../components/Field'
 import { DataGrid } from '../../components/DataGrid'
 import type { GridColumn } from '../../components/DataGrid'
-import { ActionBar, PageShell, Stat } from '../../components/Screen'
+import { ActionBar, PageShell, SearchLayout, Stat } from '../../components/Screen'
 import { Button } from '../../components/Button'
 import { downloadCsv } from '../../lib/exportCsv'
 import type { CsvColumn } from '../../lib/exportCsv'
@@ -210,92 +210,126 @@ export function WorksheetTrackingPage() {
   return (
     <PageShell title="Worksheet Tracking" subtitle="Search worksheets, tick the ones to update and give them a pending status.">
       <form onSubmit={search} noValidate className="screen-form">
-        <fieldset>
-          <legend>Worksheet</legend>
-          <CheckField label="Use Scan" {...register('useScan', { onChange: () => list.clear() })} />
-          {useScan ? (
-            <TextField
-              label="Wks No"
-              required
-              maxLength={15}
-              autoFocus
-              hint="Type a code starting LO to open another screen."
-              error={errors.wksNoFrom}
-              {...register('wksNoFrom')}
-            />
-          ) : (
+        <SearchLayout
+          panel={
             <>
-              <TextField label="Wks No from" maxLength={15} autoFocus {...register('wksNoFrom')} />
-              <TextField label="Wks No to" maxLength={15} {...register('wksNoTo')} />
+              <h4 className="ct-group">Worksheet</h4>
+              <div className="ct-pair">
+                <NumberRange label="Ver. No" from="versionFrom" to="versionTo" {...pair} />
+              </div>
+              <ComboField label="Group Company" options={lookups.groupCompanies} hint="Choose a payor first." {...register('groupCompany')} />
+              <div className="ct-pair">
+                <TextRange label="Plan Code" from="planFrom" to="planTo" maxLength={8} {...pair} />
+              </div>
+              <div className="ct-pair">
+                <SelectRange label="Ins Type" from="insFrom" to="insTo" options={lookups.insuredTypes} {...pair} />
+              </div>
+              <div className="ct-pair">
+                <TextRange label="Policy No" from="policyFrom" to="policyTo" maxLength={25} {...pair} />
+              </div>
+              <div className="ct-pair">
+                <TextRange label="Member No" from="memberFrom" to="memberTo" maxLength={15} {...pair} />
+              </div>
+              <div className="ct-pair">
+                <TextRange label="I/C No" from="icFrom" to="icTo" empty="icEmpty" maxLength={20} {...pair} />
+              </div>
+              <div className="ct-pair">
+                <TextRange label="Bordx No" from="bordxFrom" to="bordxTo" empty="bordxEmpty" maxLength={20} {...pair} />
+              </div>
+
+              <h4 className="ct-group">Amounts</h4>
+              <div className="ct-pair">
+                <NumberRange label="App Amt" from="approvedFrom" to="approvedTo" {...pair} />
+              </div>
+              <div className="ct-pair">
+                <NumberRange label="Pay2M" from="payMemberFrom" to="payMemberTo" {...pair} />
+              </div>
+              <div className="ct-pair">
+                <NumberRange label="Pay2H" from="payHospitalFrom" to="payHospitalTo" {...pair} />
+              </div>
+
+              <h4 className="ct-group">Dates and diagnosis</h4>
+              <div className="ct-pair">
+                <DateRange label="DOA" from="doaFrom" to="doaTo" empty="doaEmpty" hint="Date of admission" control={control} register={register} />
+              </div>
+              <div className="ct-pair">
+                <DateRange label="DOD" from="dodFrom" to="dodTo" empty="dodEmpty" hint="Date of discharge" control={control} register={register} />
+              </div>
+              <div className="ct-pair">
+                <DateRange label="DPO" from="dpoFrom" to="dpoTo" empty="dpoEmpty" hint="Date passed on" control={control} register={register} />
+              </div>
+              <div className="ct-pair">
+                <TextRange label="First Diag." from="firstFrom" to="firstTo" empty="firstEmpty" maxLength={5} {...pair} />
+              </div>
+              <div className="ct-pair">
+                <TextRange label="Final Diag." from="finalFrom" to="finalTo" empty="finalEmpty" maxLength={20} {...pair} />
+              </div>
             </>
-          )}
-          <NumberRange label="Ver. No" from="versionFrom" to="versionTo" {...pair} />
-          <ComboField label="Payor" options={lookups.payors} {...register('payor', { onChange: () => setValue('groupCompany', '') })} />
-          <ComboField label="Group Company" options={lookups.groupCompanies} hint="Choose a payor first." {...register('groupCompany')} />
-          <TextRange label="Plan Code" from="planFrom" to="planTo" maxLength={8} {...pair} />
-          <SelectRange label="Ins Type" from="insFrom" to="insTo" options={lookups.insuredTypes} {...pair} />
-          <TextRange label="Policy No" from="policyFrom" to="policyTo" maxLength={25} {...pair} />
-          <TextRange label="Member No" from="memberFrom" to="memberTo" maxLength={15} {...pair} />
-          <TextRange label="I/C No" from="icFrom" to="icTo" empty="icEmpty" maxLength={20} {...pair} />
-          <TextRange label="Bordx No" from="bordxFrom" to="bordxTo" empty="bordxEmpty" maxLength={20} {...pair} />
-        </fieldset>
+          }
+        >
+          <fieldset>
+            <legend>Worksheet</legend>
+            <CheckField label="Use Scan" {...register('useScan', { onChange: () => list.clear() })} />
+            {useScan ? (
+              <TextField
+                label="Wks No"
+                required
+                maxLength={15}
+                autoFocus
+                hint="Type a code starting LO to open another screen."
+                error={errors.wksNoFrom}
+                {...register('wksNoFrom')}
+              />
+            ) : (
+              <>
+                <TextField label="Wks No from" maxLength={15} autoFocus {...register('wksNoFrom')} />
+                <TextField label="Wks No to" maxLength={15} {...register('wksNoTo')} />
+              </>
+            )}
+            <ComboField label="Payor" options={lookups.payors} {...register('payor', { onChange: () => setValue('groupCompany', '') })} />
+            <SelectField label="Claimability" options={claimabilityOptions} {...register('claimability')} />
+            <SelectField label="Pending Status" options={searchPendingOptions} {...register('pending')} />
+            <CheckField label="Pending Status is empty" {...register('pendingEmpty')} />
+          </fieldset>
 
-        <fieldset>
-          <legend>Status and amounts</legend>
-          <SelectField label="Claimability" options={claimabilityOptions} {...register('claimability')} />
-          <SelectField label="Pending Status" options={searchPendingOptions} {...register('pending')} />
-          <CheckField label="Pending Status is empty" {...register('pendingEmpty')} />
-          <NumberRange label="App Amt" from="approvedFrom" to="approvedTo" {...pair} />
-          <NumberRange label="Pay2M" from="payMemberFrom" to="payMemberTo" {...pair} />
-          <NumberRange label="Pay2H" from="payHospitalFrom" to="payHospitalTo" {...pair} />
-        </fieldset>
+          <fieldset>
+            <legend>Update pending status</legend>
+            <DateField control={control} name="updateDate" label="Date Update" hint="Applies to the ticked worksheets." />
+            <SelectField label="Pending Status" options={updatePendingOptions} error={errors.updatePending} {...register('updatePending')} />
+          </fieldset>
 
-        <fieldset>
-          <legend>Dates and diagnosis</legend>
-          <DateRange label="DOA" from="doaFrom" to="doaTo" empty="doaEmpty" hint="Date of admission" control={control} register={register} />
-          <DateRange label="DOD" from="dodFrom" to="dodTo" empty="dodEmpty" hint="Date of discharge" control={control} register={register} />
-          <DateRange label="DPO" from="dpoFrom" to="dpoTo" empty="dpoEmpty" hint="Date passed on" control={control} register={register} />
-          <TextRange label="First Diag." from="firstFrom" to="firstTo" empty="firstEmpty" maxLength={5} {...pair} />
-          <TextRange label="Final Diag." from="finalFrom" to="finalTo" empty="finalEmpty" maxLength={20} {...pair} />
-        </fieldset>
+          <ActionBar label="Worksheet tracking actions">
+            <Button variant="primary" type="submit" busy={busy} busyLabel="Working…">
+              Search
+            </Button>
+            <Button variant="ghost" onClick={update} disabled={busy}>
+              Update
+            </Button>
+            <Button variant="ghost" onClick={exportList}>
+              Print to File
+            </Button>
+            <Button variant="link" onClick={clear}>
+              Clear
+            </Button>
+            <span className="spacer" />
+            <Stat label="Records" value={list.rows.length} />
+            <Stat label="Selected" value={list.checked.size} />
+            <Stat label="Total Amt" value={formatMoney(totalApproved)} />
+            <Button variant="link" onClick={() => navigate('/')}>
+              Close
+            </Button>
+          </ActionBar>
 
-        <fieldset>
-          <legend>Update pending status</legend>
-          <DateField control={control} name="updateDate" label="Date Update" hint="Applies to the ticked worksheets." />
-          <SelectField label="Pending Status" options={updatePendingOptions} error={errors.updatePending} {...register('updatePending')} />
-        </fieldset>
-
-        <ActionBar label="Worksheet tracking actions">
-          <Button variant="primary" type="submit" busy={busy} busyLabel="Working…">
-            Search
-          </Button>
-          <Button variant="ghost" onClick={update} disabled={busy}>
-            Update
-          </Button>
-          <Button variant="ghost" onClick={exportList}>
-            Print to File
-          </Button>
-          <Button variant="link" onClick={clear}>
-            Clear
-          </Button>
-          <span className="spacer" />
-          <Stat label="Records" value={list.rows.length} />
-          <Stat label="Selected" value={list.checked.size} />
-          <Stat label="Total Amt" value={formatMoney(totalApproved)} />
-          <Button variant="link" onClick={() => navigate('/')}>
-            Close
-          </Button>
-        </ActionBar>
-
-        <DataGrid
-          caption="Worksheets"
-          columns={columns}
-          rows={list.rows}
-          rowKey={worksheetKey}
-          check={{ checked: list.checked, onChange: list.change }}
-          tall
-          empty="No worksheets. Enter the search criteria and press Search."
-        />
+          <DataGrid
+            caption="Worksheets"
+            columns={columns}
+            rows={list.rows}
+            rowKey={worksheetKey}
+            check={{ checked: list.checked, onChange: list.change }}
+            tall
+            empty="No worksheets. Enter the search criteria and press Search."
+          />
+        </SearchLayout>
       </form>
     </PageShell>
   )

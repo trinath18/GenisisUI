@@ -218,6 +218,14 @@ button.ghost:hover:not(:disabled) { background: var(--accent-soft); color: var(-
 .ct-filters .ct-filter { display: block; white-space: normal; }
 .ct-filters .ct-filter input, .ct-filters .ct-filter select { display: block; width: 100%; margin-top: 2px; box-sizing: border-box; }
 @media (max-width: 1100px) { .ct-layout { grid-template-columns: 1fr; } .ct-filters { position: static; max-height: none; } }
+/* Worksheet search screens: the same layout, a wider panel for the from / to pairs, and headings that group the criteria in it */
+.ct-layout.ws-layout { grid-template-columns: minmax(0, 1fr) 340px; }
+@media (max-width: 1100px) { .ct-layout.ws-layout { grid-template-columns: 1fr; } }
+.ct-filters .ct-group { margin: 8px 0 0; padding-top: 8px; border-top: 1px solid var(--border); font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--accent-strong); }
+.ct-filters .ct-group:first-of-type { margin-top: 0; padding-top: 0; border-top: 0; }
+.ct-filters .check-field, .ct-pair .check-field { min-height: 0; }
+.ct-pair .check-field { grid-column: 1 / -1; }
+.ws-span2 { grid-column: span 2; }
 
 /* Case adjustment: GL dialog grid, tab-level actions, document lists */
 .gl-fields { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px 16px; }

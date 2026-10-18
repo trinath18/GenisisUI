@@ -8,7 +8,7 @@ import { yupResolver } from '@hookform/resolvers/yup'
 import { CheckField, ComboField, DateField, SelectField, TextField } from '../../components/Field'
 import { DataGrid } from '../../components/DataGrid'
 import type { GridColumn } from '../../components/DataGrid'
-import { ActionBar, PageShell, Stat } from '../../components/Screen'
+import { ActionBar, PageShell, SearchLayout, Stat } from '../../components/Screen'
 import { Button } from '../../components/Button'
 import { downloadCsv } from '../../lib/exportCsv'
 import type { CsvColumn } from '../../lib/exportCsv'
@@ -163,61 +163,76 @@ export function WorksheetSendToAccountsPage() {
   return (
     <PageShell title="Worksheet Send to A/C" subtitle="Search worksheets, tick the ones to send to accounts and record the date.">
       <form onSubmit={search} noValidate className="screen-form">
-        <fieldset>
-          <legend>Selection Criteria</legend>
-          <CheckField label="Use Scan" {...register('useScan', { onChange: () => list.clear() })} />
-          {useScan ? (
-            <TextField label="Wks No" required maxLength={20} autoFocus error={errors.wksNoFrom} {...register('wksNoFrom')} />
-          ) : (
+        <SearchLayout
+          panel={
             <>
-              <TextField label="Wks No from" maxLength={20} autoFocus {...register('wksNoFrom')} />
-              <TextField label="Wks No to" maxLength={20} {...register('wksNoTo')} />
+              <div className="ct-pair">
+                <DateRange label="Wks Date" from="wksDateFrom" to="wksDateTo" control={control} register={register} />
+              </div>
+              <div className="ct-pair">
+                <NumberRange label="Wks Amt" from="amountFrom" to="amountTo" {...pair} />
+              </div>
+              <div className="ct-pair">
+                <TextRange label="Bordx No" from="bordxFrom" to="bordxTo" maxLength={20} {...pair} />
+              </div>
             </>
-          )}
-          <ComboField label="Payor" options={lookups.payors} {...register('payor')} />
-          <DateRange label="Wks Date" from="wksDateFrom" to="wksDateTo" control={control} register={register} />
-          <NumberRange label="Wks Amt" from="amountFrom" to="amountTo" {...pair} />
-          <DateRange label="Date Sent" from="dateSentFrom" to="dateSentTo" control={control} register={register} />
-          <SelectField label="Token Status" options={tokenStatusOptions} blank={false} {...register('tokenStatus')} />
-          <TextRange label="Bordx No" from="bordxFrom" to="bordxTo" maxLength={20} {...pair} />
-        </fieldset>
+          }
+        >
+          <fieldset>
+            <legend>Selection Criteria</legend>
+            <CheckField label="Use Scan" {...register('useScan', { onChange: () => list.clear() })} />
+            {useScan ? (
+              <TextField label="Wks No" required maxLength={20} autoFocus error={errors.wksNoFrom} {...register('wksNoFrom')} />
+            ) : (
+              <>
+                <TextField label="Wks No from" maxLength={20} autoFocus {...register('wksNoFrom')} />
+                <TextField label="Wks No to" maxLength={20} {...register('wksNoTo')} />
+              </>
+            )}
+            <ComboField label="Payor" options={lookups.payors} {...register('payor')} />
+            <div className="ct-pair ws-span2">
+              <DateRange label="Date Sent" from="dateSentFrom" to="dateSentTo" control={control} register={register} />
+            </div>
+            <SelectField label="Token Status" options={tokenStatusOptions} blank={false} {...register('tokenStatus')} />
+          </fieldset>
 
-        <fieldset>
-          <legend>Send to accounts</legend>
-          <DateField control={control} name="sendDate" label="Date Sent" hint="Applies to the ticked worksheets." />
-        </fieldset>
+          <fieldset>
+            <legend>Send to accounts</legend>
+            <DateField control={control} name="sendDate" label="Date Sent" hint="Applies to the ticked worksheets." />
+          </fieldset>
 
-        <ActionBar label="Send to accounts actions">
-          <Button variant="primary" type="submit" busy={busy} busyLabel="Working…">
-            Search
-          </Button>
-          <Button variant="ghost" onClick={send} disabled={busy}>
-            Update
-          </Button>
-          <Button variant="ghost" onClick={exportList}>
-            Print to File
-          </Button>
-          <Button variant="link" onClick={clear}>
-            Clear
-          </Button>
-          <span className="spacer" />
-          <Stat label="Records" value={list.rows.length} />
-          <Stat label="Selected" value={list.checked.size} />
-          <Stat label="Total Amt" value={formatMoney(total)} />
-          <Button variant="link" onClick={() => navigate('/')}>
-            Close
-          </Button>
-        </ActionBar>
+          <ActionBar label="Send to accounts actions">
+            <Button variant="primary" type="submit" busy={busy} busyLabel="Working…">
+              Search
+            </Button>
+            <Button variant="ghost" onClick={send} disabled={busy}>
+              Update
+            </Button>
+            <Button variant="ghost" onClick={exportList}>
+              Print to File
+            </Button>
+            <Button variant="link" onClick={clear}>
+              Clear
+            </Button>
+            <span className="spacer" />
+            <Stat label="Records" value={list.rows.length} />
+            <Stat label="Selected" value={list.checked.size} />
+            <Stat label="Total Amt" value={formatMoney(total)} />
+            <Button variant="link" onClick={() => navigate('/')}>
+              Close
+            </Button>
+          </ActionBar>
 
-        <DataGrid
-          caption="Worksheets to send to accounts"
-          columns={columns}
-          rows={list.rows}
-          rowKey={worksheetKey}
-          check={{ checked: list.checked, onChange: list.change }}
-          tall
-          empty="No worksheets. Enter the search criteria and press Search."
-        />
+          <DataGrid
+            caption="Worksheets to send to accounts"
+            columns={columns}
+            rows={list.rows}
+            rowKey={worksheetKey}
+            check={{ checked: list.checked, onChange: list.change }}
+            tall
+            empty="No worksheets. Enter the search criteria and press Search."
+          />
+        </SearchLayout>
       </form>
     </PageShell>
   )

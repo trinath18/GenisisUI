@@ -54,6 +54,132 @@ check(
 await t.go('/worksheet/registration')
 check('menu: Worksheet Registration is a placeholder until migrated', (await page.$eval('h2', (e) => e.textContent)) === 'Worksheet Registration')
 
+// ---------------- Search layout: Case Tracking's, with the other criteria in a panel on the right
+const labelsIn = (selector) =>
+  page.$$eval(`${selector} label.form-field > span, ${selector} label.check-field > span`, (els) =>
+    els.map((e) => e.textContent.replace('*', '').trim()).filter(Boolean),
+  )
+const panelLabels = () => labelsIn('.ct-filters')
+const mainLabels = () => labelsIn('.ct-content')
+const rect = (selector) =>
+  page.$eval(selector, (e) => {
+    const r = e.getBoundingClientRect()
+    return { top: r.top, left: r.left, bottom: r.bottom, width: r.width }
+  })
+
+await t.go('/worksheet/tracking')
+const trackingPanel = await panelLabels()
+const trackingMain = await mainLabels()
+const panelSide = await rect('.ct-filters')
+const mainSide = await rect('.ct-content')
+check(
+  'layout: tracking has its "More filters" panel on the right of the results',
+  (await page.$eval('.ct-filters legend', (e) => e.textContent)) === 'More filters' && panelSide.left > mainSide.left + mainSide.width - 1,
+  JSON.stringify({ panelSide, mainSide }),
+)
+const expectedPanel = [
+  'Ver. No from',
+  'Ver. No to',
+  'Group Company',
+  'Plan Code from',
+  'Plan Code to',
+  'Ins Type from',
+  'Ins Type to',
+  'Policy No from',
+  'Policy No to',
+  'Member No from',
+  'Member No to',
+  'I/C No from',
+  'I/C No to',
+  'I/C No is empty',
+  'Bordx No from',
+  'Bordx No to',
+  'Bordx No is empty',
+  'App Amt from',
+  'App Amt to',
+  'Pay2M from',
+  'Pay2M to',
+  'Pay2H from',
+  'Pay2H to',
+  'DOA from',
+  'DOA to',
+  'DOA is empty',
+  'DOD from',
+  'DOD to',
+  'DOD is empty',
+  'DPO from',
+  'DPO to',
+  'DPO is empty',
+  'First Diag. from',
+  'First Diag. to',
+  'First Diag. is empty',
+  'Final Diag. from',
+  'Final Diag. to',
+  'Final Diag. is empty',
+]
+check(
+  'layout: tracking keeps every criterion; the panel holds the 38 that are not the main ones',
+  expectedPanel.every((x) => trackingPanel.includes(x)) && trackingPanel.length === expectedPanel.length,
+  JSON.stringify(expectedPanel.filter((x) => !trackingPanel.includes(x))),
+)
+check(
+  'layout: tracking keeps the main criteria beside the actions',
+  ['Use Scan', 'Wks No', 'Payor', 'Claimability', 'Pending Status', 'Pending Status is empty', 'Date Update'].every((x) => trackingMain.includes(x)),
+  JSON.stringify(trackingMain),
+)
+const grid = await rect('.table-wrap')
+check('layout: tracking shows the results grid on the first screen (it was below two screens of criteria)', grid.top < 700, String(Math.round(grid.top)))
+const scroll = await page.evaluate(() => {
+  const panel = document.querySelector('.ct-filters')
+  panel.scrollTop = 99999
+  return { client: panel.clientHeight, scrollHeight: panel.scrollHeight, reached: panel.scrollTop }
+})
+check('layout: tracking panel scrolls on its own to reach the last criteria', scroll.scrollHeight > scroll.client && scroll.reached > 0, JSON.stringify(scroll))
+check(
+  'layout: tracking panel stays in view while the page scrolls (sticky)',
+  (await page.$eval('.ct-filters', (e) => getComputedStyle(e).position)) === 'sticky',
+)
+
+await t.go('/worksheet/send-to-accounts')
+const acPanel = await panelLabels()
+const acMain = await mainLabels()
+check(
+  'layout: send to A/C has the same panel with the worksheet date, amount and bordx criteria',
+  ['Wks Date from', 'Wks Date to', 'Wks Amt from', 'Wks Amt to', 'Bordx No from', 'Bordx No to'].every((x) => acPanel.includes(x)) && acPanel.length === 6,
+  JSON.stringify(acPanel),
+)
+check(
+  'layout: send to A/C keeps wks no, payor, date sent and token status in the main part',
+  ['Use Scan', 'Wks No', 'Payor', 'Date Sent from', 'Date Sent to', 'Token Status'].every((x) => acMain.includes(x)),
+  JSON.stringify(acMain),
+)
+const dateFrom = await page.evaluate(
+  () =>
+    [...document.querySelectorAll('.ct-content label.form-field')]
+      .find((l) => l.querySelector('span')?.textContent === 'Date Sent from')
+      ?.getBoundingClientRect().top,
+)
+const dateTo = await page.evaluate(
+  () =>
+    [...document.querySelectorAll('.ct-content label.form-field')].find((l) => l.querySelector('span')?.textContent === 'Date Sent to')?.getBoundingClientRect()
+      .top,
+)
+check('layout: send to A/C shows the Date Sent from and to side by side', Math.abs(dateFrom - dateTo) < 2, `${dateFrom} vs ${dateTo}`)
+
+await t.go('/worksheet/send-to-ar')
+check('layout: send to A/R, which has only four criteria, needs no panel', (await page.$('.ct-filters')) === null)
+
+await page.setViewport({ width: 1000, height: 900 })
+await t.go('/worksheet/tracking')
+const narrowGrid = await rect('.table-wrap')
+const narrowPanel = await rect('.ct-filters')
+check(
+  'layout: on a narrow screen the panel moves under the results',
+  narrowPanel.top > narrowGrid.top && Math.abs(narrowPanel.left - narrowGrid.left) < 30,
+  JSON.stringify({ narrowGrid, narrowPanel }),
+)
+await page.setViewport({ width: 1440, height: 900 })
+
 // ---------------- Worksheet Tracking
 const xi = (await get('/api/worksheet/tracking/search?useScan=false&payor=XI')).rows
 const bordxed = xi.find((r) => r.bordxed)
