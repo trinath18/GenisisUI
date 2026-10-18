@@ -36,7 +36,7 @@ states, loading, saving, downloads), plus the Worksheet menu (`worksheet.mjs`: T
 - The ZZ test case `ZZ00000106` (test members `ZZHA0000518*01` / `ZZHA0000316*01`): non-disclosure, pay & claim, transfer (and back).
 - One real case's audit review (`XI00002733`, which has no audit row) and the audit status on its cross reference.
 - MMA procedures / fees: added and deleted again by the test itself.
-- Worksheet Adjustment suite: reads real worksheets and intercepts the save request, so nothing is written.
+- Worksheet Adjustment suite: reads real worksheets and intercepts every request that writes (the save, the debit note numbering, the excess letter, which marks the case), so nothing is written; the notes and the letter are checked against fixtures.
 - Worksheet Enquiry suite: read-only; it picks a case with several worksheet versions through the API and writes nothing.
 - Worksheet suite: reads real worksheets (payors `XI`, `AC`, cases `ZZ…`); the three POSTs that would change data (tracking update, send to A/C, send to A/R) are intercepted and answered by the test, so nothing is written (the database writes are covered by the API's rolled-back database tests).
 - ASCII: Claim ASCII payor `GC` (accepted) and `AN` (rejected), Case ASCII payor `BI`; this flags the exported claims / cases and takes batch numbers.

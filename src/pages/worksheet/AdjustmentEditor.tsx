@@ -8,6 +8,7 @@ import type { Option } from '../../components/Field'
 import { ActionBar } from '../../components/Screen'
 import { ask, notify } from '../../lib/notifyStore'
 import { api, errorMessage } from '../../api/client'
+import { AdjustmentDocuments } from './AdjustmentDocuments'
 import { isSingleVersion, lastPayTo, limits, paymentProblem, paymentSchema, paymentValuesOf, toUpdateRequest } from './adjustmentRules'
 import type { AdjustmentLookups, PaymentValues } from './adjustmentRules'
 import type { EnquiryResult } from './enquiryRules'
@@ -106,6 +107,7 @@ export function AdjustmentEditor({ result, onSaved }: { result: EnquiryResult; o
         <Button variant="primary" type="submit" busy={busy} busyLabel="Saving…">
           Update
         </Button>
+        <AdjustmentDocuments result={result} />
       </ActionBar>
     </form>
   )

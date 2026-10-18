@@ -1,5 +1,5 @@
-// Worksheet > Worksheet Adjustment: the saved worksheet with the editable payment details and remarks. It reads real data; the save request is intercepted and answered
-// here, so nothing is written (the database writes are covered by the API's rolled-back database tests).
+// Worksheet > Worksheet Adjustment: the saved worksheet with the editable payment details and remarks, and the credit / debit note and Excess letter. It reads real data; the
+// requests that write (the save, the debit note numbering, the excess letter, which marks the case) are intercepted and answered here, so nothing is written (the database writes are covered by the API's rolled-back database tests).
 import { start, BASE } from './lib.mjs'
 import { mint } from './mint.mjs'
 
@@ -12,8 +12,18 @@ const loaded = () =>
   t.waitFor(async () => (await t.readValue('Mem Num')) !== null && (await page.$('form[aria-label="Payment details and remarks"]')) !== null, 15000)
 
 const puts = []
+const posts = []
+const fixture = { note: null, debit: null, excess: null }
+const json = (status, body) => ({ status, contentType: 'application/json', body: JSON.stringify(body) })
 await page.setRequestInterception(true)
 page.on('request', (req) => {
+  const path = new URL(req.url()).pathname
+  if (req.method() === 'GET' && fixture.note && /\/api\/worksheet\/adjustment\/[^/]+\/\d+\/note$/.test(path)) return req.respond(json(200, fixture.note))
+  if (req.method() === 'POST' && /\/api\/worksheet\/adjustment\/[^/]+\/\d+\/(debit-note|excess-letter)$/.test(path)) {
+    posts.push(path.split('/').pop())
+    const answer = path.endsWith('debit-note') ? fixture.debit : fixture.excess
+    return req.respond(answer.status ? json(answer.status, answer.body) : json(200, answer))
+  }
   if (req.method() === 'PUT' && /\/api\/worksheet\/adjustment\/[^/]+\/\d+\/payment$/.test(req.url())) {
     puts.push({ path: new URL(req.url()).pathname, body: JSON.parse(req.postData()) })
     return req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Record Save' }) })
@@ -82,6 +92,146 @@ await t.click('Update')
 await page.waitForSelector('[role=dialog]')
 await (await t.btn('No')).click()
 check('update: answering No sends nothing', (await new Promise((r) => setTimeout(() => r(puts.length), 500))) === 1)
+
+// ---------------- Credit / debit notes and the Excess letter
+const real = await get(`/api/worksheet/adjustment/${cas}/1/note`)
+check(
+  'note: the real API answers with a kind, an amount that is not negative and the case',
+  ['Credit', 'Debit', 'None'].includes(real.kind) && real.amount >= 0 && real.caseNo === cas && real.version === 1,
+  JSON.stringify(real).slice(0, 120),
+)
+const enabled = async (label) => !(await t.isDisabled(label))
+check(
+  'buttons: Credit Note and Debit Note follow the real amount due; Exc Letter is always there',
+  (await enabled('Credit Note')) === (real.kind === 'Credit') && (await enabled('Debit Note')) === (real.kind === 'Debit') && (await enabled('Exc Letter')),
+  real.kind,
+)
+
+const baseNote = {
+  kind: 'Credit',
+  number: 'CAH00012',
+  date: '2021-08-06T00:00:00',
+  amount: 150,
+  caseNo: cas,
+  version: 1,
+  patientName: 'ALI BIN ABU',
+  memberNo: 'AHA0001*01',
+  memberName: 'ABU BIN ALI',
+  groupCompany: 'ACME BHD',
+  companyPlan: false,
+  hospital: 'PRINCE COURT MEDICAL CENTRE',
+  admitted: '2021-07-17T00:00:00',
+  disability: 'FISTULA\nABSCESS',
+  address1: '1 Jalan Satu',
+  address2: 'Taman Dua',
+  address3: '',
+  postCode: '50450',
+  city: 'KUALA LUMPUR',
+  state: 'WILAYAH PERSEKUTUAN',
+  remarks: 'PLEASE REFUND',
+}
+const dialogText = () => page.$eval('[role=dialog]', (d) => d.textContent)
+const closeDialog = async () => {
+  await page.evaluate(() => [...document.querySelectorAll('[role=dialog] button')].find((b) => b.textContent.trim() === 'Close')?.click())
+  await t.waitFor(async () => (await page.$('[role=dialog]')) === null)
+}
+
+fixture.note = baseNote
+await t.go(`/worksheet/adjustment?cas=${cas}`)
+await loaded()
+check('credit note: only Credit Note is enabled when Medix owes the member', (await enabled('Credit Note')) && !(await enabled('Debit Note')))
+await t.click('Credit Note')
+let text = await dialogText().catch(() => '')
+check(
+  'credit note: the sheet shows number, amount, patient, member, hospital, disability and remarks',
+  ['CREDIT NOTE', 'CAH00012', 'RM 150.00', 'ALI BIN ABU', 'AHA0001*01', `${cas} - 1`, 'PRINCE COURT', 'FISTULA', 'PLEASE REFUND'].every((x) =>
+    text.includes(x),
+  ),
+  text.slice(0, 160),
+)
+check(
+  'credit note: the address is printed with post code, city and state on one line',
+  text.includes('50450 KUALA LUMPUR WILAYAH PERSEKUTUAN') && text.includes('1 Jalan Satu'),
+)
+check('credit note: it can be printed', (await page.$$eval('[role=dialog] button', (b) => b.map((x) => x.textContent.trim()))).includes('Print'))
+await closeDialog()
+
+fixture.note = { ...baseNote, kind: 'Debit', number: '', amount: 333.2 }
+fixture.debit = { ...fixture.note, number: 'DAH00007', date: '2026-10-18T00:00:00' }
+await t.go(`/worksheet/adjustment?cas=${cas}`)
+await loaded()
+check('debit note: only Debit Note is enabled when the member owes Medix', !(await enabled('Credit Note')) && (await enabled('Debit Note')))
+await t.click('Debit Note', 800)
+text = await dialogText().catch(() => '')
+check(
+  'debit note: making it asks the server once and shows the number it gave',
+  posts.filter((x) => x === 'debit-note').length === 1 &&
+    text.includes('DEBIT NOTE') &&
+    text.includes('DAH00007') &&
+    text.includes('RM 333.20') &&
+    text.includes('AMOUNT DUE FROM YOU'),
+  text.slice(0, 160),
+)
+await closeDialog()
+
+fixture.note = { ...baseNote, kind: 'None', amount: 0 }
+await t.go(`/worksheet/adjustment?cas=${cas}`)
+await loaded()
+check('no note: neither note button is enabled when nothing is due', !(await enabled('Credit Note')) && !(await enabled('Debit Note')))
+
+fixture.excess = {
+  template: 'MAS',
+  excessNo: 'EAH00000782-1',
+  excessDate: '2021-08-06T00:00:00',
+  invoiceNo: 'A210028679',
+  invoiceAmount: 3997.68,
+  caseNo: cas,
+  principalName: 'ABU BIN ALI',
+  patientName: 'ALI BIN ABU',
+  patientIc: '890705086092',
+  planCode: 'BO48',
+  staffNo: 'S123',
+  costCenter: 'CC9',
+  department: 'FINANCE',
+  bordxNo: 'B77',
+  admitted: '2021-07-17T00:00:00',
+  discharged: '2021-07-18T00:00:00',
+  hospital: 'PRINCE COURT MEDICAL CENTRE',
+  hospitalContact: 'MS RANI',
+  hospitalFax: '03-74911222',
+  items: [
+    { label: 'Room & Board', amount: 100 },
+    { label: 'CERADAN CREAM (RM46.08)', amount: 77.5 },
+  ],
+  limitExceeded: 10,
+  coPayment: 0,
+  undertakenExcess: 0,
+  totalExcess: 187.5,
+  othersDescription: 'CERADAN CREAM (RM46.08)',
+  issuedOn: '2026-10-18T00:00:00',
+}
+await t.click('Exc Letter', 800)
+text = await dialogText().catch(() => '')
+check(
+  'excess letter: it asks the server once and shows the number, hospital contact and the amounts',
+  posts.filter((x) => x === 'excess-letter').length === 1 &&
+    ['EAH00000782-1', 'EXCESS PAYMENT NOTICE (MAS)', 'MS RANI', '03-74911222', 'Room & Board', '100.00', '77.50'].every((x) => text.includes(x)),
+  text.slice(0, 160),
+)
+check(
+  'excess letter: the limit exceeded and the total are listed; the MAS template adds staff number, cost center and department',
+  ['Limit Exceeded', '10.00', 'Total Excess', '187.50', 'S123', 'CC9', 'FINANCE'].every((x) => text.includes(x)),
+)
+await closeDialog()
+
+fixture.excess = { status: 404, body: { message: 'There is no excess record for this case.' } }
+await t.click('Exc Letter', 800)
+check(
+  'excess letter: a case without an excess record says so and shows no letter',
+  (await t.toast('There is no excess record for this case.')) && (await page.$('[role=dialog]')) === null,
+  JSON.stringify(await t.toasts()),
+)
+fixture.note = null
 
 // ---------------- Master and the cumulative views are not versions
 await t.select('Version', 'Master')
