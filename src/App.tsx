@@ -9,6 +9,7 @@ import { RegistrationPage } from './pages/membership/RegistrationPage'
 import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
 import { UploadBordxPage } from './features/membership/bordx/pages/UploadBordxPage'
 import { TrackingPage } from './features/membership/tracking/pages/TrackingPage'
+import { ReinstatementPage } from './features/membership/reinstatement/pages/ReinstatementPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
@@ -109,6 +110,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipTracking}>
               <TrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/reinstatement"
+          element={
+            <RequireAccess position={Access.MembershipAdjustment}>
+              <ReinstatementPage />
             </RequireAccess>
           }
         />
