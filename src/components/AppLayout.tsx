@@ -27,6 +27,8 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/membership/reinstatement', label: 'Member Reinstatement', access: Access.MembershipAdjustment },
       { to: '/membership/mco-pending', label: 'MCO Pending', access: Access.MembershipAdjustment },
       { to: '/membership/tracking', label: 'Tracking', access: Access.MembershipTracking },
+      { to: '/membership/pluto-upload', label: 'Upload Membership Excel (Pluto)', access: Access.MembershipUploadBordx },
+      { to: '/membership/pluto-ascii', label: 'Generate Membership ASCII (Pluto)', access: Access.MembershipUploadBordx },
       { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
     ],
   },

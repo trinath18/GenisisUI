@@ -9,6 +9,8 @@ import { RegistrationPage } from './pages/membership/RegistrationPage'
 import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
 import { UploadBordxPage } from './features/membership/bordx/pages/UploadBordxPage'
 import { TrackingPage } from './features/membership/tracking/pages/TrackingPage'
+import { PlutoAsciiPage } from './features/membership/pluto/pages/PlutoAsciiPage'
+import { PlutoUploadPage } from './features/membership/pluto/pages/PlutoUploadPage'
 import { McoPendingPage } from './features/membership/mcoPending/pages/McoPendingPage'
 import { ReinstatementPage } from './features/membership/reinstatement/pages/ReinstatementPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
@@ -111,6 +113,22 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipTracking}>
               <TrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/pluto-ascii"
+          element={
+            <RequireAccess position={Access.MembershipUploadBordx}>
+              <PlutoAsciiPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/pluto-upload"
+          element={
+            <RequireAccess position={Access.MembershipUploadBordx}>
+              <PlutoUploadPage />
             </RequireAccess>
           }
         />
