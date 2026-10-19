@@ -248,10 +248,10 @@ check(
   update?.body.date === '2026-10-18' && update.body.status === 'P' && update.body.items.length === 1 && update.body.items[0].caseNo === fresh.caseNo,
   JSON.stringify(update?.body),
 )
-check('tracking: after an update a range search lists again', (await gridRows('Worksheets')).length === xi.length)
+check('tracking: after an update a range search lists again', await t.waitFor(async () => (await gridRows('Worksheets')).length === xi.length, 20000))
 
 await t.checkbox('Use Scan')
-check('tracking: switching to scan mode empties the list', (await gridRows('Worksheets')).length === 0)
+check('tracking: switching to scan mode empties the list', await t.waitFor(async () => (await gridRows('Worksheets')).length === 0, 10000))
 await t.type('Wks No', fresh.caseNo)
 await t.click('Search', 600)
 check('tracking: a scan adds the worksheets of the case', await t.waitFor(async () => (await gridRows('Worksheets')).length >= 1, 20000))

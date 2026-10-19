@@ -11,6 +11,7 @@ const suites = [
   'worksheet.mjs',
   'worksheet-enquiry.mjs',
   'worksheet-adjustment.mjs',
+  'worksheet-registration.mjs',
 ]
 
 for (const name of ['E2E_JWT_KEY', 'E2E_ASCII_DIR']) {

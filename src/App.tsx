@@ -25,6 +25,7 @@ import { MmaCptPage } from './pages/case/MmaCptPage'
 import { CasePayClaimPage } from './pages/case/CasePayClaimPage'
 import { CaseNonDisclosurePage } from './pages/case/CaseNonDisclosurePage'
 import { CaseAsciiPage, ClaimAsciiPage } from './pages/case/AsciiExportPages'
+import { WorksheetRegistrationPage } from './pages/worksheet/WorksheetRegistrationPage'
 import { WorksheetAdjustmentPage } from './pages/worksheet/WorksheetAdjustmentPage'
 import { WorksheetEnquiryPage } from './pages/worksheet/WorksheetEnquiryPage'
 import { WorksheetTrackingPage } from './pages/worksheet/WorksheetTrackingPage'
@@ -201,7 +202,7 @@ export default function App() {
           path="worksheet/registration"
           element={
             <RequireAccess position={Access.WorksheetRegistration}>
-              <NotMigratedPage title="Worksheet Registration" />
+              <WorksheetRegistrationPage />
             </RequireAccess>
           }
         />
