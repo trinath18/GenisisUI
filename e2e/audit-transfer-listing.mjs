@@ -135,7 +135,21 @@ check('transfer: transferred back', await t.waitFor(async () => (await t.readVal
 const bordxCalls = []
 let bordxMode = 'ok'
 await page.setRequestInterception(true)
-page.on('request', (req) => {
+// A complete database has no group worksheet without a group company, which is the case the group-company rule is for; the search result is therefore
+// patched so that ZN00007106 has none (the rest of the row is the real one).
+const GROUP_RULE_CASE = 'ZN00007106'
+page.on('request', async (req) => {
+  if (req.method() === 'GET' && req.url().includes('/api/case/listing/search')) {
+    try {
+      const res = await fetch(req.url(), { headers: req.headers() })
+      const rows = await res.json()
+      const patched = Array.isArray(rows) ? rows.map((r) => (r.caseNo?.trim() === GROUP_RULE_CASE ? { ...r, groupCompany: '' } : r)) : rows
+      await req.respond({ status: res.status, contentType: 'application/json', body: JSON.stringify(patched) })
+    } catch {
+      await req.continue()
+    }
+    return
+  }
   if (req.method() === 'POST' && req.url().endsWith('/api/case/listing/bordx')) {
     bordxCalls.push(JSON.parse(req.postData()))
     if (bordxMode === 'ok')

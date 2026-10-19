@@ -197,6 +197,8 @@ button.ghost:hover:not(:disabled) { background: var(--accent-soft); color: var(-
 .letter-meta td { padding: 2px 0; }
 .letter-terms { margin: 10px 0; padding-left: 22px; }
 .letter-terms li { margin-bottom: 4px; white-space: pre-line; }
+.letter-sheet .num { text-align: right; font-variant-numeric: tabular-nums; }
+.letter-sheet .pre-line { white-space: pre-line; }
 .letter-sign { margin-top: 22px; }
 .letter-sheet .muted { color: #7b8794; font-size: 12px; }
 .letter-actions { justify-content: flex-end; }

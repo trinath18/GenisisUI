@@ -31,6 +31,10 @@ states, loading, saving, downloads), plus the Worksheet menu (`worksheet.mjs`: T
 
 3. Restore the data the run wrote: `sqlcmd -S MYDELL -d HISDB -E -C -b -i e2e/cleanup.sql`.
 
+## Data dependence
+
+The suites ran first on a trimmed development database and then on the full one, and three checks had assumed the trimmed data. The Claim ASCII check now reads the record count from the file (header, N records, trailer T<N>) instead of expecting 4; the listing suite patches the search result so that ZN00007106 has no group company (a complete database has no group worksheet without one, which is the case the group-company rule is for); and the Tracking scan check waits for the search to finish instead of for a fixed 600 ms (the search is slower on the full tables).
+
 ## What they touch
 
 - The ZZ test case `ZZ00000106` (test members `ZZHA0000518*01` / `ZZHA0000316*01`): non-disclosure, pay & claim, transfer (and back).

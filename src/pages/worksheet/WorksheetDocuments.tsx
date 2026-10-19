@@ -73,7 +73,7 @@ export function NoteModal({ note, onClose }: { note: WorksheetNote; onClose: () 
             </tr>
             <tr>
               <th>Disability</th>
-              <td style={{ whiteSpace: 'pre-line' }}>{note.disability}</td>
+              <td className="pre-line">{note.disability}</td>
             </tr>
           </tbody>
         </table>
@@ -81,7 +81,7 @@ export function NoteModal({ note, onClose }: { note: WorksheetNote; onClose: () 
         <p>
           <strong>RM {money(note.amount)}</strong>
         </p>
-        {note.remarks && <p style={{ whiteSpace: 'pre-line' }}>{note.remarks}</p>}
+        {note.remarks && <p className="pre-line">{note.remarks}</p>}
       </div>
       <Actions onClose={onClose} />
     </Modal>
@@ -183,7 +183,7 @@ export function ExcessLetterModal({ letter, onClose }: { letter: ExcessLetter; o
             {letter.items.map((i) => (
               <tr key={i.label}>
                 <th>{i.label}</th>
-                <td style={{ textAlign: 'right' }}>{money(i.amount)}</td>
+                <td className="num">{money(i.amount)}</td>
               </tr>
             ))}
             {extras
@@ -191,7 +191,7 @@ export function ExcessLetterModal({ letter, onClose }: { letter: ExcessLetter; o
               .map(([label, v]) => (
                 <tr key={label}>
                   <th>{label}</th>
-                  <td style={{ textAlign: 'right' }}>{money(v)}</td>
+                  <td className="num">{money(v)}</td>
                 </tr>
               ))}
             {showsTotalExcess(letter) && (
@@ -199,7 +199,7 @@ export function ExcessLetterModal({ letter, onClose }: { letter: ExcessLetter; o
                 <th>
                   <strong>Total Excess</strong>
                 </th>
-                <td style={{ textAlign: 'right' }}>
+                <td className="num">
                   <strong>{money(letter.totalExcess)}</strong>
                 </td>
               </tr>
