@@ -26,6 +26,7 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/membership/adjustment', label: 'Adjustment', access: Access.MembershipAdjustment },
       { to: '/membership/enquiry', label: 'Enquiry', access: Access.MembershipEnquiry },
       { to: '/membership/reinstatement', label: 'Member Reinstatement', access: Access.MembershipAdjustment },
+      { to: '/membership/mco-pending', label: 'MCO Pending', access: Access.MembershipAdjustment },
       { to: '/membership/tracking', label: 'Tracking', access: Access.MembershipTracking },
       { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
     ],
