@@ -9,6 +9,7 @@ import { AxiosError } from 'axios'
 import { api, errorMessage } from '../../api/client'
 import { DataTable } from '../../components/DataTable'
 import type { Column } from '../../components/DataTable'
+import { DateInput } from '../../components/DateInput'
 import { ask, notify, say } from '../../lib/notifyStore'
 import { formatDate, formatMoney, formatValue } from '../../lib/format'
 import type { Row } from '../../lib/format'
@@ -482,7 +483,7 @@ export function CaseAdjustmentPage() {
                 extras={
                   <>
                     {field('Link Case No', <input value={v('TxtLinkCASNo')} maxLength={15} onChange={(e) => set('TxtLinkCASNo')(e.target.value)} />)}
-                    {field('Doc Received', <input value={v('txtDateRECDoc')} placeholder="dd/mm/yyyy" maxLength={10} inputMode="numeric" onChange={(e) => set('txtDateRECDoc')(e.target.value)} />)}
+                    {field('Doc Received', <DateInput value={v('txtDateRECDoc')} onChange={set('txtDateRECDoc')} />)}
                   </>
                 }
               />

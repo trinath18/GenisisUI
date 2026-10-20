@@ -12,18 +12,33 @@ export function PolicyWordingTab({ membershipNo }: { membershipNo: string }) {
   })
 
   if (list.isLoading) return <p className="muted">Loading…</p>
-  if (list.isError) return <p className="error" role="alert">{errorMessage(list.error)}</p>
+  if (list.isError)
+    return (
+      <p className="error" role="alert">
+        {errorMessage(list.error)}
+      </p>
+    )
   const data = list.data!
   if (!data.wording) return <p className="muted">This plan has no policy wording.</p>
   if (data.files.length === 0)
-    return <p className="muted">No policy wording files found for "{data.wording}"{data.folderFound ? '' : ' (folder not found on the server)'}.</p>
+    return (
+      <p className="muted">
+        No policy wording files found for "{data.wording}"{data.folderFound ? '' : ' (folder not found on the server)'}.
+      </p>
+    )
   return (
     <>
-      {open.isError && <p className="error" role="alert">{errorMessage(open.error)}</p>}
+      {open.isError && (
+        <p className="error" role="alert">
+          {errorMessage(open.error)}
+        </p>
+      )}
       <ul>
         {data.files.map((fileName) => (
           <li key={fileName}>
-            <button type="button" className="link" disabled={open.isPending} onClick={() => open.mutate(fileName)}>{fileName}</button>
+            <button type="button" className="link" disabled={open.isPending} onClick={() => open.mutate(fileName)}>
+              {fileName}
+            </button>
           </li>
         ))}
       </ul>

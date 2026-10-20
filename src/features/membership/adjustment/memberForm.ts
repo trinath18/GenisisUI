@@ -24,10 +24,30 @@ export function toRequest(row: FormRow): FormRow {
 
 /** A new supplementary, starting from the principal's plan and cover period. */
 export const newSupplementary = (principal: FormRow): FormRow => ({
-  action: CoveredAction.Add, coverId: null, salutation: MALE_SALUTATION, name: '', icBcPp: '', dateOfBirth: '', sex: 'M', relationship: 'S',
-  planCode: text(principal.planCode), effectiveDate: text(principal.payorEffectiveDate), expiryDate: text(principal.payorExpiryDate),
-  allergic: '', exclusion: '', underwritingExcess: '', claimNonPayFrom: '', claimNonPayTo: '', payorPremiumNet: '', payorMcoGross: '',
-  payorMcoNet: '', renewalDisc: '', policyDisc: '', familyDiscountAmount: '', renewalDiscountAmount: '', loadingPremium: '',
+  action: CoveredAction.Add,
+  coverId: null,
+  salutation: MALE_SALUTATION,
+  name: '',
+  icBcPp: '',
+  dateOfBirth: '',
+  sex: 'M',
+  relationship: 'S',
+  planCode: text(principal.planCode),
+  effectiveDate: text(principal.payorEffectiveDate),
+  expiryDate: text(principal.payorExpiryDate),
+  allergic: '',
+  exclusion: '',
+  underwritingExcess: '',
+  claimNonPayFrom: '',
+  claimNonPayTo: '',
+  payorPremiumNet: '',
+  payorMcoGross: '',
+  payorMcoNet: '',
+  renewalDisc: '',
+  policyDisc: '',
+  familyDiscountAmount: '',
+  renewalDiscountAmount: '',
+  loadingPremium: '',
 })
 
 /** The desktop's required-field checks of the supplementary Add / Update buttons; returns the message or null. */

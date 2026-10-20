@@ -5,7 +5,11 @@ const BASE_URL = '/api/membership/mco-pending'
 
 /** Only the filters that were filled in. */
 function searchParams(search: McoPendingSearch): Record<string, string> {
-  return Object.fromEntries(Object.entries(search).filter(([, value]) => value.trim() !== '').map(([key, value]) => [key, value.trim()]))
+  return Object.fromEntries(
+    Object.entries(search)
+      .filter(([, value]) => value.trim() !== '')
+      .map(([key, value]) => [key, value.trim()]),
+  )
 }
 
 export const mcoPendingApi = {

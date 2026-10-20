@@ -22,8 +22,7 @@ export function BenefitCategoryTab() {
   const search = useQuery({
     queryKey: ['benefit-categories', filter],
     enabled: filter !== null,
-    queryFn: async () =>
-      benefitsApi.searchCategories<CategoryRow>({ code: filter!.code || undefined, description: filter!.description || undefined }),
+    queryFn: async () => benefitsApi.searchCategories<CategoryRow>({ code: filter!.code || undefined, description: filter!.description || undefined }),
   })
   const refresh = () => {
     queryClient.invalidateQueries({ queryKey: ['benefit-categories'] })
@@ -92,12 +91,29 @@ export function BenefitCategoryTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>{editing === null ? 'Save' : 'Update'}</button>
-          <button type="button" disabled={busy || editing !== null}
-            onClick={() => { resetFeedback(); setFilter((f) => ({ code: code.trim(), description: description.trim(), n: (f?.n ?? 0) + 1 })) }}>
+          <button type="submit" disabled={busy}>
+            {editing === null ? 'Save' : 'Update'}
+          </button>
+          <button
+            type="button"
+            disabled={busy || editing !== null}
+            onClick={() => {
+              resetFeedback()
+              setFilter((f) => ({ code: code.trim(), description: description.trim(), n: (f?.n ?? 0) + 1 }))
+            }}
+          >
             Search
           </button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear() }}>Clear</button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => {
+              resetFeedback()
+              clear()
+            }}
+          >
+            Clear
+          </button>
         </div>
       </form>
 
@@ -123,9 +139,15 @@ export function BenefitCategoryTab() {
                       <td className="center">{r.code}</td>
                       <td className="wrap">{r.description}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>Edit</button>
-                        <button type="button" className="link" disabled={busy}
-                          onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r.code))}>
+                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="link"
+                          disabled={busy}
+                          onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r.code))}
+                        >
                           Delete
                         </button>
                       </td>
@@ -226,14 +248,20 @@ export function BenefitSubCategoryTab() {
                 <option value={form.categoryCode}>{form.categoryCode} (not found)</option>
               )}
               {lookups.data?.categories.map((c) => (
-                <option key={c.code} value={c.code}>{optionLabel(c)}</option>
+                <option key={c.code} value={c.code}>
+                  {optionLabel(c)}
+                </option>
               ))}
             </select>
           </label>
           <label className="form-field">
             <span>Sub Cat Code *</span>
-            <input value={form.code} maxLength={10} disabled={editing !== null || busy}
-              onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })} />
+            <input
+              value={form.code}
+              maxLength={10}
+              disabled={editing !== null || busy}
+              onChange={(e) => setForm({ ...form, code: e.target.value.toUpperCase() })}
+            />
           </label>
           <label className="form-field wide">
             <span>Description *</span>
@@ -245,12 +273,29 @@ export function BenefitSubCategoryTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>{editing === null ? 'Save' : 'Update'}</button>
-          <button type="button" disabled={busy || editing !== null}
-            onClick={() => { resetFeedback(); setFilter((f) => ({ form, n: (f?.n ?? 0) + 1 })) }}>
+          <button type="submit" disabled={busy}>
+            {editing === null ? 'Save' : 'Update'}
+          </button>
+          <button
+            type="button"
+            disabled={busy || editing !== null}
+            onClick={() => {
+              resetFeedback()
+              setFilter((f) => ({ form, n: (f?.n ?? 0) + 1 }))
+            }}
+          >
             Search
           </button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear() }}>Clear</button>
+          <button
+            type="button"
+            disabled={busy}
+            onClick={() => {
+              resetFeedback()
+              clear()
+            }}
+          >
+            Clear
+          </button>
         </div>
       </form>
 
@@ -280,9 +325,15 @@ export function BenefitSubCategoryTab() {
                       <td className="center">{r.code}</td>
                       <td className="wrap">{r.name}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>Edit</button>
-                        <button type="button" className="link" disabled={busy}
-                          onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r.code))}>
+                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>
+                          Edit
+                        </button>
+                        <button
+                          type="button"
+                          className="link"
+                          disabled={busy}
+                          onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r.code))}
+                        >
                           Delete
                         </button>
                       </td>

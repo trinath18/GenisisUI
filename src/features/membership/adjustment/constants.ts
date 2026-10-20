@@ -50,32 +50,104 @@ export const SEARCH_FIELDS: Option[] = [
 const options = (values: [string, string][]): Option[] => values.map(([code, name]) => ({ code, name }))
 
 export const OPTIONS = {
-  takeOver: options([['N', 'None'], ['Y', 'Take Over'], ['C', 'Conversion']]),
-  renewal: options([['R', 'Renew'], ['N', 'New'], ['T', 'Timely'], ['P', 'Partial']]),
-  dataStatus: options([['A', 'Active'], ['D', 'Deleted']]),
-  installmentMode: options([['A', 'Annually'], ['Q', 'Quarterly'], ['S', 'Semi Annual'], ['M', 'Monthly']]),
-  sex: options([['M', 'Male'], ['F', 'Female']]),
-  maritalStatus: options([['S', 'Single'], ['M', 'Married']]),
-  adultChild: options([['A', 'Adult'], ['C', 'Child']]),
-  policyCondition: options([['X', 'Black Listed'], ['O', 'Red Flagged']]),
-  noYes: options([['N', 'No'], ['Y', 'Yes']]),
-  yesNo: options([['Y', 'Yes'], ['N', 'No']]),
+  takeOver: options([
+    ['N', 'None'],
+    ['Y', 'Take Over'],
+    ['C', 'Conversion'],
+  ]),
+  renewal: options([
+    ['R', 'Renew'],
+    ['N', 'New'],
+    ['T', 'Timely'],
+    ['P', 'Partial'],
+  ]),
+  dataStatus: options([
+    ['A', 'Active'],
+    ['D', 'Deleted'],
+  ]),
+  installmentMode: options([
+    ['A', 'Annually'],
+    ['Q', 'Quarterly'],
+    ['S', 'Semi Annual'],
+    ['M', 'Monthly'],
+  ]),
+  sex: options([
+    ['M', 'Male'],
+    ['F', 'Female'],
+  ]),
+  maritalStatus: options([
+    ['S', 'Single'],
+    ['M', 'Married'],
+  ]),
+  adultChild: options([
+    ['A', 'Adult'],
+    ['C', 'Child'],
+  ]),
+  policyCondition: options([
+    ['X', 'Black Listed'],
+    ['O', 'Red Flagged'],
+  ]),
+  noYes: options([
+    ['N', 'No'],
+    ['Y', 'Yes'],
+  ]),
+  yesNo: options([
+    ['Y', 'Yes'],
+    ['N', 'No'],
+  ]),
   bloodTypes: ['A', 'B', 'AB', 'O'].map((b) => ({ code: b, name: b })),
   salutations: SALUTATIONS.map((s) => ({ code: s, name: s })),
 }
 
 /** Member fields holding dates (ISO from the API, yyyy-mm-dd in date inputs). */
 export const DATE_FIELDS = new Set([
-  'dateOfBirth', 'payorEffectiveDate', 'payorExpiryDate', 'bordxDate', 'valueDate', 'finalExpiryDate', 'nextDueDate', 'cardSentDate',
-  'cancelDate', 'dateJoined', 'claimNonPayFrom', 'claimNonPayTo', 'newPolicyEffectiveDate', 'invoiceDate', 'creditNoteDate',
-  'generalWaitingEnd', 'preExistingWaitingEnd', 'specificIllnessWaitingEnd', 'topupJoinDate', 'effectiveDate', 'expiryDate',
+  'dateOfBirth',
+  'payorEffectiveDate',
+  'payorExpiryDate',
+  'bordxDate',
+  'valueDate',
+  'finalExpiryDate',
+  'nextDueDate',
+  'cardSentDate',
+  'cancelDate',
+  'dateJoined',
+  'claimNonPayFrom',
+  'claimNonPayTo',
+  'newPolicyEffectiveDate',
+  'invoiceDate',
+  'creditNoteDate',
+  'generalWaitingEnd',
+  'preExistingWaitingEnd',
+  'specificIllnessWaitingEnd',
+  'topupJoinDate',
+  'effectiveDate',
+  'expiryDate',
 ])
 
 /** Member fields sent as numbers. */
 export const NUMBER_FIELDS = new Set([
-  'mcoFee', 'basicMco', 'basicPremium', 'premium', 'policyDisc', 'renewalDisc', 'underwritingExcess', 'rbAmount', 'generalWaitingDays',
-  'preExistingWaitingDays', 'specificIllnessWaitingDays', 'payorPremiumGross', 'payorPremiumNet', 'payorMcoGross', 'payorMcoNet',
-  'familyDiscountAmount', 'renewalDiscountAmount', 'loadingPremium', 'availableLimit', 'annualLimit', 'mco', 'batchNo',
+  'mcoFee',
+  'basicMco',
+  'basicPremium',
+  'premium',
+  'policyDisc',
+  'renewalDisc',
+  'underwritingExcess',
+  'rbAmount',
+  'generalWaitingDays',
+  'preExistingWaitingDays',
+  'specificIllnessWaitingDays',
+  'payorPremiumGross',
+  'payorPremiumNet',
+  'payorMcoGross',
+  'payorMcoNet',
+  'familyDiscountAmount',
+  'renewalDiscountAmount',
+  'loadingPremium',
+  'availableLimit',
+  'annualLimit',
+  'mco',
+  'batchNo',
 ])
 
 /** Messages the desktop shows before saving. */

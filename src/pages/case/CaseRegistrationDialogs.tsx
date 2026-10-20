@@ -154,7 +154,7 @@ export function CodeSearchDialog({
   return (
     <Modal title={icd ? `Search ICD — ${groupLabel[group ?? 'prelim']}` : 'Search Repudiation'} onClose={onClose} wide>
       <div className="search">
-        <input data-autofocus placeholder={icd ? 'ICD code' : 'Repudiation code'} aria-label="Code" value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={enterRuns(search)} style={{ width: 140 }} />
+        <input data-autofocus placeholder={icd ? 'ICD code' : 'Repudiation code'} aria-label="Code" value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={enterRuns(search)} className="code-input" />
         <input placeholder="Description" aria-label="Description" value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={enterRuns(search)} />
         <select aria-label="Match" value={andOr} onChange={(e) => setAndOr(e.target.value)}>
           <option>AND</option>
@@ -214,7 +214,7 @@ export function ProcedureSearchDialog({ inv, onPick, onClose }: { inv?: boolean;
   return (
     <Modal title={inv ? 'Search Investigation' : 'Search Procedure'} onClose={onClose} wide>
       <div className="search">
-        <input data-autofocus placeholder={inv ? 'Inv code' : 'MMA code'} maxLength={10} aria-label="Code" value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={enterRuns(search)} style={{ width: 140 }} />
+        <input data-autofocus placeholder={inv ? 'Inv code' : 'MMA code'} maxLength={10} aria-label="Code" value={code} onChange={(e) => setCode(e.target.value)} onKeyDown={enterRuns(search)} className="code-input" />
         <input placeholder={inv ? 'Inv description' : 'MMA description'} aria-label="Description" value={desc} onChange={(e) => setDesc(e.target.value)} onKeyDown={enterRuns(search)} />
       </div>
       <DataTable columns={columns} rows={rows} onActivate={(r) => onPick(String(r.OPCSCode))} empty="Search for a code or description." />

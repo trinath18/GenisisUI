@@ -20,6 +20,20 @@ export const Access = {
   CaseEnquiry: 7,
   CaseAdjustment: 12,
   CaseTracking: 15,
+  // Case > Inpatient Case Listing (mnuAppCase_Click) checks position 7.
+  CaseListing: 7,
+  // Case > Claim ASCII (mnuClaimAscii_Click) checks position 18; Case ASCII has no click handler and is gated the same way.
+  ClaimAscii: 18,
+  CaseAscii: 18,
+  // Menu items without a click handler in mdiMain.frm (their forms are never opened by the desktop app) are gated like
+  // the closest sibling screen: Case Transfer / Pay & Claim / Audit Review / Non-Disclosure like Adjustment,
+  // Panel Hospitals like Enquiry, MMA/CPT like the other fee-schedule maintenance screens.
+  CaseTransfer: 12,
+  CasePayClaim: 12,
+  CaseAuditReview: 12,
+  CaseNonDisclosure: 12,
+  PanelHospitals: 7,
+  MmaCpt: 1,
 } as const
 
 export class MustChangePasswordError extends Error {}

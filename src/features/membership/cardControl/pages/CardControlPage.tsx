@@ -10,12 +10,37 @@ import { CardControlFilters } from '../components/CardControlFilters'
 import { DOC_REFERENCE_MAX_LENGTH, EXPORT_FILE_NAME, MESSAGES, SEARCH_LIMIT, SENDING_MODES, rowKey } from '../constants'
 import type { CardControlRow, CardControlSearch } from '../types'
 
-const HEADINGS = ['MBMNumber', 'Cover ID', 'Member Name', 'Bordx Date', 'Batch No', 'Sending Mode', 'Sent Date', 'Policy No', 'Doc Reference',
-  'Grp Company', 'Cost Center', 'Branch', 'Department'] as const
+const HEADINGS = [
+  'MBMNumber',
+  'Cover ID',
+  'Member Name',
+  'Bordx Date',
+  'Batch No',
+  'Sending Mode',
+  'Sent Date',
+  'Policy No',
+  'Doc Reference',
+  'Grp Company',
+  'Cost Center',
+  'Branch',
+  'Department',
+] as const
 
-const cells = (r: CardControlRow): string[] => [r.membershipNo, r.coverId, r.name ?? '', formatDate(r.bordxDate), r.batchNo?.toString() ?? '',
-  r.sendingMode ?? '', formatDate(r.sentDate), r.policyNo ?? '', r.docReference ?? '', r.groupCompany ?? '', r.costCenter ?? '', r.branch ?? '',
-  r.department ?? '']
+const cells = (r: CardControlRow): string[] => [
+  r.membershipNo,
+  r.coverId,
+  r.name ?? '',
+  formatDate(r.bordxDate),
+  r.batchNo?.toString() ?? '',
+  r.sendingMode ?? '',
+  formatDate(r.sentDate),
+  r.policyNo ?? '',
+  r.docReference ?? '',
+  r.groupCompany ?? '',
+  r.costCenter ?? '',
+  r.branch ?? '',
+  r.department ?? '',
+]
 
 /** Membership &gt; Card Sending Mode (legacy frmMembershipCardControl). */
 export function CardControlPage() {
@@ -30,10 +55,13 @@ export function CardControlPage() {
   const rows = list.data?.rows ?? []
 
   const update = useMutation({
-    mutationFn: () => cardControlApi.update({
-      sendingMode: mode, sentDate: sentDate === '' ? null : sentDate, docReference,
-      items: rows.filter((r) => checked.has(rowKey(r))).map((r) => ({ membershipNo: r.membershipNo, coverId: r.coverId })),
-    }),
+    mutationFn: () =>
+      cardControlApi.update({
+        sendingMode: mode,
+        sentDate: sentDate === '' ? null : sentDate,
+        docReference,
+        items: rows.filter((r) => checked.has(rowKey(r))).map((r) => ({ membershipNo: r.membershipNo, coverId: r.coverId })),
+      }),
     onSuccess: (result) => {
       notify(result.message, 'success')
       void queryClient.invalidateQueries({ queryKey: cardControlKeys.search(search) })
@@ -86,10 +114,16 @@ export function CardControlPage() {
           <FormField label="Send Mode *">
             <select value={mode} onChange={(e) => setMode(e.target.value)}>
               <option value="">(choose)</option>
-              {SENDING_MODES.map((m) => <option key={m} value={m}>{m}</option>)}
+              {SENDING_MODES.map((m) => (
+                <option key={m} value={m}>
+                  {m}
+                </option>
+              ))}
             </select>
           </FormField>
-          <FormField label="Sent Date *"><input type="date" value={sentDate} onChange={(e) => setSentDate(e.target.value)} /></FormField>
+          <FormField label="Sent Date *">
+            <input type="date" value={sentDate} onChange={(e) => setSentDate(e.target.value)} />
+          </FormField>
           <FormField label="Doc Reference">
             <input value={docReference} maxLength={DOC_REFERENCE_MAX_LENGTH} onChange={(e) => setDocReference(e.target.value)} />
           </FormField>
@@ -97,13 +131,23 @@ export function CardControlPage() {
             <button type="button" disabled={selected === 0 || update.isPending} onClick={() => void confirmUpdate()}>
               {update.isPending ? 'Updating…' : `Update (${selected})`}
             </button>
-            <button type="button" disabled={rows.length === 0} onClick={print}>Print</button>
+            <button type="button" disabled={rows.length === 0} onClick={print}>
+              Print
+            </button>
           </div>
         </fieldset>
       </div>
-      {update.isError && <p className="error" role="alert">{errorMessage(update.error)}</p>}
+      {update.isError && (
+        <p className="error" role="alert">
+          {errorMessage(update.error)}
+        </p>
+      )}
       {list.isLoading && <p className="muted">Searching…</p>}
-      {list.isError && <p className="error" role="alert">{errorMessage(list.error)}</p>}
+      {list.isError && (
+        <p className="error" role="alert">
+          {errorMessage(list.error)}
+        </p>
+      )}
       {list.data && rows.length === 0 && <p className="muted">{MESSAGES.notFound}</p>}
       {list.data?.truncated && <p className="warning">Only the first {SEARCH_LIMIT} principals are listed. Narrow the search to see the rest.</p>}
       {list.data && rows.length > 0 && (
@@ -117,10 +161,16 @@ export function CardControlPage() {
               <thead>
                 <tr>
                   <th>
-                    <input type="checkbox" aria-label="Check All" checked={allChecked}
-                      onChange={() => setChecked(allChecked ? new Set() : new Set(rows.map(rowKey)))} />
+                    <input
+                      type="checkbox"
+                      aria-label="Check All"
+                      checked={allChecked}
+                      onChange={() => setChecked(allChecked ? new Set() : new Set(rows.map(rowKey)))}
+                    />
                   </th>
-                  {HEADINGS.map((h) => <th key={h}>{h}</th>)}
+                  {HEADINGS.map((h) => (
+                    <th key={h}>{h}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
@@ -128,8 +178,17 @@ export function CardControlPage() {
                   const key = rowKey(r)
                   return (
                     <tr key={key}>
-                      <td><input type="checkbox" aria-label={`Select ${r.membershipNo} cover ${r.coverId}`} checked={checked.has(key)} onChange={() => toggle(key)} /></td>
-                      {cells(r).map((value, i) => <td key={HEADINGS[i]}>{value}</td>)}
+                      <td>
+                        <input
+                          type="checkbox"
+                          aria-label={`Select ${r.membershipNo} cover ${r.coverId}`}
+                          checked={checked.has(key)}
+                          onChange={() => toggle(key)}
+                        />
+                      </td>
+                      {cells(r).map((value, i) => (
+                        <td key={HEADINGS[i]}>{value}</td>
+                      ))}
                     </tr>
                   )
                 })}

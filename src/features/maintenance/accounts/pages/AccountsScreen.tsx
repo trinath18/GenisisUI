@@ -29,8 +29,7 @@ export function AccountsScreen() {
   const [notice, setNotice] = useState<string | null>(null)
 
   const move = useMutation({
-    mutationFn: async ({ code, direction }: { code: string | null; direction: Direction }) =>
-      accountsApi.moveSchedule<ScheduleRow>(code, direction),
+    mutationFn: async ({ code, direction }: { code: string | null; direction: Direction }) => accountsApi.moveSchedule<ScheduleRow>(code, direction),
     onSuccess: (data) => {
       setNotice(data.message)
       if (data.row) setRow(data.row)
@@ -63,13 +62,25 @@ export function AccountsScreen() {
             <strong>{row?.code ?? 'No Code Available !'}</strong>
           </div>
           <div className="actions">
-            <button type="button" disabled={move.isPending} onClick={() => go('prev')}>Prev</button>
-            <button type="button" disabled={move.isPending} onClick={() => go('next')}>Next</button>
+            <button type="button" disabled={move.isPending} onClick={() => go('prev')}>
+              Prev
+            </button>
+            <button type="button" disabled={move.isPending} onClick={() => go('next')}>
+              Next
+            </button>
           </div>
           <form className="actions" onSubmit={onFind}>
-            <input aria-label="Go to MMA code" placeholder="Go to code" value={find} maxLength={10} disabled={move.isPending}
-              onChange={(e) => setFind(e.target.value.toUpperCase())} />
-            <button type="submit" disabled={move.isPending || !find.trim()}>Go</button>
+            <input
+              aria-label="Go to MMA code"
+              placeholder="Go to code"
+              value={find}
+              maxLength={10}
+              disabled={move.isPending}
+              onChange={(e) => setFind(e.target.value.toUpperCase())}
+            />
+            <button type="submit" disabled={move.isPending || !find.trim()}>
+              Go
+            </button>
           </form>
         </fieldset>
         {move.isError && <p className="error">{errorMessage(move.error)}</p>}
