@@ -26,15 +26,29 @@ export function PlutoAsciiPage() {
         <fieldset>
           <legend>File</legend>
           <FormField label="Health Type *">
-            <select value={healthCode} onChange={(e) => { setHealthCode(e.target.value); setPayorCode('') }}>
+            <select
+              value={healthCode}
+              onChange={(e) => {
+                setHealthCode(e.target.value)
+                setPayorCode('')
+              }}
+            >
               <option value="">(choose)</option>
-              {HEALTH_CODES.map((h) => <option key={h.code} value={h.code}>{h.name}</option>)}
+              {HEALTH_CODES.map((h) => (
+                <option key={h.code} value={h.code}>
+                  {h.name}
+                </option>
+              ))}
             </select>
           </FormField>
           <FormField label="Payor *">
             <select value={payorCode} disabled={!payors.data} onChange={(e) => setPayorCode(e.target.value)}>
               <option value="">{payors.isLoading ? 'Loading…' : '(choose)'}</option>
-              {payors.data?.map((p) => <option key={p.code} value={p.code}>{p.code} - {p.name ?? ''}</option>)}
+              {payors.data?.map((p) => (
+                <option key={p.code} value={p.code}>
+                  {p.code} - {p.name ?? ''}
+                </option>
+              ))}
             </select>
           </FormField>
           <FormField label="Bordx Date *">
@@ -47,8 +61,16 @@ export function PlutoAsciiPage() {
           </div>
         </fieldset>
       </div>
-      {payors.isError && <p className="error" role="alert">{errorMessage(payors.error)}</p>}
-      {generate.isError && <p className="error" role="alert">{errorMessage(generate.error)}</p>}
+      {payors.isError && (
+        <p className="error" role="alert">
+          {errorMessage(payors.error)}
+        </p>
+      )}
+      {generate.isError && (
+        <p className="error" role="alert">
+          {errorMessage(generate.error)}
+        </p>
+      )}
       {generate.data && (
         <p className="success" role="status">
           {ASCII_GENERATED_MESSAGE} {generate.data.fileName}: Total Principal {generate.data.principals ?? 0}, Total Supplementary{' '}

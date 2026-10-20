@@ -35,6 +35,7 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/membership/pluto-ascii', label: 'Generate Membership ASCII (Pluto)', access: Access.MembershipUploadBordx },
       { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
       { to: '/membership/temp-registration', label: 'Temp MBM Reg', access: Access.MembershipRegistration },
+      { to: '/membership/temp-adjustment', label: 'Temp MBM Adj', access: Access.MembershipAdjustment },
     ],
   },
   {
@@ -127,24 +128,6 @@ export function AppLayout() {
         </button>
       </header>
       <nav className="rail" aria-label="Modules" onMouseEnter={() => setOpen(true)} onMouseLeave={navLeave}>
-      <nav className="sidebar">
-        <h4>Membership</h4>
-        {item('/membership/registration', 'Registration', Access.MembershipRegistration)}
-        {item('/membership/adjustment', 'Adjustment', Access.MembershipAdjustment)}
-        {item('/membership/enquiry', 'Enquiry', Access.MembershipEnquiry)}
-        {item('/membership/tracking', 'Tracking', Access.MembershipTracking)}
-        {item('/membership/upload-bordx', 'Upload Bordx', Access.MembershipUploadBordx)}
-        <h4>Maintenance</h4>
-        {item('/maintenance/plan', 'Plan Maintenance', Access.PlanMaintenance)}
-        {item('/maintenance/benefits', 'Benefits Maintenance', Access.BenefitsMaintenance)}
-        {item('/maintenance/entity', 'Entity Maintenance', Access.EntityMaintenance)}
-        {item('/maintenance/accounts', 'Accounts', Access.AccountsMaintenance)}
-        {notMigrated.map((m) => (
-          <h4 key={m} className="disabled" title="Not migrated yet">
-            {m}
-          </h4>
-        ))}
-      <nav className="rail" aria-label="Modules">
         {rail.map((r) =>
           r.to && (r.access === undefined || hasAccess(r.access)) ? (
             <NavLink

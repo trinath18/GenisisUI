@@ -2,7 +2,14 @@ import { useState } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { adjustmentApi, adjustmentKeys } from '../api/adjustmentApi'
 import {
-  EndorsementType, FAMILY_INSURED_TYPES, MemberStatus, Messages, NOTES_MAXIMUM_LENGTH, TABS, editsPrincipal, endsMembership,
+  EndorsementType,
+  FAMILY_INSURED_TYPES,
+  MemberStatus,
+  Messages,
+  NOTES_MAXIMUM_LENGTH,
+  TABS,
+  editsPrincipal,
+  endsMembership,
   worksOnSupplementaries,
 } from '../constants'
 import type { AdjustmentTab } from '../constants'
@@ -59,16 +66,26 @@ export function AdjustmentEditor({ membershipNo, original, lookups, onReload, sa
     queryFn: () => adjustmentApi.getLastBatch(bordxDate, text(member.payorCode) || undefined),
   })
   const fees = useQuery({ queryKey: adjustmentKeys.fees(membershipNo), enabled: tab === 'Fees', queryFn: () => adjustmentApi.getFees(membershipNo) })
-  const history = useQuery({ queryKey: adjustmentKeys.history(membershipNo), enabled: tab === 'Adjustment History', queryFn: () => adjustmentApi.getHistory(membershipNo) })
+  const history = useQuery({
+    queryKey: adjustmentKeys.history(membershipNo),
+    enabled: tab === 'Adjustment History',
+    queryFn: () => adjustmentApi.getHistory(membershipNo),
+  })
   const memberHistory = useQuery({
-    queryKey: adjustmentKeys.memberHistory(membershipNo), enabled: tab === 'MBM History', queryFn: () => adjustmentApi.getMemberHistory(membershipNo),
+    queryKey: adjustmentKeys.memberHistory(membershipNo),
+    enabled: tab === 'MBM History',
+    queryFn: () => adjustmentApi.getMemberHistory(membershipNo),
   })
 
   const recalculate = useMutation({
-    mutationFn: () => adjustmentApi.recalculate(membershipNo, {
-      planCode: text(member.planCode) || null, payorEffectiveDate: text(member.payorEffectiveDate) || null,
-      payorExpiryDate: text(member.payorExpiryDate) || null, dateOfBirth: text(member.dateOfBirth) || null, sex: text(member.sex) || null,
-    }),
+    mutationFn: () =>
+      adjustmentApi.recalculate(membershipNo, {
+        planCode: text(member.planCode) || null,
+        payorEffectiveDate: text(member.payorEffectiveDate) || null,
+        payorExpiryDate: text(member.payorExpiryDate) || null,
+        dateOfBirth: text(member.dateOfBirth) || null,
+        sex: text(member.sex) || null,
+      }),
     onSuccess: setRecalculation,
   })
   const policyCheck = useMutation({
@@ -76,11 +93,16 @@ export function AdjustmentEditor({ membershipNo, original, lookups, onReload, sa
     onSuccess: (result) => setNotice(result.duplicateOf ? `Duplicate Policy No In The Membership. Membership No: ${result.duplicateOf}` : null),
   })
   const save = useMutation({
-    mutationFn: () => adjustmentApi.save(membershipNo, {
-      endorsementType: type, endtBordxDate: bordxDate || null, endtEffectiveDate: effectiveDate || null, member: toRequest(member),
-      covered: covered.map(toRequest), applyAnnualLimit: applyAnnualLimit && recalculation?.annualLimit != null,
-      annualLimit: recalculation?.annualLimit ?? null,
-    }),
+    mutationFn: () =>
+      adjustmentApi.save(membershipNo, {
+        endorsementType: type,
+        endtBordxDate: bordxDate || null,
+        endtEffectiveDate: effectiveDate || null,
+        member: toRequest(member),
+        covered: covered.map(toRequest),
+        applyAnnualLimit: applyAnnualLimit && recalculation?.annualLimit != null,
+        annualLimit: recalculation?.annualLimit ?? null,
+      }),
     onSuccess: async (result) => {
       setSavedMessage([result.message, ...result.warnings].join(' — '))
       setBordxDate('')
@@ -142,7 +164,10 @@ export function AdjustmentEditor({ membershipNo, original, lookups, onReload, sa
   async function refreshSupplementaryExpiry(row: FormRow) {
     if (!row.dateOfBirth || !row.planCode || !row.effectiveDate || !row.expiryDate) return
     const result = await adjustmentApi.getSupplementaryExpiry({
-      dateOfBirth: text(row.dateOfBirth), planCode: text(row.planCode), effectiveDate: text(row.effectiveDate), expiryDate: text(row.expiryDate),
+      dateOfBirth: text(row.dateOfBirth),
+      planCode: text(row.planCode),
+      effectiveDate: text(row.effectiveDate),
+      expiryDate: text(row.expiryDate),
     })
     setPerson((current) => (current ? { ...current, expiryDate: result.expiryDate?.slice(0, 10) ?? current.expiryDate } : current))
     setNotice(result.overAge ? `Supplementary age is above ${result.ageLimit}` : null)
@@ -157,17 +182,37 @@ export function AdjustmentEditor({ membershipNo, original, lookups, onReload, sa
   return (
     <>
       <EndorsementPanel
-        original={original} endorsementTypes={lookups.endorsementTypes} editing={editing} busy={busy} endorsementType={type}
-        endorsementBordxDate={bordxDate} endorsementEffectiveDate={effectiveDate} lastBatch={lastBatch.data?.lastBatch} notice={notice}
-        saveError={save.isError ? save.error : null} savedMessage={savedMessage} onStartEdit={startEdit} onTypeChange={chooseType}
-        onBordxDateChange={setBordxDate} onEffectiveDateChange={setEffectiveDate} onSave={confirmSave} onClear={onReload}
+        original={original}
+        endorsementTypes={lookups.endorsementTypes}
+        editing={editing}
+        busy={busy}
+        endorsementType={type}
+        endorsementBordxDate={bordxDate}
+        endorsementEffectiveDate={effectiveDate}
+        lastBatch={lastBatch.data?.lastBatch}
+        notice={notice}
+        saveError={save.isError ? save.error : null}
+        savedMessage={savedMessage}
+        onStartEdit={startEdit}
+        onTypeChange={chooseType}
+        onBordxDateChange={setBordxDate}
+        onEffectiveDateChange={setEffectiveDate}
+        onSave={confirmSave}
+        onClear={onReload}
       />
 
       <div className="tabs" role="tablist">
         {TABS.map((t) => (
-          <button key={t} type="button" role="tab" aria-selected={t === tab} className={t === tab ? 'active' : undefined}
-            disabled={t === 'Supplementary' && !familyPlan} title={t === 'Supplementary' && !familyPlan ? Messages.noSupplementary : undefined}
-            onClick={() => setTab(t)}>
+          <button
+            key={t}
+            type="button"
+            role="tab"
+            aria-selected={t === tab}
+            className={t === tab ? 'active' : undefined}
+            disabled={t === 'Supplementary' && !familyPlan}
+            title={t === 'Supplementary' && !familyPlan ? Messages.noSupplementary : undefined}
+            onClick={() => setTab(t)}
+          >
             {t}
           </button>
         ))}
@@ -175,26 +220,52 @@ export function AdjustmentEditor({ membershipNo, original, lookups, onReload, sa
       <div className="tab-body" role="tabpanel">
         {tab === 'Principal Details' && (
           <PrincipalDetailsTab
-            form={form} original={original} lookups={lookups} plans={plans.data ?? []}
-            onPlanChange={(planCode) => { form.set('planCode', planCode); setRecalculation(null) }}
+            form={form}
+            original={original}
+            lookups={lookups}
+            plans={plans.data ?? []}
+            onPlanChange={(planCode) => {
+              form.set('planCode', planCode)
+              setRecalculation(null)
+            }}
             onPolicyBlur={() => editPrincipal && member.policyNo && policyCheck.mutate()}
-            recalculation={recalculation} recalculating={recalculate.isPending} recalculateError={recalculate.isError ? recalculate.error : null}
+            recalculation={recalculation}
+            recalculating={recalculate.isPending}
+            recalculateError={recalculate.isError ? recalculate.error : null}
             onRecalculate={() => recalculate.mutate()}
-            onUsePremium={() => recalculation && setMember((m) => ({ ...m, premium: recalculation.premium, basicPremium: recalculation.basicPremium, ageCode: recalculation.ageCode }))}
+            onUsePremium={() =>
+              recalculation &&
+              setMember((m) => ({ ...m, premium: recalculation.premium, basicPremium: recalculation.basicPremium, ageCode: recalculation.ageCode }))
+            }
             onUseMco={() => recalculation && setMember((m) => ({ ...m, mcoFee: recalculation.mco }))}
-            applyAnnualLimit={applyAnnualLimit} onApplyAnnualLimitChange={setApplyAnnualLimit}
+            applyAnnualLimit={applyAnnualLimit}
+            onApplyAnnualLimitChange={setApplyAnnualLimit}
           />
         )}
         {tab === 'Others Details' && <OthersDetailsTab form={form} original={original} />}
         {tab === 'Supplementary' && (
           <SupplementaryTab
-            covered={covered} endorsementType={type} editing={editing} busy={busy} relationships={lookups.relationships} person={person}
-            personIndex={personIndex} onPersonChange={setPerson} onPersonBlur={refreshSupplementaryExpiry}
-            onEdit={(index) => { setPerson({ ...covered[index] }); setPersonIndex(index) }}
+            covered={covered}
+            endorsementType={type}
+            editing={editing}
+            busy={busy}
+            relationships={lookups.relationships}
+            person={person}
+            personIndex={personIndex}
+            onPersonChange={setPerson}
+            onPersonBlur={refreshSupplementaryExpiry}
+            onEdit={(index) => {
+              setPerson({ ...covered[index] })
+              setPersonIndex(index)
+            }}
             onMark={(index, action) => setCovered((list) => list.map((p, i) => (i === index ? { ...p, action } : p)))}
             onRemoveNew={(index) => setCovered((list) => list.filter((_, i) => i !== index))}
-            onAdd={addPerson} onUpdate={updatePerson}
-            onClear={() => { setPerson(type === EndorsementType.AddSupplementary ? newSupplementary(member) : null); setPersonIndex(null) }}
+            onAdd={addPerson}
+            onUpdate={updatePerson}
+            onClear={() => {
+              setPerson(type === EndorsementType.AddSupplementary ? newSupplementary(member) : null)
+              setPersonIndex(null)
+            }}
           />
         )}
         {tab === 'Adjustment History' && <QueryTable query={history} columns={historyColumns} />}
@@ -213,4 +284,3 @@ export function AdjustmentEditor({ membershipNo, original, lookups, onReload, sa
     </>
   )
 }
-

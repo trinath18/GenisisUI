@@ -22,28 +22,57 @@ export function CardControlFilters({ busy, onSearch, onClear }: CardControlFilte
   return (
     <fieldset>
       <legend>Search</legend>
-      <FormField label="MBM Number"><input value={search.numberFrom} onChange={(e) => set('numberFrom')(e.target.value.toUpperCase())} /></FormField>
-      <FormField label="To"><input value={search.numberTo} onChange={(e) => set('numberTo')(e.target.value.toUpperCase())} /></FormField>
-      <FormField label="Bordx Date"><input type="date" value={search.bordxDateFrom} onChange={(e) => set('bordxDateFrom')(e.target.value)} /></FormField>
-      <FormField label="To"><input type="date" value={search.bordxDateTo} onChange={(e) => set('bordxDateTo')(e.target.value)} /></FormField>
+      <FormField label="MBM Number">
+        <input value={search.numberFrom} onChange={(e) => set('numberFrom')(e.target.value.toUpperCase())} />
+      </FormField>
+      <FormField label="To">
+        <input value={search.numberTo} onChange={(e) => set('numberTo')(e.target.value.toUpperCase())} />
+      </FormField>
+      <FormField label="Bordx Date">
+        <input type="date" value={search.bordxDateFrom} onChange={(e) => set('bordxDateFrom')(e.target.value)} />
+      </FormField>
+      <FormField label="To">
+        <input type="date" value={search.bordxDateTo} onChange={(e) => set('bordxDateTo')(e.target.value)} />
+      </FormField>
       <FormField label="Payor">
         <CodeSelect value={search.payorCode} onChange={set('payorCode')} options={lookups.data?.payors ?? []} disabled={!lookups.data} />
       </FormField>
       <FormField label="Batch No.">
         <input value={search.batchFrom} inputMode="numeric" onChange={(e) => set('batchFrom')(digits(e.target.value))} />
       </FormField>
-      <FormField label="To"><input value={search.batchTo} inputMode="numeric" onChange={(e) => set('batchTo')(digits(e.target.value))} /></FormField>
+      <FormField label="To">
+        <input value={search.batchTo} inputMode="numeric" onChange={(e) => set('batchTo')(digits(e.target.value))} />
+      </FormField>
       <FormField label="Sending Mode">
         <select value={search.sendingMode} onChange={(e) => set('sendingMode')(e.target.value)}>
           <option value="">(any)</option>
-          {SENDING_MODES.map((m) => <option key={m} value={m}>{m}</option>)}
+          {SENDING_MODES.map((m) => (
+            <option key={m} value={m}>
+              {m}
+            </option>
+          ))}
         </select>
       </FormField>
-      <FormField label="Sent Date"><input type="date" value={search.sentDateFrom} onChange={(e) => set('sentDateFrom')(e.target.value)} /></FormField>
-      <FormField label="To"><input type="date" value={search.sentDateTo} onChange={(e) => set('sentDateTo')(e.target.value)} /></FormField>
+      <FormField label="Sent Date">
+        <input type="date" value={search.sentDateFrom} onChange={(e) => set('sentDateFrom')(e.target.value)} />
+      </FormField>
+      <FormField label="To">
+        <input type="date" value={search.sentDateTo} onChange={(e) => set('sentDateTo')(e.target.value)} />
+      </FormField>
       <div className="actions">
-        <button type="button" disabled={busy} onClick={() => onSearch({ ...search })}>Search</button>
-        <button type="button" disabled={busy} onClick={() => { setSearch(EMPTY_SEARCH); onClear() }}>Clear</button>
+        <button type="button" disabled={busy} onClick={() => onSearch({ ...search })}>
+          Search
+        </button>
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => {
+            setSearch(EMPTY_SEARCH)
+            onClear()
+          }}
+        >
+          Clear
+        </button>
       </div>
     </fieldset>
   )

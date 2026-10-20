@@ -15,16 +15,24 @@ interface TrackingFiltersProps {
 
 const inputType = (field: TrackingField) => (field.kind === 'Date' ? 'date' : field.kind === 'Number' ? 'number' : 'text')
 
-function FilterInput({ field, value, onChange, options, label }: {
+function FilterInput({
+  field,
+  value,
+  onChange,
+  options,
+  label,
+}: {
   field: TrackingField
   value: string
   onChange: (value: string) => void
   options: CodeOption[]
   label: string
 }) {
-  return field.kind === 'Select'
-    ? <CodeSelect value={value} onChange={onChange} options={options} ariaLabel={label} />
-    : <input aria-label={label} type={inputType(field)} value={value} onChange={(e) => onChange(e.target.value)} />
+  return field.kind === 'Select' ? (
+    <CodeSelect value={value} onChange={onChange} options={options} ariaLabel={label} />
+  ) : (
+    <input aria-label={label} type={inputType(field)} value={value} onChange={(e) => onChange(e.target.value)} />
+  )
 }
 
 /** The desktop's filter controls, grouped; every field can have from / to and a "blank" box as the server describes it. */
@@ -41,19 +49,35 @@ export function TrackingFilters(props: TrackingFiltersProps) {
                 <span>{field.label}</span>
                 {field.blankOnly ? null : field.range ? (
                   <div className="actions">
-                    <FilterInput field={field} label={`${field.label} from`} value={range.from} options={props.optionsFor(field)}
-                      onChange={(from) => props.onRangeChange(field.key, { ...range, from })} />
+                    <FilterInput
+                      field={field}
+                      label={`${field.label} from`}
+                      value={range.from}
+                      options={props.optionsFor(field)}
+                      onChange={(from) => props.onRangeChange(field.key, { ...range, from })}
+                    />
                     <span className="muted">to</span>
-                    <FilterInput field={field} label={`${field.label} to`} value={range.to} options={props.optionsFor(field)}
-                      onChange={(to) => props.onRangeChange(field.key, { ...range, to })} />
+                    <FilterInput
+                      field={field}
+                      label={`${field.label} to`}
+                      value={range.to}
+                      options={props.optionsFor(field)}
+                      onChange={(to) => props.onRangeChange(field.key, { ...range, to })}
+                    />
                   </div>
                 ) : (
-                  <FilterInput field={field} label={field.label} value={props.values[field.key] ?? ''} options={props.optionsFor(field)}
-                    onChange={(value) => props.onValueChange(field.key, value)} />
+                  <FilterInput
+                    field={field}
+                    label={field.label}
+                    value={props.values[field.key] ?? ''}
+                    options={props.optionsFor(field)}
+                    onChange={(value) => props.onValueChange(field.key, value)}
+                  />
                 )}
                 {field.blankable && (
                   <label className="muted">
-                    <input type="checkbox" checked={props.blanks.includes(field.key)} onChange={(e) => props.onBlankChange(field.key, e.target.checked)} /> blank
+                    <input type="checkbox" checked={props.blanks.includes(field.key)} onChange={(e) => props.onBlankChange(field.key, e.target.checked)} />{' '}
+                    blank
                   </label>
                 )}
               </div>

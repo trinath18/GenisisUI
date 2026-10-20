@@ -7,8 +7,7 @@ const memberUrl = (membershipNo: string) => `${BASE_URL}/${encodeURIComponent(me
 export const reinstatementApi = {
   get: async (membershipNo: string) => (await api.get<ReinstatementView>(memberUrl(membershipNo))).data,
 
-  reinstate: async (membershipNo: string, body: ReinstatementRequest) =>
-    (await api.post<ReinstatementResult>(memberUrl(membershipNo), body)).data,
+  reinstate: async (membershipNo: string, body: ReinstatementRequest) => (await api.post<ReinstatementResult>(memberUrl(membershipNo), body)).data,
 }
 
 export const reinstatementKeys = {
