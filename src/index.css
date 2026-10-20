@@ -226,6 +226,7 @@ button.ghost:hover:not(:disabled) { background: var(--accent-soft); color: var(-
 .doc-list .doc-name { text-align: left; word-break: break-all; }
 .doc-list .muted { margin-left: auto; white-space: nowrap; }
 .doc-list .link.danger { color: #b91c1c; }
+button.danger:not(:disabled) { background: #b91c1c; border-color: #b91c1c; color: #fff; }
 
 /* ---- Motion: subtle, fast, respects reduced-motion ---- */
 button, .sidebar a, .rail a, .nav-toggle, input, select, textarea, .tabs button {
