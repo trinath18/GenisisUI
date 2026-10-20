@@ -171,9 +171,20 @@ function Select({ value, onChange, options, blank = '' }: { value: string; onCha
 const names = (values: string[]): Option[] => values.map((v) => ({ code: v, name: v }))
 const describe = (list: Option[]): Option[] => list.map((o) => ({ code: o.name, name: o.code }))
 
-export function RegistrationPage() {
-  const [form, setForm] = useState<Form>(emptyForm)
-  const [covered, setCovered] = useState<CoveredPerson[]>([])
+/** Values to start the form with (Temp MBM Reg pre-fills a renewal); missing fields start empty. */
+export interface RegistrationInitial {
+  form: Partial<Record<FormKey, string>>
+  covered: Partial<CoveredPerson>[]
+}
+
+interface RegistrationPageProps {
+  initial?: RegistrationInitial
+  title?: string
+}
+
+export function RegistrationPage({ initial, title = 'Membership Registration' }: RegistrationPageProps = {}) {
+  const [form, setForm] = useState<Form>(() => ({ ...emptyForm, ...initial?.form }))
+  const [covered, setCovered] = useState<CoveredPerson[]>(() => (initial?.covered ?? []).map((p) => ({ ...emptyPerson, ...p })))
   const [saved, setSaved] = useState<SaveResult | null>(null)
 
   const lookups = useQuery({
@@ -237,7 +248,7 @@ export function RegistrationPage() {
 
   return (
     <section>
-      <h2>Membership Registration</h2>
+      <h2>{title}</h2>
       {saved && (
         <p className="success" role="status">
           Registered membership <strong>{saved.membershipNo}</strong> (security code {saved.securityCode}).
