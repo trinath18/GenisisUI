@@ -25,6 +25,7 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/membership/registration', label: 'Registration', access: Access.MembershipRegistration },
       { to: '/membership/adjustment', label: 'Adjustment', access: Access.MembershipAdjustment },
       { to: '/membership/enquiry', label: 'Enquiry', access: Access.MembershipEnquiry },
+      { to: '/membership/leaflet-card', label: 'Leaflet & Card', access: Access.MembershipEnquiry },
       { to: '/membership/card-control', label: 'Card Sending Mode', access: Access.MembershipAdjustment },
       { to: '/membership/reinstatement', label: 'Member Reinstatement', access: Access.MembershipAdjustment },
       { to: '/membership/mco-pending', label: 'MCO Pending', access: Access.MembershipAdjustment },

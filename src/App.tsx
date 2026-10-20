@@ -9,6 +9,7 @@ import { RegistrationPage } from './pages/membership/RegistrationPage'
 import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
 import { UploadBordxPage } from './features/membership/bordx/pages/UploadBordxPage'
 import { TrackingPage } from './features/membership/tracking/pages/TrackingPage'
+import { LeafletCardPage } from './features/membership/leafletCard/pages/LeafletCardPage'
 import { DeletionPage } from './features/membership/deletion/pages/DeletionPage'
 import { CardControlPage } from './features/membership/cardControl/pages/CardControlPage'
 import { PlutoAsciiPage } from './features/membership/pluto/pages/PlutoAsciiPage'
@@ -191,6 +192,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipTracking}>
               <TrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/leaflet-card"
+          element={
+            <RequireAccess position={Access.MembershipEnquiry}>
+              <LeafletCardPage />
             </RequireAccess>
           }
         />
