@@ -9,7 +9,8 @@ import { api, errorMessage } from '../../api/client'
 import { notify, say } from '../../lib/notifyStore'
 import { formatDate, formatMoney } from '../../lib/format'
 import type { Row } from '../../lib/format'
-import { maskDate, digitsOnly } from '../../lib/masks'
+import { digitsOnly } from '../../lib/masks'
+import { DateInput } from '../../components/DateInput'
 import type { RepSelection } from './CaseRegistrationDialogs'
 import type { LetterResult } from './CaseLetters'
 import {
@@ -271,9 +272,7 @@ export function useCaseEditor() {
     />
   )
   const ro = (k: string) => <input value={v(k)} readOnly className="ro" />
-  const dateBox = (k: string, blur?: () => void) => (
-    <input value={v(k)} placeholder="dd/mm/yyyy" maxLength={10} inputMode="numeric" onChange={(e) => set(k)(maskDate(e.target.value))} onBlur={blur} />
-  )
+  const dateBox = (k: string, blur?: () => void) => <DateInput value={v(k)} onChange={set(k)} onBlur={blur} />
   const sel = (k: string, options: Opt[], o: { onChange?: (x: string) => void; disabled?: boolean; blank?: boolean; title?: string } = {}) => (
     <select value={v(k)} disabled={o.disabled} title={o.title} onChange={(e) => (o.onChange ?? set(k))(e.target.value)}>
       {(o.blank ?? true) && <option value="" />}
@@ -314,7 +313,7 @@ export function useCaseEditor() {
         {[1, 2, 3].map((i) => (
           <div key={i} className="diag-row">
             <input aria-label={`${caption} ${i}`} maxLength={150} value={v(`${t}${i}`)} onChange={(e) => set(`${t}${i}`)(e.target.value)} />
-            <input aria-label={`Onset ${i}`} placeholder="dd/mm/yyyy" maxLength={10} inputMode="numeric" value={v(`${d}${i}`)} onChange={(e) => set(`${d}${i}`)(maskDate(e.target.value))} onBlur={otherDateBlur(`${d}${i}`)} />
+            <DateInput ariaLabel={`Onset ${i}`} value={v(`${d}${i}`)} onChange={set(`${d}${i}`)} onBlur={otherDateBlur(`${d}${i}`)} />
             <input aria-label={`ICD ${i}`} maxLength={3} value={v(`${c}${i}`)} onChange={(e) => set(`${c}${i}`)(e.target.value)} />
           </div>
         ))}

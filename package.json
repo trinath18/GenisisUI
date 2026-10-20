@@ -7,14 +7,22 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "vitest run",
+    "typecheck": "tsc -b",
+    "e2e": "node e2e/run.mjs"
   },
   "dependencies": {
+    "@hookform/resolvers": "5.9.1",
     "@tanstack/react-query": "^5.104.1",
     "axios": "^1.20.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
-    "react-router-dom": "^7.18.4"
+    "react-hook-form": "7.89.0",
+    "react-router-dom": "^7.18.4",
+    "yup": "1.7.1"
   },
   "devDependencies": {
     "@types/node": "^24.13.3",
@@ -22,7 +30,10 @@
     "@types/react-dom": "^19.2.7",
     "@vitejs/plugin-react": "^6.1.1",
     "oxlint": "^1.81.0",
+    "prettier": "3.9.9",
+    "puppeteer-core": "25.12.0",
     "typescript": "~6.0.2",
-    "vite": "^8.3.0"
+    "vite": "^8.3.0",
+    "vitest": "5.0.3"
   }
 }
