@@ -25,6 +25,9 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/membership/registration', label: 'Registration', access: Access.MembershipRegistration },
       { to: '/membership/adjustment', label: 'Adjustment', access: Access.MembershipAdjustment },
       { to: '/membership/enquiry', label: 'Enquiry', access: Access.MembershipEnquiry },
+      { to: '/membership/reinstatement', label: 'Member Reinstatement', access: Access.MembershipAdjustment },
+      { to: '/membership/tracking', label: 'Tracking', access: Access.MembershipTracking },
+      { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
     ],
   },
   {
@@ -52,6 +55,8 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
     items: [
       { to: '/maintenance/plan', label: 'Plan Maintenance', access: Access.PlanMaintenance },
       { to: '/maintenance/benefits', label: 'Benefits Maintenance', access: Access.BenefitsMaintenance },
+      { to: '/maintenance/entity', label: 'Entity Maintenance', access: Access.EntityMaintenance },
+      { to: '/maintenance/accounts', label: 'Accounts', access: Access.AccountsMaintenance },
     ],
   },
 ]
