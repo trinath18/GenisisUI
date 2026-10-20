@@ -23,6 +23,8 @@ import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
 import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
 import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
+import { DepartmentScreen } from './features/maintenance/security/pages/DepartmentScreen'
+import { UserSecurityScreen } from './features/maintenance/security/pages/UserSecurityScreen'
 import { CaseEnquiryPage } from './pages/case/CaseEnquiryPage'
 import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
 import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
@@ -311,6 +313,30 @@ export default function App() {
           element={
             <RequireAccess position={Access.AccountTransaction}>
               <AccountTransactionScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/security/department"
+          element={
+            <RequireAccess position={Access.SecurityDepartment}>
+              <DepartmentScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/security/role-management"
+          element={
+            <RequireAccess position={Access.SecurityUsers}>
+              <UserSecurityScreen mode="role" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/security/user-permission"
+          element={
+            <RequireAccess position={Access.SecurityUsers}>
+              <UserSecurityScreen mode="permission" />
             </RequireAccess>
           }
         />

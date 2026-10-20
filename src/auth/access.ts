@@ -17,6 +17,9 @@ export const Access = {
   AccountsMaintenance: 1,
   // Maintenance > Account Transaction (MnuAccountTrans_Click) checks position 1 too.
   AccountTransaction: 1,
+  // Maintenance > Security: the matrix's own Department (111) and User Permission (112) rights, not the desktop's CheckAccess(2).
+  SecurityDepartment: 111,
+  SecurityUsers: 112,
   // Case menu positions in mdiMain.frm (CaseEntry=11, CASInMBM=7, CaseAdjustment=12, CaseTracking=15).
   CaseRegistration: 11,
   CaseEnquiry: 7,
