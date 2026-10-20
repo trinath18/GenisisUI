@@ -10,7 +10,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'users', label: 'Membership', to: '/membership/enquiry', prefix: '/membership', access: Access.MembershipEnquiry },
   { icon: 'folder', label: 'Case', to: '/case/registration', prefix: '/case', access: Access.CaseRegistration },
   { icon: 'tool', label: 'Maintenance', to: '/maintenance/plan', prefix: '/maintenance', access: Access.PlanMaintenance },
-  { icon: 'file', label: 'Invoice' },
+  { icon: 'file', label: 'Invoice', to: '/invoice/processing', prefix: '/invoice', access: Access.InvoiceProcessing },
   { icon: 'grid', label: 'Worksheet', to: '/worksheet/tracking', prefix: '/worksheet', access: Access.WorksheetTracking },
   { icon: 'shield', label: 'Claims' },
   { icon: 'list', label: 'Claim Bordx' },
@@ -47,6 +47,11 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/case/claim-ascii', label: 'Claim ASCII', access: Access.ClaimAscii, group: 'Exports' },
       { to: '/case/case-ascii', label: 'Case ASCII', access: Access.CaseAscii, group: 'Exports' },
     ],
+  },
+  {
+    label: 'Invoice',
+    prefix: '/invoice',
+    items: [{ to: '/invoice/processing', label: 'Invoice Processing', access: Access.InvoiceProcessing }],
   },
   {
     label: 'Worksheet',

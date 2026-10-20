@@ -210,6 +210,8 @@ await t.go('/worksheet/tracking')
 await t.checkbox('Use Scan')
 await t.type('Payor', 'XI')
 await t.click('Search', 800)
+// the larger data makes this search slower than the click's own wait
+await t.waitFor(async () => (await gridRows('Worksheets')).length === xi.length, 30000)
 check(
   'tracking: range search lists the payor worksheets',
   (await gridRows('Worksheets')).length === xi.length,

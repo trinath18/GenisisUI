@@ -26,6 +26,7 @@ import { CasePayClaimPage } from './pages/case/CasePayClaimPage'
 import { CaseNonDisclosurePage } from './pages/case/CaseNonDisclosurePage'
 import { CaseAsciiPage, ClaimAsciiPage } from './pages/case/AsciiExportPages'
 import { WorksheetRegistrationPage } from './pages/worksheet/WorksheetRegistrationPage'
+import { InvoiceProcessingPage } from './pages/invoice/InvoiceProcessingPage'
 import { WorksheetAdjustmentPage } from './pages/worksheet/WorksheetAdjustmentPage'
 import { WorksheetEnquiryPage } from './pages/worksheet/WorksheetEnquiryPage'
 import { WorksheetTrackingPage } from './pages/worksheet/WorksheetTrackingPage'
@@ -195,6 +196,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.CaseAscii}>
               <CaseAsciiPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/processing"
+          element={
+            <RequireAccess position={Access.InvoiceProcessing}>
+              <InvoiceProcessingPage />
             </RequireAccess>
           }
         />

@@ -38,6 +38,8 @@ export const Access = {
   // is LOW003, Enquiry (13) is mnuWSEnq_Click. Send to A/C and Send to A/R have no click handler and are gated like Tracking.
   // Keep in step with Genisis.Api/Auth/AccessRight.cs.
   WorksheetRegistration: 22,
+  // Invoice > Invoice Processing is CheckAccess(22) in the desktop (mniInvoiceProcess_Click), the same position as the Worksheet Registration scan code.
+  InvoiceProcessing: 22,
   WorksheetAdjustment: 23,
   WorksheetTracking: 24,
   WorksheetEnquiry: 13,
