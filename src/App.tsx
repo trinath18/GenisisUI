@@ -189,6 +189,10 @@ export default function App() {
           element={
             <RequireAccess position={Access.CaseAscii}>
               <CaseAsciiPage />
+            </RequireAccess>
+          }
+        />
+        <Route
           path="membership/tracking"
           element={
             <RequireAccess position={Access.MembershipTracking}>

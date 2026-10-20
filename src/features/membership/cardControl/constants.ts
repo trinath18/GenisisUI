@@ -4,8 +4,16 @@ import type { CardControlRow, CardControlSearch } from './types'
 export const SENDING_MODES = ['By Hand', 'By Post', 'Courier'] as const
 
 export const EMPTY_SEARCH: CardControlSearch = {
-  payorCode: '', numberFrom: '', numberTo: '', bordxDateFrom: '', bordxDateTo: '', batchFrom: '', batchTo: '', sentDateFrom: '',
-  sentDateTo: '', sendingMode: '',
+  payorCode: '',
+  numberFrom: '',
+  numberTo: '',
+  bordxDateFrom: '',
+  bordxDateTo: '',
+  batchFrom: '',
+  batchTo: '',
+  sentDateFrom: '',
+  sentDateTo: '',
+  sendingMode: '',
 }
 
 export const MESSAGES = {

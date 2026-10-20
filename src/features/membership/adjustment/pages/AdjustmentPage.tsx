@@ -31,13 +31,22 @@ export function AdjustmentPage() {
   }
 
   if (lookups.isLoading) return <p className="muted">Loading…</p>
-  if (lookups.isError) return <p className="error" role="alert">{errorMessage(lookups.error)}</p>
+  if (lookups.isError)
+    return (
+      <p className="error" role="alert">
+        {errorMessage(lookups.error)}
+      </p>
+    )
 
   return (
     <section>
       <h2>Membership Adjustment</h2>
       <MemberSearchPanel currentNumber={membershipNo} onOpen={open} />
-      {loaded.isError && <p className="error" role="alert">{errorMessage(loaded.error)}</p>}
+      {loaded.isError && (
+        <p className="error" role="alert">
+          {errorMessage(loaded.error)}
+        </p>
+      )}
       {loaded.isLoading && <p className="muted">Loading…</p>}
       {loaded.data && membershipNo && (
         <AdjustmentEditor
@@ -45,7 +54,10 @@ export function AdjustmentPage() {
           membershipNo={membershipNo}
           original={loaded.data}
           lookups={lookups.data!}
-          onReload={() => { setReloadCount((n) => n + 1); setSavedMessage(null) }}
+          onReload={() => {
+            setReloadCount((n) => n + 1)
+            setSavedMessage(null)
+          }}
           savedMessage={savedMessage}
           onSavedMessageChange={setSavedMessage}
         />

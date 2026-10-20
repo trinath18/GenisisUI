@@ -13,19 +13,35 @@ export function McoPendingFilters({ busy, onSearch }: { busy: boolean; onSearch:
   return (
     <fieldset>
       <legend>Search</legend>
-      <FormField label="MBM Number"><input value={search.numberFrom} onChange={(e) => set('numberFrom')(e.target.value.toUpperCase())} /></FormField>
-      <FormField label="To"><input value={search.numberTo} onChange={(e) => set('numberTo')(e.target.value.toUpperCase())} /></FormField>
-      <FormField label="Bordx Date"><input type="date" value={search.bordxDateFrom} onChange={(e) => set('bordxDateFrom')(e.target.value)} /></FormField>
-      <FormField label="To"><input type="date" value={search.bordxDateTo} onChange={(e) => set('bordxDateTo')(e.target.value)} /></FormField>
+      <FormField label="MBM Number">
+        <input value={search.numberFrom} onChange={(e) => set('numberFrom')(e.target.value.toUpperCase())} />
+      </FormField>
+      <FormField label="To">
+        <input value={search.numberTo} onChange={(e) => set('numberTo')(e.target.value.toUpperCase())} />
+      </FormField>
+      <FormField label="Bordx Date">
+        <input type="date" value={search.bordxDateFrom} onChange={(e) => set('bordxDateFrom')(e.target.value)} />
+      </FormField>
+      <FormField label="To">
+        <input type="date" value={search.bordxDateTo} onChange={(e) => set('bordxDateTo')(e.target.value)} />
+      </FormField>
       <FormField label="Status">
         <select value={search.status} onChange={(e) => set('status')(e.target.value)}>
           <option value="">(any)</option>
-          {SEARCH_STATUSES.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
+          {SEARCH_STATUSES.map((s) => (
+            <option key={s.code} value={s.code}>
+              {s.name}
+            </option>
+          ))}
         </select>
       </FormField>
       <div className="actions">
-        <button type="button" disabled={busy} onClick={() => onSearch({ ...search })}>Search</button>
-        <button type="button" disabled={busy} onClick={() => setSearch(EMPTY)}>Clear</button>
+        <button type="button" disabled={busy} onClick={() => onSearch({ ...search })}>
+          Search
+        </button>
+        <button type="button" disabled={busy} onClick={() => setSearch(EMPTY)}>
+          Clear
+        </button>
       </div>
     </fieldset>
   )

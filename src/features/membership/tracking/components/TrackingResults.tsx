@@ -25,12 +25,24 @@ export function TrackingResults({ result, report }: { result: TrackingResult; re
       {result.rows.length > 0 && (
         <div className="table-wrap">
           <table className="grid">
-            <thead><tr>{result.columns.map((c) => <th key={c} scope="col">{c}</th>)}</tr></thead>
+            <thead>
+              <tr>
+                {result.columns.map((c) => (
+                  <th key={c} scope="col">
+                    {c}
+                  </th>
+                ))}
+              </tr>
+            </thead>
             <tbody>
               {result.rows.map((row, index) => (
                 // Report rows have no identity of their own and are never reordered, so the position is a stable key.
                 <tr key={index}>
-                  {result.columns.map((c) => <td key={c} className={typeof row[c] === 'number' ? 'num' : undefined}>{display(c, row[c])}</td>)}
+                  {result.columns.map((c) => (
+                    <td key={c} className={typeof row[c] === 'number' ? 'num' : undefined}>
+                      {display(c, row[c])}
+                    </td>
+                  ))}
                 </tr>
               ))}
             </tbody>

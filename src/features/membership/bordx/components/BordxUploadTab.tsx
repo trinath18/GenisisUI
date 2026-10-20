@@ -24,7 +24,11 @@ export function BordxUploadTab({ lookups }: { lookups: BordxLookups }) {
   const abort = useRef<AbortController | null>(null)
 
   const options = (): BordxUploadOptions => ({
-    fileType, payorCode, healthCode, verifyIc: verifyIc === YES, labelPrinted: labelStatus === YES,
+    fileType,
+    payorCode,
+    healthCode,
+    verifyIc: verifyIc === YES,
+    labelPrinted: labelStatus === YES,
     backToBack: fileType === FileType.New && backToBack === YES,
   })
   async function withAbort<T>(run: (signal: AbortSignal) => Promise<T>): Promise<T> {
@@ -49,34 +53,103 @@ export function BordxUploadTab({ lookups }: { lookups: BordxLookups }) {
       <fieldset>
         <legend>Upload</legend>
         <FormField label="File *">
-          <input type="file" accept=".txt,.dat,.asc,text/plain" disabled={busy} onChange={(e) => { setFile(e.target.files?.[0] ?? null); resetResults() }} />
+          <input
+            type="file"
+            accept=".txt,.dat,.asc,text/plain"
+            disabled={busy}
+            onChange={(e) => {
+              setFile(e.target.files?.[0] ?? null)
+              resetResults()
+            }}
+          />
         </FormField>
         <FormField label="Bordx Type *">
-          <CodeSelect value={fileType} onChange={(v) => { setFileType(v); resetResults() }} options={FILE_TYPES} />
+          <CodeSelect
+            value={fileType}
+            onChange={(v) => {
+              setFileType(v)
+              resetResults()
+            }}
+            options={FILE_TYPES}
+          />
         </FormField>
-        <FormField label="File Version"><input value={fileVersion(fileType)} disabled /></FormField>
-        <FormField label="Payor *"><CodeSelect value={payorCode} onChange={(v) => { setPayorCode(v); resetResults() }} options={lookups.payors} /></FormField>
-        <FormField label="Health Type *"><CodeSelect value={healthCode} onChange={setHealthCode} options={lookups.healthCodes} /></FormField>
-        <FormField label="Verify IC"><CodeSelect value={verifyIc} onChange={setVerifyIc} options={YES_NO} allowBlank={false} /></FormField>
-        <FormField label="Label Status"><CodeSelect value={labelStatus} onChange={setLabelStatus} options={YES_NO} /></FormField>
+        <FormField label="File Version">
+          <input value={fileVersion(fileType)} disabled />
+        </FormField>
+        <FormField label="Payor *">
+          <CodeSelect
+            value={payorCode}
+            onChange={(v) => {
+              setPayorCode(v)
+              resetResults()
+            }}
+            options={lookups.payors}
+          />
+        </FormField>
+        <FormField label="Health Type *">
+          <CodeSelect value={healthCode} onChange={setHealthCode} options={lookups.healthCodes} />
+        </FormField>
+        <FormField label="Verify IC">
+          <CodeSelect value={verifyIc} onChange={setVerifyIc} options={YES_NO} allowBlank={false} />
+        </FormField>
+        <FormField label="Label Status">
+          <CodeSelect value={labelStatus} onChange={setLabelStatus} options={YES_NO} />
+        </FormField>
         <FormField label="Back to Back">
           <CodeSelect value={backToBack} onChange={setBackToBack} options={YES_NO} allowBlank={false} disabled={fileType !== FileType.New} />
         </FormField>
         <p className="muted">
-          Standard layout (and the ZURICH / TAK variant). Payors using an AXA layout must still be uploaded from the desktop. Payor can be left blank only
-          for ZURICH / TAK files.
+          Standard layout (and the ZURICH / TAK variant). Payors using an AXA layout must still be uploaded from the desktop. Payor can be left blank only for
+          ZURICH / TAK files.
         </p>
         <div className="actions">
-          <button type="button" disabled={busy || !!missing} title={missing ?? undefined} onClick={() => { upload.reset(); verify.mutate() }}>Verify</button>
-          <button type="button" disabled={busy || !!missing} title={missing ?? undefined}
-            onClick={() => { if (window.confirm(Messages.confirmUpload)) { verify.reset(); upload.mutate() } }}>Upload</button>
-          <button type="button" disabled={!busy} onClick={() => abort.current?.abort()}>Stop</button>
-          <button type="button" disabled={!verify.data?.errors.length} onClick={() => verify.data && errorsCsv(verify.data.errors)}>Print</button>
+          <button
+            type="button"
+            disabled={busy || !!missing}
+            title={missing ?? undefined}
+            onClick={() => {
+              upload.reset()
+              verify.mutate()
+            }}
+          >
+            Verify
+          </button>
+          <button
+            type="button"
+            disabled={busy || !!missing}
+            title={missing ?? undefined}
+            onClick={() => {
+              if (window.confirm(Messages.confirmUpload)) {
+                verify.reset()
+                upload.mutate()
+              }
+            }}
+          >
+            Upload
+          </button>
+          <button type="button" disabled={!busy} onClick={() => abort.current?.abort()}>
+            Stop
+          </button>
+          <button type="button" disabled={!verify.data?.errors.length} onClick={() => verify.data && errorsCsv(verify.data.errors)}>
+            Print
+          </button>
         </div>
       </fieldset>
-      {busy && <p className="muted" role="status">{verify.isPending ? 'Verifying…' : 'Uploading… (Stop cancels the whole upload; nothing is imported)'}</p>}
-      {verify.isError && <p className="error" role="alert">{errorMessage(verify.error)}</p>}
-      {upload.isError && <p className="error" role="alert">{errorMessage(upload.error)}</p>}
+      {busy && (
+        <p className="muted" role="status">
+          {verify.isPending ? 'Verifying…' : 'Uploading… (Stop cancels the whole upload; nothing is imported)'}
+        </p>
+      )}
+      {verify.isError && (
+        <p className="error" role="alert">
+          {errorMessage(verify.error)}
+        </p>
+      )}
+      {upload.isError && (
+        <p className="error" role="alert">
+          {errorMessage(upload.error)}
+        </p>
+      )}
       {verify.data && <VerifyResultView result={verify.data} />}
       {upload.data && <UploadResultView result={upload.data} />}
     </div>
