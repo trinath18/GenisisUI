@@ -34,7 +34,7 @@ to the API; set `GENISIS_API_URL` to point the proxy elsewhere, or `VITE_API_URL
   - Upload Membership Excel / Generate Membership ASCII (Pluto) (`frmMembershipExcelPluto`, `frmMembershipASCIIPluto`)
   - Temp MBM Reg (`FrmTempMBMReg`): the Registration form pre-filled from a previous membership as a renewal
   - Temp MBM Adj (`FrmTempMBMAdj`): the Adjustment screen for memberships of temporary payors only
-- Maintenance: Plan, Benefits, Entity and Accounts
+- Maintenance: Plan, Benefits, Entity, Accounts, Account Transaction (`frmMMASchedule`), MMA (Procedures/OPCS, `frmMMAEntry`) and Security: Department (`frmGroupMaintenance`), Role Management (`frmUserMaintenance`) and User Permission (`frmUserPermissionMaintenance`, with the access matrix)
 
 ## Code structure
 
@@ -54,7 +54,7 @@ src/
     types.ts               request / response contracts
 ```
 
-`features/membership/*` and `features/maintenance/{benefits,entity,accounts}` use it; the older
+`features/membership/*` and `features/maintenance/*` use it; the older
 screens in `pages/` keep their original layout.
 
 Conventions:
