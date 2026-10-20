@@ -33,6 +33,7 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/membership/pluto-upload', label: 'Upload Membership Excel (Pluto)', access: Access.MembershipUploadBordx },
       { to: '/membership/pluto-ascii', label: 'Generate Membership ASCII (Pluto)', access: Access.MembershipUploadBordx },
       { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
+      { to: '/membership/temp-registration', label: 'Temp MBM Reg', access: Access.MembershipRegistration },
     ],
   },
   {
