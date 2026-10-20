@@ -15,6 +15,8 @@ export const Access = {
   // Maintenance > Entity (mnuAgent_Click) and Accounts (MaintenanceAccounts_Click) check position 1 too.
   EntityMaintenance: 1,
   AccountsMaintenance: 1,
+  // Maintenance > Account Transaction (MnuAccountTrans_Click) checks position 1 too.
+  AccountTransaction: 1,
   // Case menu positions in mdiMain.frm (CaseEntry=11, CASInMBM=7, CaseAdjustment=12, CaseTracking=15).
   CaseRegistration: 11,
   CaseEnquiry: 7,

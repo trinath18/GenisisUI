@@ -22,6 +22,7 @@ import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
 import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
+import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
 import { CaseEnquiryPage } from './pages/case/CaseEnquiryPage'
 import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
 import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
@@ -302,6 +303,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.AccountsMaintenance}>
               <AccountsScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/account-transaction"
+          element={
+            <RequireAccess position={Access.AccountTransaction}>
+              <AccountTransactionScreen />
             </RequireAccess>
           }
         />
