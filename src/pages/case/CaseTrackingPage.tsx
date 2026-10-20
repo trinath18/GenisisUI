@@ -49,26 +49,23 @@ const columns: Column[] = [
 
 type Filters = Record<string, string>
 
-const input = { width: 130 } as const
-const wideInput = { width: 200 } as const
-const panelInput = { width: '100%' } as const
+type FilterSize = 'default' | 'wide' | 'fill'
+const inputClass = (size: FilterSize = 'default') => `ct-input${size === 'default' ? '' : ` ${size}`}`
 
-function TextFilter({ name, label, form, set, style, type }: { name: string; label: string; form: Filters; set: (n: string, v: string) => void; style?: React.CSSProperties; type?: string }) {
+function TextFilter({ name, label, form, set, size, type }: { name: string; label: string; form: Filters; set: (n: string, v: string) => void; size?: FilterSize; type?: string }) {
   return (
-    <label className="muted" title={label}>
+    <label className="muted ct-filter" title={label}>
       {label}
-      <br />
-      <input type={type ?? 'text'} style={style ?? input} value={form[name] ?? ''} onChange={(e) => set(name, e.target.value)} />
+      <input type={type ?? 'text'} className={inputClass(size)} value={form[name] ?? ''} onChange={(e) => set(name, e.target.value)} />
     </label>
   )
 }
 
-function SelectFilter({ name, label, form, set, options, style }: { name: string; label: string; form: Filters; set: (n: string, v: string) => void; options: Option[]; style?: React.CSSProperties }) {
+function SelectFilter({ name, label, form, set, options, size }: { name: string; label: string; form: Filters; set: (n: string, v: string) => void; options: Option[]; size?: FilterSize }) {
   return (
-    <label className="muted" title={label}>
+    <label className="muted ct-filter" title={label}>
       {label}
-      <br />
-      <select style={style ?? input} value={form[name] ?? ''} onChange={(e) => set(name, e.target.value)}>
+      <select className={inputClass(size)} value={form[name] ?? ''} onChange={(e) => set(name, e.target.value)}>
         <option value="">All</option>
         {options.map((o) => (
           <option key={o.value} value={o.value}>
@@ -122,42 +119,47 @@ export function CaseTrackingPage() {
   }
 
   const l = lookups.data
-  const pf = { form, set, style: panelInput }
-  const pfSel = { form, set, style: panelInput }
+  const pf = { form, set, size: 'fill' as const }
+  const pfSel = { form, set, size: 'fill' as const }
   return (
-    <section>
-      <h2>Case Tracking</h2>
+    <section className="registration case-reg">
       <form onSubmit={submit} className="ct-layout">
         <div className="ct-content">
-          <div className="search" style={{ flexWrap: 'wrap', alignItems: 'flex-end' }}>
-            <TextFilter name="patient" label="Patient" form={form} set={set} style={wideInput} />
-            {codeOrText('payor', 'Payor', opts(l?.payors, 'PAYCode', 'PAYCompanyName'))}
-            {codeOrText('hosName', 'Hospital', (l?.hospitals ?? []).map((h) => ({ value: formatValue(h.HOSName), label: formatValue(h.HOSName) })))}
-            <SelectFilter
-              name="status"
-              label="Status"
-              form={form}
-              set={set}
-              options={[
-                { value: 'O', label: 'Open' },
-                { value: 'D', label: 'Discharged' },
-                { value: 'OC', label: 'Open or Closed' },
-              ]}
-            />
-            <SelectFilter
-              name="claimability"
-              label="Claimability"
-              form={form}
-              set={set}
-              options={[
-                { value: 'A', label: 'Approved set' },
-                { value: 'R', label: 'Repudiated set' },
-              ]}
-            />
-            <TextFilter name="regFrom" label="Reg From" form={form} set={set} type="date" />
-            <TextFilter name="regTo" label="Reg To" form={form} set={set} type="date" />
-            <button type="submit">Show</button>
-          </div>
+        <fieldset>
+          <legend>Case Tracking</legend>
+            <div className="search wrap">
+              <TextFilter name="patient" label="Patient" form={form} set={set} size="wide" />
+              {codeOrText('payor', 'Payor', opts(l?.payors, 'PAYCode', 'PAYCompanyName'))}
+              {codeOrText('hosName', 'Hospital', (l?.hospitals ?? []).map((h) => ({ value: formatValue(h.HOSName), label: formatValue(h.HOSName) })))}
+              <SelectFilter
+                name="status"
+                label="Status"
+                form={form}
+                set={set}
+                options={[
+                  { value: 'O', label: 'Open' },
+                  { value: 'D', label: 'Discharged' },
+                  { value: 'OC', label: 'Open or Closed' },
+                ]}
+              />
+              <SelectFilter
+                name="claimability"
+                label="Claimability"
+                form={form}
+                set={set}
+                options={[
+                  { value: 'A', label: 'Approved set' },
+                  { value: 'R', label: 'Repudiated set' },
+                ]}
+              />
+              <TextFilter name="regFrom" label="Reg From" form={form} set={set} type="date" />
+              <TextFilter name="regTo" label="Reg To" form={form} set={set} type="date" />
+              <button type="submit">Show</button>
+            </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Results</legend>
           {tracking.isFetching && <p className="muted">Searching…</p>}
           {tracking.error && <p className="error">{errorMessage(tracking.error)}</p>}
           {summary.data && (
@@ -166,14 +168,17 @@ export function CaseTrackingPage() {
               {formatMoney(summary.data.ApprovedAmt)}
             </p>
           )}
-          {tracking.data && (
+          {tracking.data ? (
             <>
               <p className="muted">
                 {tracking.data.length} row(s){tracking.data.length >= 2000 ? ' (first 2000 shown, refine your filters)' : ''} — click a row to open it in Case Enquiry
               </p>
               <DataTable columns={columns} rows={tracking.data} rowKey="CASNumber" onSelect={(r) => navigate(`/case/enquiry?cas=${encodeURIComponent(String(r.CASNumber))}`)} />
             </>
+          ) : (
+            !tracking.isFetching && <p className="muted">Set filters and press Show.</p>
           )}
+        </fieldset>
         </div>
 
         <fieldset className="ct-filters">

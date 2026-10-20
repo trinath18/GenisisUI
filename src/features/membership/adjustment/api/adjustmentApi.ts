@@ -7,8 +7,7 @@ const memberUrl = (membershipNo: string, suffix = '') => `${BASE_URL}/${encodeUR
 export const adjustmentApi = {
   getLookups: async () => (await api.get<AdjustmentLookups>(`${BASE_URL}/lookups`)).data,
 
-  getPlans: async (healthCode: string, payorCode: string) =>
-    (await api.get<Option[]>(`${BASE_URL}/plans`, { params: { healthCode, payorCode } })).data,
+  getPlans: async (healthCode: string, payorCode: string) => (await api.get<Option[]>(`${BASE_URL}/plans`, { params: { healthCode, payorCode } })).data,
 
   search: async (q: string, by: string) => (await api.get<FormRow[]>(`${BASE_URL}/search`, { params: { q, by } })).data,
 
@@ -29,8 +28,10 @@ export const adjustmentApi = {
   checkPolicy: async (policyNo: string, membershipNo: string) =>
     (await api.get<{ duplicateOf: string | null }>(`${BASE_URL}/policy-check`, { params: { policyNo, number: membershipNo } })).data,
 
-  recalculate: async (membershipNo: string, body: { planCode: string | null; payorEffectiveDate: string | null; payorExpiryDate: string | null; dateOfBirth: string | null; sex: string | null }) =>
-    (await api.post<Recalculation>(memberUrl(membershipNo, '/recalculate'), body)).data,
+  recalculate: async (
+    membershipNo: string,
+    body: { planCode: string | null; payorEffectiveDate: string | null; payorExpiryDate: string | null; dateOfBirth: string | null; sex: string | null },
+  ) => (await api.post<Recalculation>(memberUrl(membershipNo, '/recalculate'), body)).data,
 
   getSupplementaryExpiry: async (body: { dateOfBirth: string; planCode: string; effectiveDate: string; expiryDate: string }) =>
     (await api.post<SupplementaryExpiry>(`${BASE_URL}/supplementary-expiry`, body)).data,

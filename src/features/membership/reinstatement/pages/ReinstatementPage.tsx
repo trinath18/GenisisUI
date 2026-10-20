@@ -38,17 +38,22 @@ export function ReinstatementPage() {
       <div className="registration">
         <fieldset>
           <FormField label="Membership No">
-            <input value={numberInput} onChange={(e) => setNumberInput(e.target.value.toUpperCase())}
-              onKeyDown={(e) => e.key === 'Enter' && search()} />
+            <input value={numberInput} onChange={(e) => setNumberInput(e.target.value.toUpperCase())} onKeyDown={(e) => e.key === 'Enter' && search()} />
           </FormField>
           <div className="actions">
-            <button type="button" disabled={!numberInput.trim()} onClick={search}>Search</button>
+            <button type="button" disabled={!numberInput.trim()} onClick={search}>
+              Search
+            </button>
           </div>
         </fieldset>
       </div>
       {result && <ReinstatementSummary result={result} />}
       {membership.isLoading && <p className="muted">Loading…</p>}
-      {membership.isError && <p className="error" role="alert">{errorMessage(membership.error)}</p>}
+      {membership.isError && (
+        <p className="error" role="alert">
+          {errorMessage(membership.error)}
+        </p>
+      )}
       {membership.data && (
         <ReinstatementForm key={`${membership.data.member.membershipNo}:${membership.dataUpdatedAt}`} view={membership.data} onReinstated={reinstated} />
       )}

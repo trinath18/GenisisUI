@@ -53,10 +53,13 @@ export function McoPendingPage() {
 
   function print() {
     if (rows.length === 0) return notify(MESSAGES.noRecordToPrint, 'error')
-    saveCsv([
-      ['MBMNumber', 'Bordx Date', 'New Bordx Date', 'Status'],
-      ...rows.map((r) => [r.membershipNo, formatDate(r.bordxDate), formatDate(r.newBordxDate), r.status ?? '']),
-    ], EXPORT_FILE_NAME)
+    saveCsv(
+      [
+        ['MBMNumber', 'Bordx Date', 'New Bordx Date', 'Status'],
+        ...rows.map((r) => [r.membershipNo, formatDate(r.bordxDate), formatDate(r.newBordxDate), r.status ?? '']),
+      ],
+      EXPORT_FILE_NAME,
+    )
   }
 
   return (
@@ -68,32 +71,59 @@ export function McoPendingPage() {
           <legend>Update</legend>
           <FormField label="Status">
             <select value={status} onChange={(e) => setStatus(e.target.value)}>
-              {UPDATE_STATUSES.map((s) => <option key={s.code} value={s.code}>{s.name}</option>)}
+              {UPDATE_STATUSES.map((s) => (
+                <option key={s.code} value={s.code}>
+                  {s.name}
+                </option>
+              ))}
             </select>
           </FormField>
           <div className="actions">
             <button type="button" disabled={checked.size === 0 || update.isPending} onClick={() => void confirmUpdate()}>
               {update.isPending ? 'Updating…' : `Update (${checked.size})`}
             </button>
-            <button type="button" disabled={rows.length === 0} onClick={print}>Print</button>
+            <button type="button" disabled={rows.length === 0} onClick={print}>
+              Print
+            </button>
           </div>
         </fieldset>
       </div>
-      {update.isError && <p className="error" role="alert">{errorMessage(update.error)}</p>}
+      {update.isError && (
+        <p className="error" role="alert">
+          {errorMessage(update.error)}
+        </p>
+      )}
       {list.isLoading && <p className="muted">Searching…</p>}
-      {list.isError && <p className="error" role="alert">{errorMessage(list.error)}</p>}
+      {list.isError && (
+        <p className="error" role="alert">
+          {errorMessage(list.error)}
+        </p>
+      )}
       {list.data && rows.length === 0 && <p className="muted">{MESSAGES.noRecord}</p>}
       {list.data?.truncated && <p className="warning">Only the first {SEARCH_LIMIT} records are shown. Narrow the search to see the rest.</p>}
       {rows.length > 0 && (
         <div className="table-wrap">
           <table className="grid">
-            <thead><tr><th>Check</th><th>MBMNumber</th><th>Bordx Date</th><th>New Bordx Date</th><th>Status</th></tr></thead>
+            <thead>
+              <tr>
+                <th>Check</th>
+                <th>MBMNumber</th>
+                <th>Bordx Date</th>
+                <th>New Bordx Date</th>
+                <th>Status</th>
+              </tr>
+            </thead>
             <tbody>
               {rows.map((r) => (
                 <tr key={r.membershipNo}>
                   <td>
-                    <input type="checkbox" aria-label={`Select ${r.membershipNo}`} checked={checked.has(r.membershipNo)}
-                      disabled={update.isPending} onChange={() => toggle(r)} />
+                    <input
+                      type="checkbox"
+                      aria-label={`Select ${r.membershipNo}`}
+                      checked={checked.has(r.membershipNo)}
+                      disabled={update.isPending}
+                      onChange={() => toggle(r)}
+                    />
                   </td>
                   <td>{r.membershipNo}</td>
                   <td>{formatDate(r.bordxDate)}</td>

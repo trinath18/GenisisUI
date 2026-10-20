@@ -59,7 +59,12 @@ interface MemberTextAreaProps {
 
 export function MemberTextArea({ form, field, rows = 2, maxLength }: MemberTextAreaProps) {
   return (
-    <textarea rows={rows} maxLength={maxLength} value={text(form.member[field])} disabled={!form.editable || form.busy}
-      onChange={(e) => form.set(field, e.target.value)} />
+    <textarea
+      rows={rows}
+      maxLength={maxLength}
+      value={text(form.member[field])}
+      disabled={!form.editable || form.busy}
+      onChange={(e) => form.set(field, e.target.value)}
+    />
   )
 }

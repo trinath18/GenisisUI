@@ -36,8 +36,11 @@ export function ReinstatementForm({ view, onReinstated }: ReinstatementFormProps
   const reinstate = useMutation({
     mutationFn: () => {
       const body: ReinstatementRequest = {
-        endtBordxDate: orNull(form.endtBordxDate), batchNo: form.batchNo, reinstateDate: orNull(form.reinstateDate),
-        lapsedDate: orNull(form.lapsedDate), expiryDate: orNull(form.expiryDate),
+        endtBordxDate: orNull(form.endtBordxDate),
+        batchNo: form.batchNo,
+        reinstateDate: orNull(form.reinstateDate),
+        lapsedDate: orNull(form.lapsedDate),
+        expiryDate: orNull(form.expiryDate),
       }
       return reinstatementApi.reinstate(member.membershipNo, body)
     },
@@ -49,12 +52,24 @@ export function ReinstatementForm({ view, onReinstated }: ReinstatementFormProps
       {!cancelled && <p className="warning">{STILL_ACTIVE_MESSAGE}</p>}
       <fieldset>
         <legend>Membership</legend>
-        <FormField label="Name"><input value={member.name ?? ''} disabled /></FormField>
-        <FormField label="Policy No"><input value={member.policyNo ?? ''} disabled /></FormField>
-        <FormField label="Status"><input value={member.status ?? ''} disabled /></FormField>
-        <FormField label="Payor Eff. Date"><input value={formatDate(member.payorEffectiveDate)} disabled /></FormField>
-        <FormField label="Final Expiry Date"><input value={formatDate(member.finalExpiryDate)} disabled /></FormField>
-        <FormField label="Covered Persons"><input value={String(coveredCount)} disabled /></FormField>
+        <FormField label="Name">
+          <input value={member.name ?? ''} disabled />
+        </FormField>
+        <FormField label="Policy No">
+          <input value={member.policyNo ?? ''} disabled />
+        </FormField>
+        <FormField label="Status">
+          <input value={member.status ?? ''} disabled />
+        </FormField>
+        <FormField label="Payor Eff. Date">
+          <input value={formatDate(member.payorEffectiveDate)} disabled />
+        </FormField>
+        <FormField label="Final Expiry Date">
+          <input value={formatDate(member.finalExpiryDate)} disabled />
+        </FormField>
+        <FormField label="Covered Persons">
+          <input value={String(coveredCount)} disabled />
+        </FormField>
       </fieldset>
       <fieldset>
         <legend>Reinstatement</legend>
@@ -62,8 +77,13 @@ export function ReinstatementForm({ view, onReinstated }: ReinstatementFormProps
           <input type="date" value={form.endtBordxDate} disabled={!cancelled} onChange={(e) => set('endtBordxDate')(e.target.value)} />
         </FormField>
         <FormField label="Batch No *">
-          <input value={form.batchNo} inputMode="numeric" maxLength={BATCH_NO_MAX_LENGTH} disabled={!cancelled}
-            onChange={(e) => set('batchNo')(e.target.value.replace(/\D/g, ''))} />
+          <input
+            value={form.batchNo}
+            inputMode="numeric"
+            maxLength={BATCH_NO_MAX_LENGTH}
+            disabled={!cancelled}
+            onChange={(e) => set('batchNo')(e.target.value.replace(/\D/g, ''))}
+          />
         </FormField>
         <FormField label="Reinstatement Date *">
           <input type="date" value={form.reinstateDate} disabled={!cancelled} onChange={(e) => set('reinstateDate')(e.target.value)} />
@@ -80,7 +100,11 @@ export function ReinstatementForm({ view, onReinstated }: ReinstatementFormProps
           </button>
         </div>
       </fieldset>
-      {reinstate.isError && <p className="error" role="alert">{errorMessage(reinstate.error)}</p>}
+      {reinstate.isError && (
+        <p className="error" role="alert">
+          {errorMessage(reinstate.error)}
+        </p>
+      )}
     </div>
   )
 }
@@ -89,11 +113,23 @@ export function ReinstatementForm({ view, onReinstated }: ReinstatementFormProps
 export function ReinstatementSummary({ result }: { result: ReinstatementResult }) {
   return (
     <div className="registration">
-      <p className="success" role="status">{result.message}</p>
-      {result.warnings.map((w) => <p key={w} className="warning">{w}</p>)}
+      <p className="success" role="status">
+        {result.message}
+      </p>
+      {result.warnings.map((w) => (
+        <p key={w} className="warning">
+          {w}
+        </p>
+      ))}
       <div className="table-wrap">
         <table className="grid">
-          <thead><tr><th>Cover</th><th>MCO Fee</th><th>Premium</th></tr></thead>
+          <thead>
+            <tr>
+              <th>Cover</th>
+              <th>MCO Fee</th>
+              <th>Premium</th>
+            </tr>
+          </thead>
           <tbody>
             {result.covers.map((c) => (
               <tr key={c.coverId}>

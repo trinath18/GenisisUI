@@ -45,14 +45,27 @@ export function AdjustmentPage({ title = 'Membership Adjustment', canOpen }: Adj
   }
 
   if (lookups.isLoading) return <p className="muted">Loading…</p>
-  if (lookups.isError) return <p className="error" role="alert">{errorMessage(lookups.error)}</p>
+  if (lookups.isError)
+    return (
+      <p className="error" role="alert">
+        {errorMessage(lookups.error)}
+      </p>
+    )
 
   return (
     <section>
       <h2>{title}</h2>
       <MemberSearchPanel currentNumber={membershipNo} onOpen={(number) => void open(number)} />
-      {refused && <p className="error" role="alert">{refused}</p>}
-      {loaded.isError && <p className="error" role="alert">{errorMessage(loaded.error)}</p>}
+      {refused && (
+        <p className="error" role="alert">
+          {refused}
+        </p>
+      )}
+      {loaded.isError && (
+        <p className="error" role="alert">
+          {errorMessage(loaded.error)}
+        </p>
+      )}
       {loaded.isLoading && <p className="muted">Loading…</p>}
       {loaded.data && membershipNo && (
         <AdjustmentEditor
@@ -60,7 +73,10 @@ export function AdjustmentPage({ title = 'Membership Adjustment', canOpen }: Adj
           membershipNo={membershipNo}
           original={loaded.data}
           lookups={lookups.data!}
-          onReload={() => { setReloadCount((n) => n + 1); setSavedMessage(null) }}
+          onReload={() => {
+            setReloadCount((n) => n + 1)
+            setSavedMessage(null)
+          }}
           savedMessage={savedMessage}
           onSavedMessageChange={setSavedMessage}
         />

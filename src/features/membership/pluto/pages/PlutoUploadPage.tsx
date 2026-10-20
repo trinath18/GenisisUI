@@ -22,13 +22,20 @@ export function PlutoUploadPage() {
         <fieldset>
           <legend>Workbook</legend>
           <p className="muted">
-            First worksheet, headings in row 1, one member per row from row 2 until column A is empty (columns A to AC: No, relationship,
-            policy no, name, address 1–3, city, state, postcode, group company, department, branch, sex, renew flag, IC, date of birth, plan,
-            insured type, payor eff./exp. dates, exclusion, clinical plan, insured type, eff./exp. dates and exclusion, payor, bordx date).
+            First worksheet, headings in row 1, one member per row from row 2 until column A is empty (columns A to AC: No, relationship, policy no, name,
+            address 1–3, city, state, postcode, group company, department, branch, sex, renew flag, IC, date of birth, plan, insured type, payor eff./exp.
+            dates, exclusion, clinical plan, insured type, eff./exp. dates and exclusion, payor, bordx date).
           </p>
           <FormField label="Excel file *" wide>
-            <input type="file" accept={ACCEPTED_FILE_TYPES} disabled={upload.isPending}
-              onChange={(e) => { setFile(e.target.files?.[0] ?? null); upload.reset() }} />
+            <input
+              type="file"
+              accept={ACCEPTED_FILE_TYPES}
+              disabled={upload.isPending}
+              onChange={(e) => {
+                setFile(e.target.files?.[0] ?? null)
+                upload.reset()
+              }}
+            />
           </FormField>
           <div className="actions">
             <button type="button" disabled={!file || upload.isPending} onClick={() => void start()}>
@@ -37,8 +44,16 @@ export function PlutoUploadPage() {
           </div>
         </fieldset>
       </div>
-      {upload.isError && <pre className="error" role="alert">{errorMessage(upload.error)}</pre>}
-      {upload.data && <p className="success" role="status">{upload.data.message} ({upload.data.rows} rows)</p>}
+      {upload.isError && (
+        <pre className="error" role="alert">
+          {errorMessage(upload.error)}
+        </pre>
+      )}
+      {upload.data && (
+        <p className="success" role="status">
+          {upload.data.message} ({upload.data.rows} rows)
+        </p>
+      )}
     </section>
   )
 }

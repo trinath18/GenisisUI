@@ -33,8 +33,11 @@ export function TempRegistrationPage() {
         <fieldset>
           <legend>Previous Membership</legend>
           <FormField label="Prev Mem No">
-            <input value={number} onChange={(e) => setNumber(e.target.value.toUpperCase())}
-              onKeyDown={(e) => e.key === 'Enter' && number.trim() && load.mutate(number)} />
+            <input
+              value={number}
+              onChange={(e) => setNumber(e.target.value.toUpperCase())}
+              onKeyDown={(e) => e.key === 'Enter' && number.trim() && load.mutate(number)}
+            />
           </FormField>
           <div className="actions">
             <button type="button" disabled={!number.trim() || load.isPending} onClick={() => load.mutate(number)}>
@@ -43,15 +46,22 @@ export function TempRegistrationPage() {
           </div>
         </fieldset>
       </div>
-      {load.isError && <p className="error" role="alert">{errorMessage(load.error)}</p>}
+      {load.isError && (
+        <p className="error" role="alert">
+          {errorMessage(load.error)}
+        </p>
+      )}
       {load.data ? (
         <>
           <p className="muted">
-            Renewal of {asText(load.data.request.previousMembershipNo)}: policy year {load.data.policyYear}. Enter the new policy number, payor
-            dates, bordx date and batch, then save.
+            Renewal of {asText(load.data.request.previousMembershipNo)}: policy year {load.data.policyYear}. Enter the new policy number, payor dates, bordx
+            date and batch, then save.
           </p>
-          <RegistrationPage key={`${asText(load.data.request.previousMembershipNo)}:${load.submittedAt}`} initial={toInitial(load.data)}
-            title="Temporary Membership Registration" />
+          <RegistrationPage
+            key={`${asText(load.data.request.previousMembershipNo)}:${load.submittedAt}`}
+            initial={toInitial(load.data)}
+            title="Temporary Membership Registration"
+          />
         </>
       ) : (
         <p className="muted">Enter the previous membership number and press Show to start a renewal registration from it.</p>
