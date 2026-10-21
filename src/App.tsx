@@ -25,6 +25,7 @@ import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsSc
 import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
 import { DepartmentScreen } from './features/maintenance/security/pages/DepartmentScreen'
 import { UserSecurityScreen } from './features/maintenance/security/pages/UserSecurityScreen'
+import { MmaEntryScreen } from './features/maintenance/mmaEntry/pages/MmaEntryScreen'
 import { CaseEnquiryPage } from './pages/case/CaseEnquiryPage'
 import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
 import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
@@ -313,6 +314,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.AccountTransaction}>
               <AccountTransactionScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/mma"
+          element={
+            <RequireAccess position={Access.MmaEntry}>
+              <MmaEntryScreen />
             </RequireAccess>
           }
         />
