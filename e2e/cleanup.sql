@@ -13,3 +13,17 @@ DELETE dbo.CASAsciiSEQ WHERE SEQBatchDate = CAST(GETDATE() AS date) AND SEQPayCo
 SELECT 'zz case' AS what, c.MBMNumber, c.MBMPatientCovID, x.MBMNumber AS xrefMbm, x.TransRemarks, c.CASLastUpdateUser FROM dbo.CAS c JOIN genisis.Maint_CASCrossReference x ON x.CASNumber = c.CASNumber WHERE c.CASNumber = 'ZZ00000106';
 SELECT 'zz limits' AS what, RTRIM(MBMNumber) AS m, MBMAvailableLimit FROM dbo.MBM WHERE MBMNumber IN ('ZZHA0000316*01', 'ZZHA0000518*01') ORDER BY MBMNumber;
 SELECT 'flags' AS what, (SELECT COUNT(*) FROM genisis.WS_Claim WHERE CLMBordxWSASCII = 'Y') AS claimsY, (SELECT COUNT(*) FROM dbo.CASOthersTwo WHERE CASASCIIGenStatus = 'Y') AS casesY, (SELECT COUNT(*) FROM dbo.CASAuditReview WHERE CASNumber = 'XI00002733') AS auditRows;
+
+-- invoice-entry.mjs adds one invoice (number E2E-...) to a real case and removes it itself; this removes any a failed run left, with all of its rows
+DECLARE @invoice int;
+DECLARE e2e_invoices CURSOR FOR SELECT INVIndex FROM genisis.WS_ClaimInvoice WHERE InvNo LIKE 'E2E-%';
+OPEN e2e_invoices;
+FETCH NEXT FROM e2e_invoices INTO @invoice;
+WHILE @@FETCH_STATUS = 0
+BEGIN
+    EXEC genisis.Invoice_Remove @invoice;
+    FETCH NEXT FROM e2e_invoices INTO @invoice;
+END
+CLOSE e2e_invoices;
+DEALLOCATE e2e_invoices;
+SELECT 'e2e invoices left' AS what, COUNT(*) AS n FROM genisis.WS_ClaimInvoice WHERE InvNo LIKE 'E2E-%';

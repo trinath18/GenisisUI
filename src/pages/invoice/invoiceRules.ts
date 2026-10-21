@@ -18,6 +18,9 @@ export interface InvoiceCaseHeader {
   payType: string | null
   claimability: string | null
   lastWorksheetVersion: number | null
+  nextWorksheetVersion: number
+  modality: string | null
+  remarks: string | null
 }
 
 export interface InvoiceSummary {

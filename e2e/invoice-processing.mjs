@@ -1,4 +1,4 @@
-// Invoice > Invoice Processing, read side: a case's invoices and one invoice's amounts by worksheet row. Reads the real development data; nothing is written.
+// Invoice > Invoice Processing, read side: a case's invoices and one invoice's amounts by worksheet row. Reads the real development data; nothing is written (invoice-entry.mjs is the write side).
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
@@ -43,8 +43,8 @@ check('api: an invoice of another case is Record not found! (404)', (await get(`
 await t.go('/invoice/processing')
 check('invoice: title', (await page.$eval('h2', (e) => e.textContent)) === 'Invoice Processing')
 check(
-  'invoice: says plainly that nothing can be added, changed or removed yet',
-  (await page.$eval('main', (m) => m.textContent ?? '')).includes('are not available yet'),
+  'invoice: says plainly that an invoice a worksheet has used cannot be changed or removed here yet',
+  (await page.$eval('main', (m) => m.textContent ?? '')).includes('cannot be changed or removed here yet'),
 )
 await t.click('Show')
 check('invoice: a case number is required', (await t.errors()).includes('Please enter Case Number!'), JSON.stringify(await t.errors()))

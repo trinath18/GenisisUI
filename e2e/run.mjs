@@ -13,6 +13,7 @@ const suites = [
   'worksheet-adjustment.mjs',
   'worksheet-registration.mjs',
   'invoice-processing.mjs',
+  'invoice-entry.mjs',
 ]
 
 for (const name of ['E2E_JWT_KEY', 'E2E_ASCII_DIR']) {

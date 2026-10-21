@@ -111,9 +111,12 @@ export function WorksheetRegistrationPage() {
       )}
       {result && (
         <>
-          <div className="form-row">
-            <ReadField label="Room & Board days" value={daysText(result.roomDays)} hint="summed over the invoices" />
-            <ReadField label="ICU days" value={daysText(result.icuDays)} hint="summed over the invoices" />
+          <div className="registration">
+            <fieldset>
+              <legend>Days of the stay</legend>
+              <ReadField label="Room & Board days" value={daysText(result.roomDays)} hint="summed over the invoices" />
+              <ReadField label="ICU days" value={daysText(result.icuDays)} hint="summed over the invoices" />
+            </fieldset>
           </div>
           {result.notes.map((n) => (
             <p key={n} role="status" className="muted">

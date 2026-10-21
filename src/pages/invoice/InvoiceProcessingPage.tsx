@@ -3,7 +3,7 @@
 
 import { useState } from 'react'
 import type { FormEvent } from 'react'
-import { keepPreviousData, useQuery } from '@tanstack/react-query'
+import { keepPreviousData, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, errorMessage } from '../../api/client'
 import { Button } from '../../components/Button'
 import { DataGrid } from '../../components/DataGrid'
@@ -11,6 +11,10 @@ import type { GridColumn } from '../../components/DataGrid'
 import { ReadField, TextField } from '../../components/Field'
 import { ActionBar, PageShell } from '../../components/Screen'
 import { formatDate, formatMoney } from '../../lib/format'
+import { ask, notify } from '../../lib/notifyStore'
+import { InvoiceEntryForm } from './InvoiceEntryForm'
+import { emptyValues, messages, valuesOf } from './invoiceEntryRules'
+import type { InvoiceField, InvoiceFormData, InvoiceLookups, InvoiceValues } from './invoiceEntryRules'
 import { amountNote, invoicesTotal, payToText, unregistered, worksheetText } from './invoiceRules'
 import type { InvoiceCaseResult, InvoiceDetail, InvoiceRowAmount, InvoiceSummary } from './invoiceRules'
 
@@ -37,6 +41,18 @@ export function InvoiceProcessingPage() {
   const [error, setError] = useState('')
   const [requested, setRequested] = useState<string | null>(null)
   const [selected, setSelected] = useState<number | null>(null)
+  const [entry, setEntry] = useState<{ index: number | null; initial: InvoiceValues } | null>(null)
+  const queryClient = useQueryClient()
+  const fields = useQuery({
+    queryKey: ['invoice-fields'],
+    queryFn: async () => (await api.get<InvoiceField[]>('/api/invoice/fields')).data,
+    staleTime: Infinity,
+  })
+  const lookups = useQuery({
+    queryKey: ['invoice-lookups'],
+    queryFn: async () => (await api.get<InvoiceLookups>('/api/invoice/lookups')).data,
+    staleTime: Infinity,
+  })
 
   const loaded = useQuery({
     queryKey: ['invoice-case', requested],
@@ -61,7 +77,52 @@ export function InvoiceProcessingPage() {
     }
     setError('')
     setSelected(null)
+    setEntry(null)
     setRequested(caseNo.trim())
+  }
+
+  const reload = async (select: number | null) => {
+    await queryClient.invalidateQueries({ queryKey: ['invoice-case'] })
+    await queryClient.invalidateQueries({ queryKey: ['invoice-detail'] })
+    setSelected(select)
+  }
+
+  // cmdAdd_Click
+  const add = () => {
+    if (!result) return notify(messages.selectCaseFirst, 'error')
+    setEntry({ index: null, initial: emptyValues(result.header) })
+  }
+
+  // cmdEdit_Click: a bordxed invoice cannot be changed; one a worksheet has used is not migrated yet (the server says so)
+  const edit = async () => {
+    if (!result || selected === null) return
+    try {
+      const data = (await api.get<InvoiceFormData>(`/api/invoice/${encodeURIComponent(result.header.caseNo)}/${selected}/form`)).data
+      if (data.bordxed) return notify('Invoice has been bordx!', 'error')
+      if (data.inWorksheet)
+        return notify(
+          "This invoice has been used in a worksheet. Changing it is not available yet: the desktop also saves the worksheet's limits then.",
+          'error',
+        )
+      setEntry({ index: selected, initial: valuesOf(data.form, fields.data ?? []) })
+    } catch (e) {
+      notify(errorMessage(e), 'error')
+    }
+  }
+
+  // CmdRemove_Click
+  const remove = async () => {
+    if (!result || selected === null) return
+    const invoice = result.invoices.find((i) => i.index === selected)
+    if (invoice?.inWorksheet) return notify('Selected Invoice cannot be deleted!\nIt has been used in Worksheet!', 'error')
+    if (!(await ask(messages.removeSure))) return
+    try {
+      await api.delete(`/api/invoice/${encodeURIComponent(result.header.caseNo)}/${selected}`)
+      setEntry(null)
+      await reload(null)
+    } catch (e) {
+      notify(errorMessage(e), 'error')
+    }
   }
 
   const header = result?.header
@@ -70,7 +131,7 @@ export function InvoiceProcessingPage() {
   return (
     <PageShell title="Invoice Processing" subtitle="The invoices of a case, and what each one charges">
       <p role="status" className="muted">
-        This page shows a case&apos;s invoices and their amounts. Adding, changing and removing invoices are not available yet, so nothing is written here.
+        Add an invoice to a case, or pick one to change or remove. An invoice a worksheet has used cannot be changed or removed here yet.
       </p>
       <form onSubmit={show} noValidate>
         <ActionBar label="Case">
@@ -94,21 +155,52 @@ export function InvoiceProcessingPage() {
       )}
       {header && result && (
         <>
-          <div className="form-row">
-            <ReadField label="Membership No" value={header.memberNo ?? ''} />
-            <ReadField label="Member" value={header.memberName ?? ''} />
-            <ReadField label="Patient" value={header.patientName ?? (header.coverId === '00' ? 'Member' : '')} />
-            <ReadField label="Payor" value={header.payor ?? ''} />
-            <ReadField label="Plan" value={header.planCode ?? ''} />
-            <ReadField label="Hospital" value={header.hospital ?? ''} />
-            <ReadField label="Date of Admission" value={formatDate(header.admitted)} />
-            <ReadField label="Date of Discharge" value={formatDate(header.discharged)} />
-            <ReadField label="Worksheet" value={header.lastWorksheetVersion == null ? 'None yet' : `Version ${header.lastWorksheetVersion}`} />
+          <div className="registration">
+            <fieldset>
+              <legend>Case</legend>
+              <ReadField label="Membership No" value={header.memberNo ?? ''} />
+              <ReadField label="Member" value={header.memberName ?? ''} />
+              <ReadField label="Patient" value={header.patientName ?? (header.coverId === '00' ? 'Member' : '')} />
+              <ReadField label="Payor" value={header.payor ?? ''} />
+              <ReadField label="Plan" value={header.planCode ?? ''} />
+              <ReadField label="Hospital" value={header.hospital ?? ''} />
+              <ReadField label="Date of Admission" value={formatDate(header.admitted)} />
+              <ReadField label="Date of Discharge" value={formatDate(header.discharged)} />
+              <ReadField label="Worksheet" value={header.lastWorksheetVersion == null ? 'None yet' : `Version ${header.lastWorksheetVersion}`} />
+              <ReadField label="Next Worksheet Version" value={String(header.nextWorksheetVersion)} />
+            </fieldset>
           </div>
           {pending.length > 0 && (
             <p role="status" className="muted">
               {pending.length === 1 ? '1 invoice is' : `${pending.length} invoices are`} not in a worksheet yet ({formatMoney(invoicesTotal(pending))}).
             </p>
+          )}
+          <ActionBar label="Invoice">
+            <Button onClick={add}>Add</Button>
+            <Button onClick={edit} disabled={selected === null}>
+              Edit
+            </Button>
+            <Button onClick={remove} disabled={selected === null}>
+              Remove
+            </Button>
+            <Button variant="link" onClick={() => setEntry(null)} disabled={entry === null}>
+              Clear
+            </Button>
+          </ActionBar>
+          {entry && fields.data && lookups.data && (
+            <InvoiceEntryForm
+              key={entry.index ?? 'new'}
+              header={result.header}
+              fields={fields.data}
+              lookups={lookups.data}
+              initial={entry.initial}
+              index={entry.index}
+              onCancel={() => setEntry(null)}
+              onSaved={async (index) => {
+                setEntry(null)
+                await reload(index)
+              }}
+            />
           )}
           <DataGrid
             caption="Invoices"
@@ -127,17 +219,20 @@ export function InvoiceProcessingPage() {
           {detail.data && (
             <>
               <h3>Invoice {detail.data.invoice.invoiceNo}</h3>
-              <div className="form-row">
-                <ReadField label="Stay Type" value={detail.data.invoice.stayType ?? ''} />
-                <ReadField label="Pay Type" value={detail.data.invoice.payType ?? ''} />
-                <ReadField label="Room Type" value={detail.data.invoice.roomType ?? ''} />
-                <ReadField label="Receipt Date" value={formatDate(detail.data.invoice.receiptDate)} />
-                <ReadField label="Receipt Mode" value={detail.data.invoice.receiptMode ?? ''} />
-                <ReadField label="Follow-up Date" value={formatDate(detail.data.invoice.followUpDate)} />
-                <ReadField label="Initial Invoice Amount" value={money(detail.data.invoice.initialAmount)} />
-                <ReadField label="Excess Amount" value={money(detail.data.invoice.excessAmount)} />
-                <ReadField label="Amount to Pay" value={money(detail.data.invoice.payAmount)} />
-                <ReadField label="UHC No" value={detail.data.invoice.uhcNo ?? ''} />
+              <div className="registration">
+                <fieldset>
+                  <legend>Invoice details</legend>
+                  <ReadField label="Stay Type" value={detail.data.invoice.stayType ?? ''} />
+                  <ReadField label="Pay Type" value={detail.data.invoice.payType ?? ''} />
+                  <ReadField label="Room Type" value={detail.data.invoice.roomType ?? ''} />
+                  <ReadField label="Receipt Date" value={formatDate(detail.data.invoice.receiptDate)} />
+                  <ReadField label="Receipt Mode" value={detail.data.invoice.receiptMode ?? ''} />
+                  <ReadField label="Follow-up Date" value={formatDate(detail.data.invoice.followUpDate)} />
+                  <ReadField label="Initial Invoice Amount" value={money(detail.data.invoice.initialAmount)} />
+                  <ReadField label="Excess Amount" value={money(detail.data.invoice.excessAmount)} />
+                  <ReadField label="Amount to Pay" value={money(detail.data.invoice.payAmount)} />
+                  <ReadField label="UHC No" value={detail.data.invoice.uhcNo ?? ''} />
+                </fieldset>
               </div>
               {amountNote(detail.data) && (
                 <p role="status" className="muted">
