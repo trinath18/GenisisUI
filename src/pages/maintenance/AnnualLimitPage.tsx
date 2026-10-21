@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, errorMessage } from "../../api/client";
+import { Button } from '../../components/Button'
+
 
 interface Option {
   code: string;
@@ -283,14 +285,13 @@ export function AnnualLimitPage() {
         {save.isError && <p className="error">{errorMessage(save.error)}</p>}
         {saved && <p className="success">{saved}</p>}
         <div className="actions">
-          <button type="submit" disabled={save.isPending}>
+          <Button variant="primary" type="submit" disabled={save.isPending}>
             {editing === null ? "Save" : "Update"}
-          </button>
-          <button type="button" onClick={onSearch}>
+          </Button>
+          <Button variant="ghost" onClick={onSearch}>
             Search
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button variant="link"
             disabled={save.isPending}
             onClick={() => {
               setForm({ suppLimitStatus: "A" });
@@ -299,7 +300,7 @@ export function AnnualLimitPage() {
             }}
           >
             Clear
-          </button>
+          </Button>
         </div>
       </form>
       {search.isError && <p className="error">{errorMessage(search.error)}</p>}
@@ -348,17 +349,13 @@ export function AnnualLimitPage() {
                     <td>{r.effectiveDate?.slice(0, 10)}</td>
                     <td>{r.version}</td>
                     <td className="action-cell">
-                      <button
-                        type="button"
-                        className="link"
+                      <Button variant="link"
                         disabled={save.isPending}
                         onClick={() => onEdit(r)}
                       >
                         Edit
-                      </button>{" "}
-                      <button
-                        type="button"
-                        className="link"
+                      </Button>{" "}
+                      <Button variant="link"
                         disabled={remove.isPending}
                         onClick={() => {
                           resetFeedback();
@@ -371,7 +368,7 @@ export function AnnualLimitPage() {
                         }}
                       >
                         Delete
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}

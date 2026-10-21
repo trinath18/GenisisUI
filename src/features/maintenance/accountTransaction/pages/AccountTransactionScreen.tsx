@@ -8,6 +8,7 @@ import { formatMoney } from '../../../../lib/format'
 import { notify } from '../../../../lib/notifyStore'
 import { accountTransactionApi, accountTransactionKeys } from '../api/accountTransactionApi'
 import type { AccountTransactionQuery, AccountTransactionRow } from '../types'
+import { Button } from '../../../../components/Button'
 
 const EMPTY: AccountTransactionQuery = {
   bodyPart: '',
@@ -103,15 +104,15 @@ export function AccountTransactionScreen() {
             </FormField>
           ))}
           <div className="actions">
-            <button type="submit" disabled={list.isFetching}>
+            <Button variant="primary" type="submit" disabled={list.isFetching}>
               Search
-            </button>
-            <button type="button" onClick={clear}>
+            </Button>
+            <Button variant="link" onClick={clear}>
               Clear
-            </button>
-            <button type="button" disabled={rows.length === 0} onClick={print}>
+            </Button>
+            <Button variant="ghost" disabled={rows.length === 0} onClick={print}>
               Print
-            </button>
+            </Button>
           </div>
         </fieldset>
       </form>

@@ -5,6 +5,7 @@ import { FormField } from '../../../../components/common/FormField'
 import { adjustmentApi, adjustmentKeys } from '../../adjustment/api/adjustmentApi'
 import { EMPTY_SEARCH, LOOKUPS_STALE_MS, SENDING_MODES } from '../constants'
 import type { CardControlSearch } from '../types'
+import { Button } from '../../../../components/Button'
 
 interface CardControlFiltersProps {
   busy: boolean
@@ -60,11 +61,11 @@ export function CardControlFilters({ busy, onSearch, onClear }: CardControlFilte
         <input type="date" value={search.sentDateTo} onChange={(e) => set('sentDateTo')(e.target.value)} />
       </FormField>
       <div className="actions">
-        <button type="button" disabled={busy} onClick={() => onSearch({ ...search })}>
+        <Button variant="ghost" disabled={busy} onClick={() => onSearch({ ...search })}>
           Search
-        </button>
-        <button
-          type="button"
+        </Button>
+        <Button
+          variant="link"
           disabled={busy}
           onClick={() => {
             setSearch(EMPTY_SEARCH)
@@ -72,7 +73,7 @@ export function CardControlFilters({ busy, onSearch, onClear }: CardControlFilte
           }}
         >
           Clear
-        </button>
+        </Button>
       </div>
     </fieldset>
   )

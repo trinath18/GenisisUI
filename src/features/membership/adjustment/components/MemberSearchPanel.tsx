@@ -6,6 +6,7 @@ import { formatDate } from '../../../../lib/format'
 import { adjustmentApi, adjustmentKeys } from '../api/adjustmentApi'
 import { SEARCH_FIELDS, SEARCH_MINIMUM_LENGTH } from '../constants'
 import { text } from '../memberForm'
+import { Button } from '../../../../components/Button'
 
 interface MemberSearchPanelProps {
   /** The membership shown below, used as the starting point of Pre / Next. */
@@ -47,15 +48,15 @@ export function MemberSearchPanel({ currentNumber, onOpen }: MemberSearchPanelPr
           />
         </FormField>
         <div className="actions">
-          <button type="button" disabled={!numberInput.trim()} onClick={() => open(numberInput)}>
+          <Button variant="ghost" disabled={!numberInput.trim()} onClick={() => open(numberInput)}>
             Go
-          </button>
-          <button type="button" disabled={navigate.isPending || !hasNumber} onClick={() => navigate.mutate('prev')}>
+          </Button>
+          <Button variant="ghost" disabled={navigate.isPending || !hasNumber} onClick={() => navigate.mutate('prev')}>
             Pre
-          </button>
-          <button type="button" disabled={navigate.isPending || !hasNumber} onClick={() => navigate.mutate('next')}>
+          </Button>
+          <Button variant="ghost" disabled={navigate.isPending || !hasNumber} onClick={() => navigate.mutate('next')}>
             Next
-          </button>
+          </Button>
         </div>
         <FormField label="Search by">
           <select value={searchBy} onChange={(e) => setSearchBy(e.target.value)}>
@@ -67,9 +68,9 @@ export function MemberSearchPanel({ currentNumber, onOpen }: MemberSearchPanelPr
           </select>
         </FormField>
         <div className="actions">
-          <button type="button" disabled={numberInput.trim().length < SEARCH_MINIMUM_LENGTH} onClick={() => setSearchText(numberInput.trim())}>
+          <Button variant="ghost" disabled={numberInput.trim().length < SEARCH_MINIMUM_LENGTH} onClick={() => setSearchText(numberInput.trim())}>
             Search
-          </button>
+          </Button>
         </div>
       </fieldset>
       {navigate.isError && (

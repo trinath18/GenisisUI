@@ -9,6 +9,7 @@ import { securityApi, securityKeys } from '../api/securityApi'
 import { AccessMatrixEditor } from '../components/AccessMatrixEditor'
 import type { CodeOption } from '../../../../components/common/CodeSelect'
 import type { CodeName, PermissionUserRequest, UserDetail } from '../types'
+import { Button } from '../../../../components/Button'
 
 const LOOKUPS_STALE_MS = 10 * 60_000
 const CODE_MAX = 10
@@ -168,27 +169,27 @@ export function UserSecurityScreen({ mode }: UserSecurityScreenProps) {
             </FormField>
           )}
           <div className="actions">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => {
                 reset()
                 setEditing('add')
               }}
             >
               Add
-            </button>
-            <button type="button" disabled={!selected || editing !== null} onClick={() => setEditing('edit')}>
+            </Button>
+            <Button variant="ghost" disabled={!selected || editing !== null} onClick={() => setEditing('edit')}>
               Edit
-            </button>
-            <button type="button" className="danger" disabled={!selected || remove.isPending} onClick={() => void onDelete()}>
+            </Button>
+            <Button variant="danger" disabled={!selected || remove.isPending} onClick={() => void onDelete()}>
               Delete
-            </button>
-            <button type="submit" disabled={locked || save.isPending}>
+            </Button>
+            <Button variant="primary" type="submit" disabled={locked || save.isPending}>
               Save
-            </button>
-            <button type="button" disabled={locked} onClick={reset}>
+            </Button>
+            <Button variant="link" disabled={locked} onClick={reset}>
               Cancel
-            </button>
+            </Button>
           </div>
         </fieldset>
       </form>
@@ -208,7 +209,9 @@ export function UserSecurityScreen({ mode }: UserSecurityScreenProps) {
         }}
       >
         <input placeholder="User ID contains" aria-label="Search user ID" value={search} onChange={(e) => setSearch(e.target.value)} />
-        <button type="submit">Search</button>
+        <Button variant="primary" type="submit">
+          Search
+        </Button>
       </form>
       {users.isLoading && <p className="muted">Loading…</p>}
       {users.isError && (

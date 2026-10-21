@@ -9,6 +9,7 @@ import { mcoPendingApi, mcoPendingKeys } from '../api/mcoPendingApi'
 import { McoPendingFilters } from '../components/McoPendingFilters'
 import { EXPORT_FILE_NAME, MCO_PENDING_STATUS, MESSAGES, SEARCH_LIMIT, UPDATE_STATUSES } from '../constants'
 import type { McoPendingRow, McoPendingSearch } from '../types'
+import { Button } from '../../../../components/Button'
 
 const isBilled = (row: McoPendingRow) => row.status?.trim().toUpperCase() === MCO_PENDING_STATUS.billed
 
@@ -79,12 +80,18 @@ export function McoPendingPage() {
             </select>
           </FormField>
           <div className="actions">
-            <button type="button" disabled={checked.size === 0 || update.isPending} onClick={() => void confirmUpdate()}>
-              {update.isPending ? 'Updating…' : `Update (${checked.size})`}
-            </button>
-            <button type="button" disabled={rows.length === 0} onClick={print}>
+            <Button
+              variant="primary"
+              busy={update.isPending}
+              busyLabel="Updating…"
+              disabled={checked.size === 0 || update.isPending}
+              onClick={() => void confirmUpdate()}
+            >
+              {`Update (${checked.size})`}
+            </Button>
+            <Button variant="ghost" disabled={rows.length === 0} onClick={print}>
               Print
-            </button>
+            </Button>
           </div>
         </fieldset>
       </div>

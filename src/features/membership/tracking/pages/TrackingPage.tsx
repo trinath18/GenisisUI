@@ -8,6 +8,7 @@ import { TrackingFilters } from '../components/TrackingFilters'
 import { TrackingResults } from '../components/TrackingResults'
 import { FieldKey, MEMBER_TYPES, META_STALE_MS, MemberType, PRINCIPAL_TYPES, PrincipalType } from '../constants'
 import type { RangeValue, TrackingField, TrackingRequest } from '../types'
+import { Button } from '../../../../components/Button'
 
 /** Membership &gt; Tracking (legacy FrmNewMBMTracking): choose a report, set filters, Search; Print to File exports every row as CSV. */
 export function TrackingPage() {
@@ -118,21 +119,27 @@ export function TrackingPage() {
             <CodeSelect value={principalType} onChange={setPrincipalType} options={PRINCIPAL_TYPES} allowBlank={false} />
           </FormField>
           <div className="actions">
-            <button type="button" disabled={!reportKey || run.isPending} onClick={() => run.mutate()}>
-              {run.isPending ? 'Searching…' : 'Search'}
-            </button>
-            <button type="button" disabled={!run.isPending} onClick={() => abort.current?.abort()}>
+            <Button variant="ghost" busy={run.isPending} busyLabel="Searching…" disabled={!reportKey || run.isPending} onClick={() => run.mutate()}>
+              Search
+            </Button>
+            <Button variant="ghost" disabled={!run.isPending} onClick={() => abort.current?.abort()}>
               Stop
-            </button>
-            <button type="button" disabled={!reportKey || exportCsv.isPending} onClick={() => exportCsv.mutate()}>
-              {exportCsv.isPending ? 'Exporting…' : 'Print to File'}
-            </button>
-            <button type="button" onClick={clear}>
+            </Button>
+            <Button
+              variant="ghost"
+              busy={exportCsv.isPending}
+              busyLabel="Exporting…"
+              disabled={!reportKey || exportCsv.isPending}
+              onClick={() => exportCsv.mutate()}
+            >
+              Print to File
+            </Button>
+            <Button variant="link" onClick={clear}>
               Clear
-            </button>
-            <button type="button" aria-expanded={showFilters} onClick={() => setShowFilters((s) => !s)}>
+            </Button>
+            <Button variant="link" aria-expanded={showFilters} onClick={() => setShowFilters((s) => !s)}>
               {showFilters ? 'Hide filters' : 'Show filters'}
-            </button>
+            </Button>
           </div>
         </fieldset>
         {showFilters && (

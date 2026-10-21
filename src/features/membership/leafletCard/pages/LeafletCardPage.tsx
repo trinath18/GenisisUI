@@ -7,6 +7,7 @@ import { saveCsv } from '../../../../lib/download'
 import { formatDate } from '../../../../lib/format'
 import { leafletCardApi, leafletCardKeys } from '../api/leafletCardApi'
 import type { CardExport, CodeName, LeafletCardCriteria } from '../types'
+import { Button } from '../../../../components/Button'
 
 const LOOKUPS_STALE_MS = 10 * 60 * 1000
 const EMPTY_FORM = { bordxDateFrom: '', bordxDateTo: '', payorCode: '', batchNo: '', healthCode: '' }
@@ -79,11 +80,11 @@ export function LeafletCardPage() {
             <CodeSelect value={form.healthCode} onChange={set('healthCode')} options={options(lookups.data?.healthCodes)} />
           </FormField>
           <div className="actions">
-            <button type="button" disabled={busy} onClick={() => search.mutate({ ...form })}>
+            <Button variant="ghost" disabled={busy} onClick={() => search.mutate({ ...form })}>
               Search
-            </button>
-            <button
-              type="button"
+            </Button>
+            <Button
+              variant="link"
               disabled={busy}
               onClick={() => {
                 setForm(EMPTY_FORM)
@@ -91,7 +92,7 @@ export function LeafletCardPage() {
               }}
             >
               Clear
-            </button>
+            </Button>
           </div>
         </fieldset>
         <fieldset>
@@ -100,15 +101,15 @@ export function LeafletCardPage() {
             PDFs open in a new tab for printing. Printed / reprinted status is not tracked (the desktop's MBMPrinting table does not exist in this database).
           </p>
           <div className="actions">
-            <button type="button" disabled={busy} onClick={() => leaflets.mutate({ ...form })}>
-              {leaflets.isPending ? 'Preparing…' : 'Leaflets (PDF)'}
-            </button>
-            <button type="button" disabled={busy} onClick={() => cards.mutate({ ...form })}>
-              {cards.isPending ? 'Preparing…' : 'Cards (PDF)'}
-            </button>
-            <button type="button" disabled={busy} onClick={() => cardExport.mutate({ ...form })}>
+            <Button variant="ghost" busy={leaflets.isPending} busyLabel="Preparing…" disabled={busy} onClick={() => leaflets.mutate({ ...form })}>
+              Leaflets (PDF)
+            </Button>
+            <Button variant="ghost" busy={cards.isPending} busyLabel="Preparing…" disabled={busy} onClick={() => cards.mutate({ ...form })}>
+              Cards (PDF)
+            </Button>
+            <Button variant="ghost" disabled={busy} onClick={() => cardExport.mutate({ ...form })}>
               Card Export (CSV)
-            </button>
+            </Button>
           </div>
         </fieldset>
       </div>

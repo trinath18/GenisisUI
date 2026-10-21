@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, errorMessage } from '../../api/client'
+import { Button } from '../../components/Button'
+
 
 interface McoFeeRow {
   index: number
@@ -210,15 +212,15 @@ export function McoFeeTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>{editing ? 'Update' : 'Save'}</button>
-          <button type="button" disabled={busy || editing !== null}
+          <Button variant="primary" type="submit" disabled={busy}>{editing ? 'Update' : 'Save'}</Button>
+          <Button variant="ghost" disabled={busy || editing !== null}
             onClick={() => {
               resetFeedback()
               setFilter((f) => ({ planCode: header.planCode, healthCode: header.healthCode, effectiveDate: header.effectiveDate, n: (f?.n ?? 0) + 1 }))
             }}>
             Search
-          </button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear() }}>Clear</button>
+          </Button>
+          <Button variant="link" disabled={busy} onClick={() => { resetFeedback(); clear() }}>Clear</Button>
         </div>
       </form>
 
@@ -263,11 +265,11 @@ export function McoFeeTab() {
                       <td>{r.effectiveDate?.slice(0, 10)}</td>
                       <td className="center">{r.coveredIdCharge}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>Edit</button>
-                        <button type="button" className="link" disabled={busy}
+                        <Button variant="link" disabled={busy} onClick={() => onEdit(r)}>Edit</Button>
+                        <Button variant="link" disabled={busy}
                           onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r.index))}>
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

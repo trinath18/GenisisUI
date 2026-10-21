@@ -4,6 +4,7 @@ import { errorMessage } from '../../../../api/client'
 import { FormField } from '../../../../components/common/FormField'
 import { RegistrationPage, type RegistrationInitial } from '../../../../pages/membership/RegistrationPage'
 import { tempRegistrationApi, type RenewalDraft } from '../api/tempRegistrationApi'
+import { Button } from '../../../../components/Button'
 
 const ISO_DATE = /^\d{4}-\d{2}-\d{2}/
 
@@ -40,9 +41,9 @@ export function TempRegistrationPage() {
             />
           </FormField>
           <div className="actions">
-            <button type="button" disabled={!number.trim() || load.isPending} onClick={() => load.mutate(number)}>
-              {load.isPending ? 'Loading…' : 'Show'}
-            </button>
+            <Button variant="ghost" busy={load.isPending} busyLabel="Loading…" disabled={!number.trim() || load.isPending} onClick={() => load.mutate(number)}>
+              Show
+            </Button>
           </div>
         </fieldset>
       </div>

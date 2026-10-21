@@ -4,6 +4,7 @@ import { errorMessage } from '../../../../api/client'
 import { FormField } from '../../../../components/common/FormField'
 import { plutoApi, plutoKeys } from '../api/plutoApi'
 import { ASCII_GENERATED_MESSAGE, HEALTH_CODES, PAYORS_STALE_MS } from '../constants'
+import { Button } from '../../../../components/Button'
 
 /** Membership &gt; Generate Membership ASCII (Pluto) (legacy frmMembershipASCIIPluto). */
 export function PlutoAsciiPage() {
@@ -55,9 +56,9 @@ export function PlutoAsciiPage() {
             <input type="date" value={bordxDate} onChange={(e) => setBordxDate(e.target.value)} />
           </FormField>
           <div className="actions">
-            <button type="button" disabled={generate.isPending} onClick={() => generate.mutate()}>
-              {generate.isPending ? 'Generating…' : 'Generate'}
-            </button>
+            <Button variant="primary" busy={generate.isPending} busyLabel="Generating…" disabled={generate.isPending} onClick={() => generate.mutate()}>
+              Generate
+            </Button>
           </div>
         </fieldset>
       </div>

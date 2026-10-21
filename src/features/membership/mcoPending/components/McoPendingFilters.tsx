@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { FormField } from '../../../../components/common/FormField'
 import { SEARCH_STATUSES } from '../constants'
 import type { McoPendingSearch } from '../types'
+import { Button } from '../../../../components/Button'
 
 const EMPTY: McoPendingSearch = { numberFrom: '', numberTo: '', bordxDateFrom: '', bordxDateTo: '', status: '' }
 
@@ -36,12 +37,12 @@ export function McoPendingFilters({ busy, onSearch }: { busy: boolean; onSearch:
         </select>
       </FormField>
       <div className="actions">
-        <button type="button" disabled={busy} onClick={() => onSearch({ ...search })}>
+        <Button variant="ghost" disabled={busy} onClick={() => onSearch({ ...search })}>
           Search
-        </button>
-        <button type="button" disabled={busy} onClick={() => setSearch(EMPTY)}>
+        </Button>
+        <Button variant="link" disabled={busy} onClick={() => setSearch(EMPTY)}>
           Clear
-        </button>
+        </Button>
       </div>
     </fieldset>
   )

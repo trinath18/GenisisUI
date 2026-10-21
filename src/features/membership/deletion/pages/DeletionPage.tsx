@@ -8,6 +8,7 @@ import { ask, notify } from '../../../../lib/notifyStore'
 import { deletionApi, deletionKeys } from '../api/deletionApi'
 import { DELETE_OPTION, DELETE_OPTIONS, LIST_LIMIT, LOOKUPS_STALE_MS, confirmDeleteMessage } from '../constants'
 import type { DeletionCriteria, DeletionListResult, DeletionOption } from '../types'
+import { Button } from '../../../../components/Button'
 
 const EMPTY_FORM = { healthCode: '', payorCode: '', option: '', bordxDateFrom: '', bordxDateTo: '', receiptDate: '', batchNo: '', numberFrom: '', numberTo: '' }
 type Form = typeof EMPTY_FORM
@@ -125,18 +126,25 @@ export function DeletionPage() {
             </>
           )}
           <div className="actions">
-            <button type="button" disabled={list.isPending || remove.isPending} onClick={() => list.mutate({ ...form })}>
-              {list.isPending ? 'Listing…' : 'Go'}
-            </button>
-            <button
-              type="button"
-              className="danger"
+            <Button
+              variant="ghost"
+              busy={list.isPending}
+              busyLabel="Listing…"
+              disabled={list.isPending || remove.isPending}
+              onClick={() => list.mutate({ ...form })}
+            >
+              Go
+            </Button>
+            <Button
+              variant="danger"
+              busy={remove.isPending}
+              busyLabel="Deleting…"
               disabled={!canDelete}
               title={sameCriteria ? undefined : 'Press Go first to list what will be deleted.'}
               onClick={() => void confirmDelete()}
             >
-              {remove.isPending ? 'Deleting…' : 'Delete'}
-            </button>
+              Delete
+            </Button>
           </div>
         </fieldset>
       </div>

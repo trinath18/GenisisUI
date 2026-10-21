@@ -6,6 +6,7 @@ import { FormField } from '../../../../components/common/FormField'
 import { bordxApi } from '../api/bordxApi'
 import { ASCII_VERSIONS, EXPORT_OPTIONS, ExportOption, Messages } from '../constants'
 import type { BordxLookups } from '../types'
+import { Button } from '../../../../components/Button'
 
 const EMPTY_FORM = { healthCode: '', payorCode: '', version: '', exportOption: '', bordxFrom: '', bordxTo: '', receiptDate: '', batchNo: '', plan: '' }
 type AsciiForm = typeof EMPTY_FORM
@@ -78,9 +79,15 @@ export function AsciiExportTab({ lookups }: { lookups: BordxLookups }) {
           </>
         )}
         <div className="actions">
-          <button type="button" disabled={generate.isPending} onClick={() => window.confirm(Messages.confirmGenerate) && generate.mutate()}>
-            {generate.isPending ? 'Generating…' : 'Generate'}
-          </button>
+          <Button
+            variant="primary"
+            busy={generate.isPending}
+            busyLabel="Generating…"
+            disabled={generate.isPending}
+            onClick={() => window.confirm(Messages.confirmGenerate) && generate.mutate()}
+          >
+            Generate
+          </Button>
         </div>
       </fieldset>
       {generate.isError && (

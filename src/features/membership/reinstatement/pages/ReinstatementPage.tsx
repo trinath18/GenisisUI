@@ -5,6 +5,7 @@ import { FormField } from '../../../../components/common/FormField'
 import { reinstatementApi, reinstatementKeys } from '../api/reinstatementApi'
 import { ReinstatementForm, ReinstatementSummary } from '../components/ReinstatementForm'
 import type { ReinstatementResult } from '../types'
+import { Button } from '../../../../components/Button'
 
 /** Membership &gt; Member Reinstatement (legacy frmMBMReintstatement). */
 export function ReinstatementPage() {
@@ -41,9 +42,9 @@ export function ReinstatementPage() {
             <input value={numberInput} onChange={(e) => setNumberInput(e.target.value.toUpperCase())} onKeyDown={(e) => e.key === 'Enter' && search()} />
           </FormField>
           <div className="actions">
-            <button type="button" disabled={!numberInput.trim()} onClick={search}>
+            <Button variant="ghost" disabled={!numberInput.trim()} onClick={search}>
               Search
-            </button>
+            </Button>
           </div>
         </fieldset>
       </div>

@@ -2,6 +2,7 @@ import { errorMessage } from '../../../../api/client'
 import { FormField } from '../../../../components/common/FormField'
 import { text } from '../memberForm'
 import type { LoadedMembership, Option } from '../types'
+import { Button } from '../../../../components/Button'
 
 interface EndorsementPanelProps {
   original: LoadedMembership
@@ -33,9 +34,9 @@ export function EndorsementPanel(props: EndorsementPanelProps) {
       <fieldset>
         <legend>Endorsement</legend>
         <div className="actions">
-          <button type="button" disabled={editing || !!original.blocked} onClick={props.onStartEdit}>
+          <Button variant="ghost" disabled={editing || !!original.blocked} onClick={props.onStartEdit}>
             Edit Status
-          </button>
+          </Button>
         </div>
         <FormField label="Endorsement Type *">
           <select value={props.endorsementType} disabled={!editing || busy} onChange={(e) => props.onTypeChange(e.target.value)}>
@@ -79,12 +80,12 @@ export function EndorsementPanel(props: EndorsementPanelProps) {
         </p>
       )}
       <div className="actions">
-        <button type="button" disabled={!editing || !props.endorsementType || busy} onClick={props.onSave}>
-          {busy ? 'Saving…' : 'Save'}
-        </button>
-        <button type="button" disabled={busy} onClick={props.onClear}>
+        <Button variant="primary" busy={busy} busyLabel="Saving…" disabled={!editing || !props.endorsementType || busy} onClick={props.onSave}>
+          Save
+        </Button>
+        <Button variant="link" disabled={busy} onClick={props.onClear}>
           Clear
-        </button>
+        </Button>
       </div>
     </div>
   )
