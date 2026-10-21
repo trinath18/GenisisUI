@@ -65,6 +65,7 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/maintenance/benefits', label: 'Benefits Maintenance', access: Access.BenefitsMaintenance },
       { to: '/maintenance/entity', label: 'Entity Maintenance', access: Access.EntityMaintenance },
       { to: '/maintenance/accounts', label: 'Accounts', access: Access.AccountsMaintenance },
+      { to: '/maintenance/account-transaction', label: 'Account Transaction', access: Access.AccountTransaction },
     ],
   },
 ]
