@@ -5,6 +5,7 @@ import { OPTIONS } from '../constants'
 import { text } from '../memberForm'
 import type { AdjustmentLookups, LoadedMembership, MemberForm, Option, Recalculation } from '../types'
 import { MemberInput, MemberSelect, MemberTextArea } from './MemberControls'
+import { Button } from '../../../../components/Button'
 
 interface PrincipalDetailsTabProps {
   form: MemberForm
@@ -232,9 +233,9 @@ export function PrincipalDetailsTab(props: PrincipalDetailsTabProps) {
         {form.editable && (
           <div className="form-field wide">
             <div className="actions">
-              <button type="button" disabled={props.recalculating || form.busy} onClick={props.onRecalculate}>
+              <Button variant="ghost" disabled={props.recalculating || form.busy} onClick={props.onRecalculate}>
                 Recalculate fees
-              </button>
+              </Button>
             </div>
             {props.recalculateError != null && (
               <p className="error" role="alert">
@@ -253,12 +254,12 @@ export function PrincipalDetailsTab(props: PrincipalDetailsTabProps) {
                   </p>
                 ))}
                 <div className="actions">
-                  <button type="button" onClick={props.onUsePremium}>
+                  <Button variant="ghost" onClick={props.onUsePremium}>
                     Use new premium
-                  </button>
-                  <button type="button" disabled={Number(member.mcoFee) === recalculation.mco} onClick={props.onUseMco}>
+                  </Button>
+                  <Button variant="ghost" disabled={Number(member.mcoFee) === recalculation.mco} onClick={props.onUseMco}>
                     Change member's MCO Fee
-                  </button>
+                  </Button>
                   {recalculation.annualLimit != null && recalculation.annualLimit !== Number(stored.availableLimit ?? 0) && (
                     <label>
                       <input type="checkbox" checked={props.applyAnnualLimit} onChange={(e) => props.onApplyAnnualLimitChange(e.target.checked)} /> Change

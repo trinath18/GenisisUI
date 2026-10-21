@@ -6,6 +6,7 @@ import { FormField } from '../../../../components/common/FormField'
 import { ask, notify } from '../../../../lib/notifyStore'
 import { securityApi, securityKeys } from '../api/securityApi'
 import type { Department } from '../types'
+import { Button } from '../../../../components/Button'
 
 const CODE_MAX = 3
 const DESCRIPTION_MAX = 255
@@ -76,27 +77,27 @@ export function DepartmentScreen() {
             <input value={description} maxLength={DESCRIPTION_MAX} disabled={locked} onChange={(e) => setDescription(e.target.value)} />
           </FormField>
           <div className="actions">
-            <button
-              type="button"
+            <Button
+              variant="ghost"
               onClick={() => {
                 reset()
                 setEditing('add')
               }}
             >
               Add
-            </button>
-            <button type="button" disabled={!selected || editing !== null} onClick={() => setEditing('edit')}>
+            </Button>
+            <Button variant="ghost" disabled={!selected || editing !== null} onClick={() => setEditing('edit')}>
               Edit
-            </button>
-            <button type="button" className="danger" disabled={!selected || remove.isPending} onClick={() => void onDelete()}>
+            </Button>
+            <Button variant="danger" disabled={!selected || remove.isPending} onClick={() => void onDelete()}>
               Delete
-            </button>
-            <button type="submit" disabled={locked || save.isPending}>
+            </Button>
+            <Button variant="primary" type="submit" disabled={locked || save.isPending}>
               Save
-            </button>
-            <button type="button" disabled={locked} onClick={reset}>
+            </Button>
+            <Button variant="link" disabled={locked} onClick={reset}>
               Cancel
-            </button>
+            </Button>
           </div>
         </fieldset>
       </form>

@@ -6,6 +6,7 @@ import { formatDate, formatMoney } from '../../../../lib/format'
 import { reinstatementApi } from '../api/reinstatementApi'
 import { BATCH_NO_MAX_LENGTH, CANCELLED_STATUS, PRINCIPAL_COVER_ID, STILL_ACTIVE_MESSAGE } from '../constants'
 import type { ReinstatementRequest, ReinstatementResult, ReinstatementView } from '../types'
+import { Button } from '../../../../components/Button'
 
 /** yyyy-mm-dd for input type="date" from an ISO date-time. */
 const toInputDate = (value: string | null) => value?.slice(0, 10) ?? ''
@@ -95,9 +96,16 @@ export function ReinstatementForm({ view, onReinstated }: ReinstatementFormProps
           <input type="date" value={form.expiryDate} disabled={!cancelled} onChange={(e) => set('expiryDate')(e.target.value)} />
         </FormField>
         <div className="actions">
-          <button type="button" disabled={!cancelled || reinstate.isPending} onClick={() => reinstate.mutate()}>
-            {reinstate.isPending ? 'Reinstating…' : 'Reinstate'}
-          </button>
+          <Button
+            variant="primary"
+            busy={reinstate.isPending}
+            busyLabel="Reinstating…"
+            disabled={!cancelled || reinstate.isPending}
+            onClick={() => reinstate.mutate()}
+          >
+            {' '}
+            Reinstate{' '}
+          </Button>
         </div>
       </fieldset>
       {reinstate.isError && (

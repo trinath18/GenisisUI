@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import type { AccessEntry } from '../types'
+import { Button } from '../../../../components/Button'
 
 interface AccessMatrixEditorProps {
   matrix: AccessEntry[]
@@ -39,8 +40,8 @@ export function AccessMatrixEditor({ matrix, granted, onChange, disabled }: Acce
       </div>
       <div className="tab-body">
         <div className="actions tab-actions">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             disabled={disabled}
             onClick={() =>
               apply(
@@ -50,9 +51,9 @@ export function AccessMatrixEditor({ matrix, granted, onChange, disabled }: Acce
             }
           >
             Check All
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             disabled={disabled}
             onClick={() =>
               apply(
@@ -62,15 +63,15 @@ export function AccessMatrixEditor({ matrix, granted, onChange, disabled }: Acce
             }
           >
             Uncheck All
-          </button>
+          </Button>
           <span className="muted">{granted.length} rights granted</span>
         </div>
         <div className="access-groups">
           {groups.map(([group, entries]) => (
             <fieldset key={group}>
               <legend>{group}</legend>
-              <button
-                type="button"
+              <Button
+                variant="ghost"
                 disabled={disabled}
                 onClick={() =>
                   apply(
@@ -80,7 +81,7 @@ export function AccessMatrixEditor({ matrix, granted, onChange, disabled }: Acce
                 }
               >
                 Check
-              </button>
+              </Button>
               {entries.map((e) => (
                 <label key={e.position} className="check" title={`Position ${e.position}`}>
                   <input type="checkbox" disabled={disabled} checked={set.has(e.position)} onChange={(ev) => apply([e.position], ev.target.checked)} />

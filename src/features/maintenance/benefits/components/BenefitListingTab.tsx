@@ -6,6 +6,7 @@ import { benefitsApi } from '../api/benefitsApi'
 import { formatDate } from '../../../../lib/format'
 import type { AmountsForm, Option } from '../benefitLookups'
 import { amountsBody, emptyAmounts, optionLabel, useBenefitLookups, withProduct } from '../benefitLookups'
+import { Button } from '../../../../components/Button'
 
 interface BenefitRow {
   subCategoryCode: string
@@ -213,11 +214,11 @@ export function BenefitListingTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>
+          <Button variant="primary" type="submit" disabled={busy}>
             {editing === null ? 'Save' : 'Update'}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             disabled={busy || editing !== null}
             onClick={() => {
               resetFeedback()
@@ -225,9 +226,9 @@ export function BenefitListingTab() {
             }}
           >
             Search
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="link"
             disabled={busy}
             onClick={() => {
               resetFeedback()
@@ -235,7 +236,7 @@ export function BenefitListingTab() {
             }}
           >
             Clear
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -282,17 +283,16 @@ export function BenefitListingTab() {
                       <td className="center">{r.payorCode}</td>
                       <td>{r.groupCompany}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>
+                        <Button variant="link" disabled={busy} onClick={() => onEdit(r)}>
                           Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="link"
+                        </Button>
+                        <Button
+                          variant="link"
                           disabled={busy}
                           onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r))}
                         >
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

@@ -5,6 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { errorMessage } from '../../../../api/client'
 import { entityApi } from '../api/entityApi'
 import { formatMoney } from '../../../../lib/format'
+import { Button } from '../../../../components/Button'
 
 interface ProcedureRow {
   index: number
@@ -135,11 +136,11 @@ function ProceduresTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>
+          <Button variant="primary" type="submit" disabled={busy}>
             {editing === null ? 'Save' : 'Update'}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             disabled={busy || editing !== null}
             onClick={() => {
               resetFeedback()
@@ -147,9 +148,9 @@ function ProceduresTab() {
             }}
           >
             Search
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="link"
             disabled={busy}
             onClick={() => {
               resetFeedback()
@@ -157,7 +158,7 @@ function ProceduresTab() {
             }}
           >
             Clear
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -198,17 +199,16 @@ function ProceduresTab() {
                       <td className="num">{r.partACost}</td>
                       <td className="num">{r.pageNo}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>
+                        <Button variant="link" disabled={busy} onClick={() => onEdit(r)}>
                           Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="link"
+                        </Button>
+                        <Button
+                          variant="link"
                           disabled={busy}
                           onClick={() => window.confirm('Do you want to delete the record?') && (resetFeedback(), remove.mutate(r.index))}
                         >
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -354,11 +354,11 @@ function LookUpTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>
+          <Button variant="primary" type="submit" disabled={busy}>
             {editing === null ? 'Save' : 'Update'}
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             disabled={busy || editing !== null}
             onClick={() => {
               resetFeedback()
@@ -366,9 +366,9 @@ function LookUpTab() {
             }}
           >
             Search
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="link"
             disabled={busy}
             onClick={() => {
               resetFeedback()
@@ -376,7 +376,7 @@ function LookUpTab() {
             }}
           >
             Clear
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -406,17 +406,16 @@ function LookUpTab() {
                       <td className="center">{r.anaesthetistCategory}</td>
                       <td className="num">{formatMoney(r.anaesthetistFee)}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>
+                        <Button variant="link" disabled={busy} onClick={() => onEdit(r)}>
                           Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="link"
+                        </Button>
+                        <Button
+                          variant="link"
                           disabled={busy}
                           onClick={() => window.confirm('Do you want to delete the record?') && (resetFeedback(), remove.mutate(r.index))}
                         >
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

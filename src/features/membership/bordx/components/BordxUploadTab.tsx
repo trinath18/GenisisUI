@@ -8,6 +8,7 @@ import { bordxApi } from '../api/bordxApi'
 import { DEFAULT_HEALTH_INDEX, ERRORS_FILE_NAME, FILE_TYPES, FileType, Messages, NO, YES, YES_NO, fileVersion } from '../constants'
 import type { BordxError, BordxLookups, BordxUploadOptions } from '../types'
 import { UploadResultView, VerifyResultView } from './BordxResults'
+import { Button } from '../../../../components/Button'
 
 const errorsCsv = (errors: BordxError[]) =>
   saveCsv([['Line', 'Policy No', 'Name', 'Error', 'File'], ...errors.map((e) => [e.line, e.policyNo, e.name, e.message, e.fileName])], ERRORS_FILE_NAME)
@@ -103,8 +104,8 @@ export function BordxUploadTab({ lookups }: { lookups: BordxLookups }) {
           ZURICH / TAK files.
         </p>
         <div className="actions">
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             disabled={busy || !!missing}
             title={missing ?? undefined}
             onClick={() => {
@@ -113,9 +114,9 @@ export function BordxUploadTab({ lookups }: { lookups: BordxLookups }) {
             }}
           >
             Verify
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="primary"
             disabled={busy || !!missing}
             title={missing ?? undefined}
             onClick={() => {
@@ -126,13 +127,13 @@ export function BordxUploadTab({ lookups }: { lookups: BordxLookups }) {
             }}
           >
             Upload
-          </button>
-          <button type="button" disabled={!busy} onClick={() => abort.current?.abort()}>
+          </Button>
+          <Button variant="ghost" disabled={!busy} onClick={() => abort.current?.abort()}>
             Stop
-          </button>
-          <button type="button" disabled={!verify.data?.errors.length} onClick={() => verify.data && errorsCsv(verify.data.errors)}>
+          </Button>
+          <Button variant="ghost" disabled={!verify.data?.errors.length} onClick={() => verify.data && errorsCsv(verify.data.errors)}>
             Print
-          </button>
+          </Button>
         </div>
       </fieldset>
       {busy && (

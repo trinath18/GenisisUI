@@ -5,6 +5,7 @@ import { FormField } from '../../../../components/common/FormField'
 import { ask } from '../../../../lib/notifyStore'
 import { plutoApi } from '../api/plutoApi'
 import { ACCEPTED_FILE_TYPES, CONFIRM_UPLOAD_MESSAGE } from '../constants'
+import { Button } from '../../../../components/Button'
 
 /** Membership &gt; Upload Membership Excel (Pluto) (legacy frmMembershipExcelPluto). */
 export function PlutoUploadPage() {
@@ -38,9 +39,10 @@ export function PlutoUploadPage() {
             />
           </FormField>
           <div className="actions">
-            <button type="button" disabled={!file || upload.isPending} onClick={() => void start()}>
-              {upload.isPending ? 'Uploading…' : 'Upload'}
-            </button>
+            <Button variant="primary" busy={upload.isPending} busyLabel="Uploading…" disabled={!file || upload.isPending} onClick={() => void start()}>
+              {' '}
+              Upload{' '}
+            </Button>
           </div>
         </fieldset>
       </div>

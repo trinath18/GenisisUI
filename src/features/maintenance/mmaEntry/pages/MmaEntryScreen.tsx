@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { useMutation } from '@tanstack/react-query'
 import { api, errorMessage } from '../../../../api/client'
 import { formatMoney } from '../../../../lib/format'
+import { Button } from '../../../../components/Button'
 
 type Mode = 'S' | 'N'
 
@@ -151,18 +152,18 @@ export function MmaEntryScreen() {
           </table>
         </div>
         <div className="actions">
-          <button type="submit" disabled={run.isPending}>
+          <Button variant="primary" type="submit" disabled={run.isPending}>
             Calculate
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="link"
             onClick={() => {
               setLines(emptyLines())
               run.reset()
             }}
           >
             Clear
-          </button>
+          </Button>
         </div>
       </form>
       {run.isError && (

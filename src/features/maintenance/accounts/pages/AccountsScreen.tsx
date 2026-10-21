@@ -4,6 +4,7 @@ import { useMutation } from '@tanstack/react-query'
 import { errorMessage } from '../../../../api/client'
 import { accountsApi } from '../api/accountsApi'
 import { formatMoney } from '../../../../lib/format'
+import { Button } from '../../../../components/Button'
 
 interface ScheduleRow {
   code: string
@@ -62,12 +63,12 @@ export function AccountsScreen() {
             <strong>{row?.code ?? 'No Code Available !'}</strong>
           </div>
           <div className="actions">
-            <button type="button" disabled={move.isPending} onClick={() => go('prev')}>
+            <Button variant="ghost" disabled={move.isPending} onClick={() => go('prev')}>
               Prev
-            </button>
-            <button type="button" disabled={move.isPending} onClick={() => go('next')}>
+            </Button>
+            <Button variant="ghost" disabled={move.isPending} onClick={() => go('next')}>
               Next
-            </button>
+            </Button>
           </div>
           <form className="actions" onSubmit={onFind}>
             <input
@@ -78,9 +79,9 @@ export function AccountsScreen() {
               disabled={move.isPending}
               onChange={(e) => setFind(e.target.value.toUpperCase())}
             />
-            <button type="submit" disabled={move.isPending || !find.trim()}>
+            <Button variant="primary" type="submit" disabled={move.isPending || !find.trim()}>
               Go
-            </button>
+            </Button>
           </form>
         </fieldset>
         {move.isError && <p className="error">{errorMessage(move.error)}</p>}

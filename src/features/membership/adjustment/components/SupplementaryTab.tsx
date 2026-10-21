@@ -3,6 +3,7 @@ import { formatDate, formatMoney } from '../../../../lib/format'
 import { CoveredAction, EndorsementType, Messages, MALE_SALUTATION, OPTIONS, SALUTATIONS, editsPrincipal } from '../constants'
 import { text } from '../memberForm'
 import type { FormRow, FormValue, Option } from '../types'
+import { Button } from '../../../../components/Button'
 
 interface SupplementaryTabProps {
   covered: FormRow[]
@@ -113,24 +114,24 @@ export function SupplementaryTab(props: SupplementaryTabProps) {
                 <td className="num">{formatMoney(row.premium)}</td>
                 <td className="action-cell">
                   {editPrincipal && row.coverId && (
-                    <button type="button" className="link" onClick={() => props.onEdit(index)}>
+                    <Button variant="link" onClick={() => props.onEdit(index)}>
                       Edit
-                    </button>
+                    </Button>
                   )}
                   {editing && type === EndorsementType.DeleteSupplementary && row.coverId && (
-                    <button type="button" className="link" onClick={() => confirmMark(index, row, CoveredAction.Remove)}>
+                    <Button variant="link" onClick={() => confirmMark(index, row, CoveredAction.Remove)}>
                       {row.action === CoveredAction.Remove ? 'Undo' : 'Remove'}
-                    </button>
+                    </Button>
                   )}
                   {editing && type === EndorsementType.CancelSupplementary && row.coverId && (
-                    <button type="button" className="link" onClick={() => confirmMark(index, row, CoveredAction.Cancel)}>
+                    <Button variant="link" onClick={() => confirmMark(index, row, CoveredAction.Cancel)}>
                       {row.action === CoveredAction.Cancel ? 'Undo' : 'Cancel'}
-                    </button>
+                    </Button>
                   )}
                   {row.action === CoveredAction.Add && (
-                    <button type="button" className="link" onClick={() => props.onRemoveNew(index)}>
+                    <Button variant="link" onClick={() => props.onRemoveNew(index)}>
                       Remove
-                    </button>
+                    </Button>
                   )}
                 </td>
               </tr>
@@ -205,17 +206,17 @@ export function SupplementaryTab(props: SupplementaryTabProps) {
           </FormField>
           <div className="actions">
             {adding ? (
-              <button type="button" onClick={props.onAdd}>
+              <Button variant="ghost" onClick={props.onAdd}>
                 Add
-              </button>
+              </Button>
             ) : (
-              <button type="button" onClick={props.onUpdate}>
+              <Button variant="ghost" onClick={props.onUpdate}>
                 Update
-              </button>
+              </Button>
             )}
-            <button type="button" onClick={props.onClear}>
+            <Button variant="link" onClick={props.onClear}>
               Clear
-            </button>
+            </Button>
           </div>
         </fieldset>
       )}

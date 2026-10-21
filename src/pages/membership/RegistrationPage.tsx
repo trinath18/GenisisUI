@@ -3,6 +3,8 @@ import type { FormEvent, ReactNode } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { api, errorMessage } from '../../api/client'
 import { formatMoney } from '../../lib/format'
+import { Button } from '../../components/Button'
+
 
 interface Option {
   code: string
@@ -424,18 +426,18 @@ export function RegistrationPage({ initial, title = 'Membership Registration' }:
                           <input value={p.occupation} maxLength={30} onChange={(e) => setPerson(i, 'occupation', e.target.value)} />
                         </td>
                         <td>
-                          <button type="button" className="link" onClick={() => setCovered((list) => list.filter((_, j) => j !== i))}>
+                          <Button variant="link" onClick={() => setCovered((list) => list.filter((_, j) => j !== i))}>
                             Remove
-                          </button>
+                          </Button>
                         </td>
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
-              <button type="button" onClick={() => setCovered((list) => [...list, { ...emptyPerson }])}>
+              <Button variant="ghost" onClick={() => setCovered((list) => [...list, { ...emptyPerson }])}>
                 Add covered person
-              </button>
+              </Button>
             </>
           )}
         </fieldset>
@@ -500,15 +502,11 @@ export function RegistrationPage({ initial, title = 'Membership Registration' }:
         )}
 
         <div className="actions">
-          <button type="button" onClick={() => quote.mutate()} disabled={quote.isPending || save.isPending}>
-            {quote.isPending ? 'Calculating…' : 'Calculate'}
-          </button>
-          <button type="submit" disabled={save.isPending}>
-            {save.isPending ? 'Saving…' : 'Save'}
-          </button>
-          <button type="button" className="link" onClick={() => { setForm(emptyForm); setCovered([]); quote.reset(); save.reset(); setSaved(null) }}>
+          <Button variant="ghost" busy={quote.isPending} busyLabel="Calculating…" onClick={() => quote.mutate()} disabled={quote.isPending || save.isPending}> Calculate </Button>
+          <Button variant="primary" type="submit" busy={save.isPending} busyLabel="Saving…" disabled={save.isPending}> Save </Button>
+          <Button variant="link" onClick={() => { setForm(emptyForm); setCovered([]); quote.reset(); save.reset(); setSaved(null) }}>
             Clear
-          </button>
+          </Button>
         </div>
       </form>
     </section>

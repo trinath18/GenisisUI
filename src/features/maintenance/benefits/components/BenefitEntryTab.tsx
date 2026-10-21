@@ -5,6 +5,7 @@ import { errorMessage } from '../../../../api/client'
 import { benefitsApi } from '../api/benefitsApi'
 import type { AmountsForm } from '../benefitLookups'
 import { amountsBody, emptyAmounts, optionLabel, useBenefitLookups, withProduct } from '../benefitLookups'
+import { Button } from '../../../../components/Button'
 
 interface EntryLine {
   code: string
@@ -165,11 +166,11 @@ export function BenefitEntryTab() {
         {done && <p className="success">{done}</p>}
         <p className="muted">Only lines with an RM Per Disability are saved. Days × RM fills RM Per Disability, as in the desktop.</p>
         <div className="actions">
-          <button type="submit" disabled={busy || exists}>
+          <Button variant="primary" type="submit" disabled={busy || exists}>
             Save
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="ghost"
             disabled={busy}
             onClick={() => {
               resetFeedback()
@@ -177,9 +178,9 @@ export function BenefitEntryTab() {
             }}
           >
             Search
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button
+            variant="link"
             disabled={busy}
             onClick={() => {
               resetFeedback()
@@ -187,7 +188,7 @@ export function BenefitEntryTab() {
             }}
           >
             Clear
-          </button>
+          </Button>
         </div>
       </form>
     </section>

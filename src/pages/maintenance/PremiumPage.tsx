@@ -2,6 +2,8 @@ import { useState } from "react";
 import type { FormEvent, ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { api, errorMessage } from "../../api/client";
+import { Button } from '../../components/Button'
+
 
 interface Option {
   code: string;
@@ -279,23 +281,19 @@ export function PremiumPage() {
                 <tr>
                   <td />
                   <td>
-                    <button
-                      type="button"
-                      className="link"
+                    <Button variant="link"
                       onClick={() => copyFirstBand("amt")}
                     >
                       Copy 01 to all
-                    </button>
+                    </Button>
                   </td>
                   {supp && (
                     <td>
-                      <button
-                        type="button"
-                        className="link"
+                      <Button variant="link"
                         onClick={() => copyFirstBand("supp")}
                       >
                         Copy 01 to all
-                      </button>
+                      </Button>
                     </td>
                   )}
                 </tr>
@@ -325,14 +323,13 @@ export function PremiumPage() {
         {save.isError && <p className="error">{errorMessage(save.error)}</p>}
         {saved && <p className="success">{saved}</p>}
         <div className="actions">
-          <button type="submit" disabled={save.isPending}>
+          <Button variant="primary" type="submit" disabled={save.isPending}>
             {editing ? "Update" : "Save"}
-          </button>
-          <button type="button" onClick={onSearch} disabled={!!editing}>
+          </Button>
+          <Button variant="ghost" onClick={onSearch} disabled={!!editing}>
             Search
-          </button>
-          <button
-            type="button"
+          </Button>
+          <Button variant="link"
             disabled={save.isPending}
             onClick={() => {
               setForm(blank);
@@ -341,7 +338,7 @@ export function PremiumPage() {
             }}
           >
             Clear
-          </button>
+          </Button>
         </div>
       </form>
       {search.isError && <p className="error">{errorMessage(search.error)}</p>}
@@ -388,17 +385,13 @@ export function PremiumPage() {
                     <td>{r.version}</td>
                     <td>{r.suppStatus}</td>
                     <td className="action-cell">
-                      <button
-                        type="button"
-                        className="link"
+                      <Button variant="link"
                         disabled={save.isPending}
                         onClick={() => onEdit(r)}
                       >
                         Edit
-                      </button>{" "}
-                      <button
-                        type="button"
-                        className="link"
+                      </Button>{" "}
+                      <Button variant="link"
                         disabled={remove.isPending}
                         onClick={() => {
                           resetFeedback();
@@ -411,7 +404,7 @@ export function PremiumPage() {
                         }}
                       >
                         Delete
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}

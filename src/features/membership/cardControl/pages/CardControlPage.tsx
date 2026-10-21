@@ -9,6 +9,7 @@ import { cardControlApi, cardControlKeys } from '../api/cardControlApi'
 import { CardControlFilters } from '../components/CardControlFilters'
 import { DOC_REFERENCE_MAX_LENGTH, EXPORT_FILE_NAME, MESSAGES, SEARCH_LIMIT, SENDING_MODES, rowKey } from '../constants'
 import type { CardControlRow, CardControlSearch } from '../types'
+import { Button } from '../../../../components/Button'
 
 const HEADINGS = [
   'MBMNumber',
@@ -128,12 +129,19 @@ export function CardControlPage() {
             <input value={docReference} maxLength={DOC_REFERENCE_MAX_LENGTH} onChange={(e) => setDocReference(e.target.value)} />
           </FormField>
           <div className="actions">
-            <button type="button" disabled={selected === 0 || update.isPending} onClick={() => void confirmUpdate()}>
-              {update.isPending ? 'Updating…' : `Update (${selected})`}
-            </button>
-            <button type="button" disabled={rows.length === 0} onClick={print}>
+            <Button
+              variant="primary"
+              busy={update.isPending}
+              busyLabel="Updating…"
+              disabled={selected === 0 || update.isPending}
+              onClick={() => void confirmUpdate()}
+            >
+              {' '}
+              {`Update (${selected})`}{' '}
+            </Button>
+            <Button variant="ghost" disabled={rows.length === 0} onClick={print}>
               Print
-            </button>
+            </Button>
           </div>
         </fieldset>
       </div>
