@@ -77,8 +77,7 @@ export function LoginPage() {
         )}
         {error && <p className="error">{error}</p>}
         <Button variant="primary" type="submit" busy={busy} busyLabel="Signing in…" disabled={busy || !userCode}>
-          {' '}
-          {mustChange ? 'Change password & sign in' : 'Login'}{' '}
+          {mustChange ? 'Change password & sign in' : 'Login'}
         </Button>
       </form>
     </div>

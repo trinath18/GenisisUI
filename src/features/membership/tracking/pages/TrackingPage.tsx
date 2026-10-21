@@ -121,7 +121,7 @@ export function TrackingPage() {
           <div className="actions">
             <Button variant="ghost" busy={run.isPending} busyLabel="Searching…" disabled={!reportKey || run.isPending} onClick={() => run.mutate()}>
               {' '}
-              Search{' '}
+              Search
             </Button>
             <Button variant="ghost" disabled={!run.isPending} onClick={() => abort.current?.abort()}>
               Stop
@@ -134,7 +134,7 @@ export function TrackingPage() {
               onClick={() => exportCsv.mutate()}
             >
               {' '}
-              Print to File{' '}
+              Print to File
             </Button>
             <Button variant="link" onClick={clear}>
               Clear

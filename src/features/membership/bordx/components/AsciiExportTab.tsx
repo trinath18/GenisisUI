@@ -87,7 +87,7 @@ export function AsciiExportTab({ lookups }: { lookups: BordxLookups }) {
             onClick={() => window.confirm(Messages.confirmGenerate) && generate.mutate()}
           >
             {' '}
-            Generate{' '}
+            Generate
           </Button>
         </div>
       </fieldset>

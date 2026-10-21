@@ -104,7 +104,7 @@ export function ReinstatementForm({ view, onReinstated }: ReinstatementFormProps
             onClick={() => reinstate.mutate()}
           >
             {' '}
-            Reinstate{' '}
+            Reinstate
           </Button>
         </div>
       </fieldset>

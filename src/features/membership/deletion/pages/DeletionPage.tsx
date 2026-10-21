@@ -134,7 +134,7 @@ export function DeletionPage() {
               onClick={() => list.mutate({ ...form })}
             >
               {' '}
-              Go{' '}
+              Go
             </Button>
             <Button
               variant="danger"
@@ -145,7 +145,7 @@ export function DeletionPage() {
               onClick={() => void confirmDelete()}
             >
               {' '}
-              Delete{' '}
+              Delete
             </Button>
           </div>
         </fieldset>

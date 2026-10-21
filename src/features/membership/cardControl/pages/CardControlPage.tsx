@@ -137,7 +137,7 @@ export function CardControlPage() {
               onClick={() => void confirmUpdate()}
             >
               {' '}
-              {`Update (${selected})`}{' '}
+              {`Update (${selected})`}
             </Button>
             <Button variant="ghost" disabled={rows.length === 0} onClick={print}>
               Print

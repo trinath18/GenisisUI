@@ -43,7 +43,7 @@ export function TempRegistrationPage() {
           <div className="actions">
             <Button variant="ghost" busy={load.isPending} busyLabel="Loading…" disabled={!number.trim() || load.isPending} onClick={() => load.mutate(number)}>
               {' '}
-              Show{' '}
+              Show
             </Button>
           </div>
         </fieldset>

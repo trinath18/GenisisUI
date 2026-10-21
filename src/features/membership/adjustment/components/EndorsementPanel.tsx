@@ -81,8 +81,7 @@ export function EndorsementPanel(props: EndorsementPanelProps) {
       )}
       <div className="actions">
         <Button variant="primary" busy={busy} busyLabel="Saving…" disabled={!editing || !props.endorsementType || busy} onClick={props.onSave}>
-          {' '}
-          Save{' '}
+          Save
         </Button>
         <Button variant="link" disabled={busy} onClick={props.onClear}>
           Clear

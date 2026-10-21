@@ -88,7 +88,7 @@ export function McoPendingPage() {
               onClick={() => void confirmUpdate()}
             >
               {' '}
-              {`Update (${checked.size})`}{' '}
+              {`Update (${checked.size})`}
             </Button>
             <Button variant="ghost" disabled={rows.length === 0} onClick={print}>
               Print

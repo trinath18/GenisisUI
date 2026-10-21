@@ -347,3 +347,4 @@ input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='d
   height: var(--control-h); min-width: var(--button-min-w); padding-block: 0; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
 }
 .actions > button.link, .modal-actions > button.link { min-width: 0; }
+.registration fieldset > .actions { grid-column: 1 / -1; flex-wrap: wrap; justify-self: start; }

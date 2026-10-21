@@ -103,11 +103,11 @@ export function LeafletCardPage() {
           <div className="actions">
             <Button variant="ghost" busy={leaflets.isPending} busyLabel="Preparing…" disabled={busy} onClick={() => leaflets.mutate({ ...form })}>
               {' '}
-              Leaflets (PDF){' '}
+              Leaflets (PDF)
             </Button>
             <Button variant="ghost" busy={cards.isPending} busyLabel="Preparing…" disabled={busy} onClick={() => cards.mutate({ ...form })}>
               {' '}
-              Cards (PDF){' '}
+              Cards (PDF)
             </Button>
             <Button variant="ghost" disabled={busy} onClick={() => cardExport.mutate({ ...form })}>
               Card Export (CSV)
