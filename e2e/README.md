@@ -3,7 +3,10 @@
 Headless Chrome drives the real UI against a real API and the development databases on `MYDELL`. They cover the nine Case
 screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
 Case Audit Review, Case Transfer, Inpatient Case Listing, Claim ASCII and Case ASCII (validation messages, enable/disable
-states, loading, saving, downloads).
+states, loading, saving, downloads), and the eight Finance screens (`finance.mjs`: searches, validation messages, selection rules,
+detail panels, the SUN journal list and the bank file downloads).
+
+`finance.mjs` alone can also run against the Vite dev server: `set E2E_BASE_URL=http://127.0.0.1:5173` and `node e2e/finance.mjs`.
 
 ## Run
 
@@ -38,6 +41,9 @@ states, loading, saving, downloads).
 - MMA procedures / fees: added and deleted again by the test itself.
 - ASCII: Claim ASCII payor `GC` (accepted) and `AN` (rejected), Case ASCII payor `BI`; this flags the exported claims / cases and takes batch numbers.
   Nothing is bordxed for real: the bordx request is intercepted and answered by the test.
+
+- Finance (`finance.mjs`): read only. It never confirms a save, post, reversal, stop or re-issue; it uses SUN batch / payor `ST`
+  (Jul–Aug 2021), receipt `RB55092`, invoice `S34041`, case `ST00073162` and credit reference `06082021`.
 
 `cleanup.sql` undoes all of it (idempotent). The suites depend on that development data; if the data changes, adjust the case / payor numbers at the top of each suite.
 Never point them at production.

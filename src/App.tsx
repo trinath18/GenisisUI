@@ -38,6 +38,12 @@ import { MmaCptPage } from './pages/case/MmaCptPage'
 import { CasePayClaimPage } from './pages/case/CasePayClaimPage'
 import { CaseNonDisclosurePage } from './pages/case/CaseNonDisclosurePage'
 import { CaseAsciiPage, ClaimAsciiPage } from './pages/case/AsciiExportPages'
+import { SunPostingPage } from './features/finance/sunPosting/pages/SunPostingPage'
+import { ReceiptEnquiryPage } from './features/finance/receiptEnquiry/pages/ReceiptEnquiryPage'
+import { InvoiceReceiptPage } from './features/finance/invoiceReceipt/pages/InvoiceReceiptPage'
+import { ReverseReceiptPage } from './features/finance/reverseReceipt/pages/ReverseReceiptPage'
+import { SuspendActivePage } from './features/finance/suspendActive/pages/SuspendActivePage'
+import { ElectronicBankingPage } from './features/finance/electronicBanking/pages/ElectronicBankingPage'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -274,6 +280,70 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipAdjustment}>
               <ReinstatementPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/receipt-enquiry"
+          element={
+            <RequireAccess position={Access.FinanceReceiptEnquiry}>
+              <ReceiptEnquiryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/invoice-receipt"
+          element={
+            <RequireAccess position={Access.FinanceInvoiceReceipt}>
+              <InvoiceReceiptPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/short-payment"
+          element={
+            <RequireAccess position={Access.FinanceShortPayment}>
+              <InvoiceReceiptPage key="short" shortPayment />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/reverse-receipt"
+          element={
+            <RequireAccess position={Access.FinanceReverseReceipt}>
+              <ReverseReceiptPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/receipt-manual"
+          element={
+            <RequireAccess position={Access.FinanceReceiptManual}>
+              <InvoiceReceiptPage key="manual" manual />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/suspend-active"
+          element={
+            <RequireAccess position={Access.FinanceSuspendActive}>
+              <SuspendActivePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/electronic-banking"
+          element={
+            <RequireAccess position={Access.FinanceElectronicBanking}>
+              <ElectronicBankingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/sun-posting"
+          element={
+            <RequireAccess position={Access.FinanceSunPosting}>
+              <SunPostingPage />
             </RequireAccess>
           }
         />

@@ -41,6 +41,16 @@ export const Access = {
   CaseNonDisclosure: 12,
   PanelHospitals: 7,
   MmaCpt: 1,
+  // Finance menu (mdiMain.frm): Invoice Receipt / Short Payment / Reverse Receipt check 9, Notification-Suspension and Suspend-Active 12,
+  // Electronic Banking 10, SUN Posting 13. Receipt Enquiry has no check in the desktop and is gated like Invoice Receipt.
+  FinanceReceiptEnquiry: 9,
+  FinanceInvoiceReceipt: 9,
+  FinanceShortPayment: 9,
+  FinanceReverseReceipt: 9,
+  FinanceReceiptManual: 12,
+  FinanceSuspendActive: 12,
+  FinanceElectronicBanking: 10,
+  FinanceSunPosting: 13,
 } as const
 
 export class MustChangePasswordError extends Error {}
