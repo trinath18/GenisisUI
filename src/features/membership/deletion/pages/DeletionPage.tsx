@@ -133,7 +133,6 @@ export function DeletionPage() {
               disabled={list.isPending || remove.isPending}
               onClick={() => list.mutate({ ...form })}
             >
-              {' '}
               Go
             </Button>
             <Button
@@ -144,7 +143,6 @@ export function DeletionPage() {
               title={sameCriteria ? undefined : 'Press Go first to list what will be deleted.'}
               onClick={() => void confirmDelete()}
             >
-              {' '}
               Delete
             </Button>
           </div>

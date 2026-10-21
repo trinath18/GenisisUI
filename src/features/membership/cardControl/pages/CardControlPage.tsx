@@ -136,7 +136,6 @@ export function CardControlPage() {
               disabled={selected === 0 || update.isPending}
               onClick={() => void confirmUpdate()}
             >
-              {' '}
               {`Update (${selected})`}
             </Button>
             <Button variant="ghost" disabled={rows.length === 0} onClick={print}>

@@ -57,7 +57,6 @@ export function PlutoAsciiPage() {
           </FormField>
           <div className="actions">
             <Button variant="primary" busy={generate.isPending} busyLabel="Generating…" disabled={generate.isPending} onClick={() => generate.mutate()}>
-              {' '}
               Generate
             </Button>
           </div>

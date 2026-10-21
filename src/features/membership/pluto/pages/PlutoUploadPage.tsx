@@ -40,7 +40,6 @@ export function PlutoUploadPage() {
           </FormField>
           <div className="actions">
             <Button variant="primary" busy={upload.isPending} busyLabel="Uploading…" disabled={!file || upload.isPending} onClick={() => void start()}>
-              {' '}
               Upload
             </Button>
           </div>

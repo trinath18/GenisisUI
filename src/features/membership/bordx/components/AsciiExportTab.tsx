@@ -86,7 +86,6 @@ export function AsciiExportTab({ lookups }: { lookups: BordxLookups }) {
             disabled={generate.isPending}
             onClick={() => window.confirm(Messages.confirmGenerate) && generate.mutate()}
           >
-            {' '}
             Generate
           </Button>
         </div>

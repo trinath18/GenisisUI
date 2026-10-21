@@ -103,7 +103,6 @@ export function ReinstatementForm({ view, onReinstated }: ReinstatementFormProps
             disabled={!cancelled || reinstate.isPending}
             onClick={() => reinstate.mutate()}
           >
-            {' '}
             Reinstate
           </Button>
         </div>
