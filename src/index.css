@@ -332,3 +332,9 @@ abbr.req { color: #b42318; text-decoration: none; margin-left: 3px; }
 .ct-input.fill { width: 100%; }
 .error-panel { max-width: 640px; margin: 48px auto; padding: 24px; border: 1px solid #b42318; border-radius: 8px; background: #fef3f2; }
 .error-panel h2 { margin-top: 0; color: #912018; }
+
+/* Security > User Permission: the access matrix */
+.access-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.access-groups fieldset { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.access-groups label.check { display: flex; gap: 6px; align-items: center; font-weight: normal; }
+.access-groups input[type='checkbox'] { width: auto; }
