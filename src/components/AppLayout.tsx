@@ -10,6 +10,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'users', label: 'Membership', to: '/membership/enquiry', prefix: '/membership', access: Access.MembershipEnquiry },
   { icon: 'folder', label: 'Case', to: '/case/registration', prefix: '/case', access: Access.CaseRegistration },
   { icon: 'tool', label: 'Maintenance', to: '/maintenance/plan', prefix: '/maintenance', access: Access.PlanMaintenance },
+  { icon: 'wallet', label: 'Finance', to: '/finance/sun-posting', prefix: '/finance', access: Access.FinanceSunPosting },
   { icon: 'file', label: 'Invoice', to: '/invoice/processing', prefix: '/invoice', access: Access.InvoiceProcessing },
   { icon: 'grid', label: 'Worksheet', to: '/worksheet/tracking', prefix: '/worksheet', access: Access.WorksheetTracking },
   { icon: 'shield', label: 'Claims' },
@@ -17,7 +18,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'activity', label: 'Monitoring' },
 ]
 
-const sections: { label: string; prefix: string; items: { to: string; label: string; access: number; group?: string }[] }[] = [
+const sections: { label: string; prefix: string; items: { to: string; label: string; access: number; group?: string; pending?: boolean }[] }[] = [
   {
     label: 'Membership',
     prefix: '/membership',
@@ -25,8 +26,17 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/membership/registration', label: 'Registration', access: Access.MembershipRegistration },
       { to: '/membership/adjustment', label: 'Adjustment', access: Access.MembershipAdjustment },
       { to: '/membership/enquiry', label: 'Enquiry', access: Access.MembershipEnquiry },
+      { to: '/membership/leaflet-card', label: 'Leaflet & Card', access: Access.MembershipEnquiry },
+      { to: '/membership/card-control', label: 'Card Sending Mode', access: Access.MembershipAdjustment },
+      { to: '/membership/reinstatement', label: 'Member Reinstatement', access: Access.MembershipAdjustment },
+      { to: '/membership/mco-pending', label: 'MCO Pending', access: Access.MembershipAdjustment },
+      { to: '/membership/deletion', label: 'Deletion', access: Access.MembershipAdjustment },
       { to: '/membership/tracking', label: 'Tracking', access: Access.MembershipTracking },
+      { to: '/membership/pluto-upload', label: 'Upload Membership Excel (Pluto)', access: Access.MembershipUploadBordx },
+      { to: '/membership/pluto-ascii', label: 'Generate Membership ASCII (Pluto)', access: Access.MembershipUploadBordx },
       { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
+      { to: '/membership/temp-registration', label: 'Temp MBM Reg', access: Access.MembershipRegistration },
+      { to: '/membership/temp-adjustment', label: 'Temp MBM Adj', access: Access.MembershipAdjustment },
     ],
   },
   {
@@ -49,6 +59,21 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
     ],
   },
   {
+    label: 'Maintenance',
+    prefix: '/maintenance',
+    items: [
+      { to: '/maintenance/plan', label: 'Plan Maintenance', access: Access.PlanMaintenance },
+      { to: '/maintenance/benefits', label: 'Benefits Maintenance', access: Access.BenefitsMaintenance },
+      { to: '/maintenance/entity', label: 'Entity Maintenance', access: Access.EntityMaintenance },
+      { to: '/maintenance/accounts', label: 'Accounts', access: Access.AccountsMaintenance },
+      { to: '/maintenance/account-transaction', label: 'Account Transaction', access: Access.AccountTransaction },
+      { to: '/maintenance/mma', label: 'MMA (Procedures/OPCS)', access: Access.MmaEntry },
+      { to: '/maintenance/security/department', label: 'Department', access: Access.SecurityDepartment, group: 'Security' },
+      { to: '/maintenance/security/role-management', label: 'Role Management', access: Access.SecurityUsers, group: 'Security' },
+      { to: '/maintenance/security/user-permission', label: 'User Permission', access: Access.SecurityUsers, group: 'Security' },
+    ],
+  },
+  {
     label: 'Invoice',
     prefix: '/invoice',
     items: [{ to: '/invoice/processing', label: 'Invoice Processing', access: Access.InvoiceProcessing }],
@@ -66,13 +91,18 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
     ],
   },
   {
-    label: 'Maintenance',
-    prefix: '/maintenance',
+    // Desktop order of the Finance menu; items still to migrate are shown disabled.
+    label: 'Finance',
+    prefix: '/finance',
     items: [
-      { to: '/maintenance/plan', label: 'Plan Maintenance', access: Access.PlanMaintenance },
-      { to: '/maintenance/benefits', label: 'Benefits Maintenance', access: Access.BenefitsMaintenance },
-      { to: '/maintenance/entity', label: 'Entity Maintenance', access: Access.EntityMaintenance },
-      { to: '/maintenance/accounts', label: 'Accounts', access: Access.AccountsMaintenance },
+      { to: '/finance/receipt-enquiry', label: 'Receipt Enquiry', access: Access.FinanceReceiptEnquiry },
+      { to: '/finance/invoice-receipt', label: 'Invoice Receipt (Outstanding)', access: Access.FinanceInvoiceReceipt },
+      { to: '/finance/short-payment', label: 'Short Payment Receipt', access: Access.FinanceShortPayment },
+      { to: '/finance/reverse-receipt', label: 'Reverse Receipt', access: Access.FinanceReverseReceipt },
+      { to: '/finance/receipt-manual', label: 'Notification / Suspension', access: Access.FinanceReceiptManual },
+      { to: '/finance/suspend-active', label: 'Suspend / Active', access: Access.FinanceSuspendActive },
+      { to: '/finance/electronic-banking', label: 'Electronic Banking', access: Access.FinanceElectronicBanking },
+      { to: '/finance/sun-posting', label: 'SUN Posting', access: Access.FinanceSunPosting },
     ],
   },
 ]
@@ -100,8 +130,12 @@ export function AppLayout() {
     }
   }
 
-  const item = (to: string, label: string, access: number) =>
-    hasAccess(access) ? (
+  const item = (to: string, label: string, access: number, pending?: boolean) =>
+    pending ? (
+      <span className="disabled" title={`${label} — not migrated yet`}>
+        {label}
+      </span>
+    ) : hasAccess(access) ? (
       <NavLink to={to}>{label}</NavLink>
     ) : (
       <span className="disabled" title="Access Denied!">
@@ -168,7 +202,7 @@ export function AppLayout() {
           {section.items.map((i, n) => (
             <Fragment key={i.to}>
               {i.group && i.group !== section.items[n - 1]?.group && <h5 className="nav-group">{i.group}</h5>}
-              {item(i.to, i.label, i.access)}
+              {item(i.to, i.label, i.access, i.pending)}
             </Fragment>
           ))}
         </nav>

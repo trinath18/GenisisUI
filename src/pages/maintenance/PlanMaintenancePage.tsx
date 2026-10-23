@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { FormEvent, ReactNode } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, errorMessage } from '../../api/client'
+import { Button } from '../../components/Button'
+
 
 interface Option {
   code: string
@@ -316,15 +318,15 @@ export function PlanMaintenancePage() {
         )}
         {updated && <p className="success">{updated}</p>}
         <div className="actions">
-          <button type="submit" disabled={save.isPending || remove.isPending}>
+          <Button variant="primary" type="submit" disabled={save.isPending || remove.isPending}>
             {editing ? 'Update' : 'Save'}
-          </button>
-          <button type="button" onClick={onSearch}>
+          </Button>
+          <Button variant="ghost" onClick={onSearch}>
             Search
-          </button>
-          <button type="button" disabled={save.isPending} onClick={clear}>
+          </Button>
+          <Button variant="link" disabled={save.isPending} onClick={clear}>
             {editing ? 'Cancel Edit' : 'Clear'}
-          </button>
+          </Button>
         </div>
       </form>
       {search.isError && <p className="error">{errorMessage(search.error)}</p>}
@@ -368,17 +370,15 @@ export function PlanMaintenancePage() {
                     </td>
                     <td>{r.clientPlan}</td>
                     <td className="action-cell">
-                      <button type="button" className="link" disabled={save.isPending || remove.isPending} onClick={() => onEdit(r)}>
+                      <Button variant="link" disabled={save.isPending || remove.isPending} onClick={() => onEdit(r)}>
                         Edit
-                      </button>
-                      <button
-                        type="button"
-                        className="link"
+                      </Button>
+                      <Button variant="link"
                         disabled={remove.isPending || save.isPending}
                         onClick={() => window.confirm(`Do you want to delete plan ${r.code}?`) && remove.mutate(r.index)}
                       >
                         Delete
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 ))}

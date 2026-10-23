@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, errorMessage } from '../../api/client'
+import { Button } from '../../components/Button'
+
 
 interface NoteRow {
   index: number
@@ -103,15 +105,15 @@ export function SpecialNoteTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy || !editing}>
+          <Button variant="primary" type="submit" disabled={busy || !editing}>
             Update
-          </button>
-          <button type="button" disabled={busy} onClick={onSearch}>
+          </Button>
+          <Button variant="ghost" disabled={busy} onClick={onSearch}>
             Search
-          </button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear(); setPlanCode(''); setGroupCompany('') }}>
+          </Button>
+          <Button variant="link" disabled={busy} onClick={() => { resetFeedback(); clear(); setPlanCode(''); setGroupCompany('') }}>
             Clear
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -144,22 +146,18 @@ export function SpecialNoteTab() {
                       <td className="wrap">{r.groupCompany}</td>
                       <td className="wrap">{r.note}</td>
                       <td className="action-cell">
-                        <button
-                          type="button"
-                          className="link"
+                        <Button variant="link"
                           disabled={busy}
                           onClick={() => { resetFeedback(); setEditing(r); setNote(r.note ?? '') }}
                         >
                           Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="link"
+                        </Button>
+                        <Button variant="link"
                           disabled={busy || !r.note}
                           onClick={() => window.confirm(`Do you want to clear the special note of plan ${r.planCode}?`) && (resetFeedback(), remove.mutate(r))}
                         >
                           Clear note
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

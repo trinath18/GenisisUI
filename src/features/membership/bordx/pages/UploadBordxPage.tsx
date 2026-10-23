@@ -18,7 +18,12 @@ export function UploadBordxPage() {
   const lookups = useQuery({ queryKey: bordxKeys.lookups, queryFn: bordxApi.getLookups, staleTime: LOOKUPS_STALE_MS })
 
   if (lookups.isLoading) return <p className="muted">Loading…</p>
-  if (lookups.isError) return <p className="error" role="alert">{errorMessage(lookups.error)}</p>
+  if (lookups.isError)
+    return (
+      <p className="error" role="alert">
+        {errorMessage(lookups.error)}
+      </p>
+    )
   return (
     <section>
       <h2>Upload Bordx</h2>

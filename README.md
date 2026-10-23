@@ -26,7 +26,15 @@ to the API; set `GENISIS_API_URL` to point the proxy elsewhere, or `VITE_API_URL
     LT Limit, Policy Wording, T/O Claims and WS
   - Upload Bordx (`FrmNewMBMEndt10`): Verify, Upload, Stop, Print and Generate ASCII
   - Tracking (`FrmNewMBMTracking`): all 22 report types, every filter, Search and Print to File (CSV)
-- Maintenance: Plan, Benefits, Entity and Accounts
+  - Leaflet & Card (`frmMainReport`): leaflets and cards as PDF, card export as CSV
+  - Card Sending Mode (`frmMembershipCardControl`)
+  - Member Reinstatement (`frmMBMReintstatement`)
+  - MCO Pending (`frmMBMMCOPending`)
+  - Deletion (`frmDeleteMembers`): Go lists the selection; Delete is only offered for the listed criteria and confirms with the counts
+  - Upload Membership Excel / Generate Membership ASCII (Pluto) (`frmMembershipExcelPluto`, `frmMembershipASCIIPluto`)
+  - Temp MBM Reg (`FrmTempMBMReg`): the Registration form pre-filled from a previous membership as a renewal
+  - Temp MBM Adj (`FrmTempMBMAdj`): the Adjustment screen for memberships of temporary payors only
+- Maintenance: Plan, Benefits, Entity, Accounts, Account Transaction (`frmMMASchedule`), MMA (Procedures/OPCS, `frmMMAEntry`) and Security: Department (`frmGroupMaintenance`), Role Management (`frmUserMaintenance`) and User Permission (`frmUserPermissionMaintenance`, with the access matrix)
 
 ## Code structure
 
@@ -46,7 +54,7 @@ src/
     types.ts               request / response contracts
 ```
 
-`features/membership/{adjustment,bordx,tracking,enquiry}` and `features/maintenance/{benefits,entity,accounts}` use it; the older
+`features/membership/*` and `features/maintenance/*` use it; the older
 screens in `pages/` keep their original layout.
 
 Conventions:

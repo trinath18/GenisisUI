@@ -8,6 +8,7 @@ const suites = [
   'panel-nondisclosure-payclaim-mma.mjs',
   'audit-transfer-listing.mjs',
   'ascii-exports.mjs',
+  'finance.mjs',
   'worksheet.mjs',
   'worksheet-enquiry.mjs',
   'worksheet-adjustment.mjs',

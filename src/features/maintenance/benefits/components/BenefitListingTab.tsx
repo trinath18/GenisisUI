@@ -6,6 +6,7 @@ import { benefitsApi } from '../api/benefitsApi'
 import { formatDate } from '../../../../lib/format'
 import type { AmountsForm, Option } from '../benefitLookups'
 import { amountsBody, emptyAmounts, optionLabel, useBenefitLookups, withProduct } from '../benefitLookups'
+import { Button } from '../../../../components/Button'
 
 interface BenefitRow {
   subCategoryCode: string
@@ -86,7 +87,12 @@ export function BenefitListingTab() {
   })
   const remove = useMutation({
     mutationFn: async (r: BenefitRow) =>
-      benefitsApi.deleteRow({ subCategoryCode: r.subCategoryCode, insuredCode: r.insuredCode, planCode: r.planCode, effectiveDate: r.effectiveDate.slice(0, 10) }),
+      benefitsApi.deleteRow({
+        subCategoryCode: r.subCategoryCode,
+        insuredCode: r.insuredCode,
+        planCode: r.planCode,
+        effectiveDate: r.effectiveDate.slice(0, 10),
+      }),
     onSuccess: (_, r) => {
       setDone('Record Deleted...')
       if (editing === rowKey(r)) clear()
@@ -131,12 +137,17 @@ export function BenefitListingTab() {
   }
   const select = (field: keyof Form, label: string, options: Option[] | undefined, keyField = true) => (
     <label className="form-field">
-      <span>{label}{keyField && ' *'}</span>
+      <span>
+        {label}
+        {keyField && ' *'}
+      </span>
       <select value={form[field]} disabled={busy || (keyField && editing !== null)} onChange={(e) => setForm({ ...form, [field]: e.target.value })}>
         <option value="" />
         {form[field] && !options?.some((o) => o.code === form[field]) && <option value={form[field]}>{form[field]}</option>}
         {options?.map((o) => (
-          <option key={o.code} value={o.code}>{optionLabel(o)}</option>
+          <option key={o.code} value={o.code}>
+            {optionLabel(o)}
+          </option>
         ))}
       </select>
     </label>
@@ -150,14 +161,22 @@ export function BenefitListingTab() {
           {select('insuredCode', 'Insured Type', lookups.data?.insuredTypes)}
           <label className="form-field">
             <span>Plan Code *</span>
-            <input value={form.planCode} maxLength={4} disabled={busy || editing !== null}
-              onChange={(e) => setForm({ ...form, planCode: e.target.value.toUpperCase() })} />
+            <input
+              value={form.planCode}
+              maxLength={4}
+              disabled={busy || editing !== null}
+              onChange={(e) => setForm({ ...form, planCode: e.target.value.toUpperCase() })}
+            />
           </label>
           {select('subCategoryCode', 'Sub Cat Code', lookups.data?.subCategories)}
           <label className="form-field">
             <span>Eff Date *</span>
-            <input type="date" value={form.effectiveDate} disabled={busy || editing !== null}
-              onChange={(e) => setForm({ ...form, effectiveDate: e.target.value })} />
+            <input
+              type="date"
+              value={form.effectiveDate}
+              disabled={busy || editing !== null}
+              onChange={(e) => setForm({ ...form, effectiveDate: e.target.value })}
+            />
           </label>
           <label className="form-field">
             <span>No of Days</span>
@@ -177,10 +196,16 @@ export function BenefitListingTab() {
           {select('payorCode', 'Payor Code', lookups.data?.payors, false)}
           <label className="form-field">
             <span>Group Company</span>
-            <input list="benefit-group-companies" value={form.groupCompany} disabled={busy || editing !== null}
-              onChange={(e) => setForm({ ...form, groupCompany: e.target.value })} />
+            <input
+              list="benefit-group-companies"
+              value={form.groupCompany}
+              disabled={busy || editing !== null}
+              onChange={(e) => setForm({ ...form, groupCompany: e.target.value })}
+            />
             <datalist id="benefit-group-companies">
-              {lookups.data?.groupCompanies.map((g) => <option key={g} value={g} />)}
+              {lookups.data?.groupCompanies.map((g) => (
+                <option key={g} value={g} />
+              ))}
             </datalist>
           </label>
         </fieldset>
@@ -189,12 +214,29 @@ export function BenefitListingTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>{editing === null ? 'Save' : 'Update'}</button>
-          <button type="button" disabled={busy || editing !== null}
-            onClick={() => { resetFeedback(); setFilter((f) => ({ form, n: (f?.n ?? 0) + 1 })) }}>
+          <Button variant="primary" type="submit" disabled={busy}>
+            {editing === null ? 'Save' : 'Update'}
+          </Button>
+          <Button
+            variant="ghost"
+            disabled={busy || editing !== null}
+            onClick={() => {
+              resetFeedback()
+              setFilter((f) => ({ form, n: (f?.n ?? 0) + 1 }))
+            }}
+          >
             Search
-          </button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear() }}>Clear</button>
+          </Button>
+          <Button
+            variant="link"
+            disabled={busy}
+            onClick={() => {
+              resetFeedback()
+              clear()
+            }}
+          >
+            Clear
+          </Button>
         </div>
       </form>
 
@@ -241,11 +283,16 @@ export function BenefitListingTab() {
                       <td className="center">{r.payorCode}</td>
                       <td>{r.groupCompany}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>Edit</button>
-                        <button type="button" className="link" disabled={busy}
-                          onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r))}>
+                        <Button variant="link" disabled={busy} onClick={() => onEdit(r)}>
+                          Edit
+                        </Button>
+                        <Button
+                          variant="link"
+                          disabled={busy}
+                          onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r))}
+                        >
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

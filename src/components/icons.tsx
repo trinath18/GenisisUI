@@ -43,6 +43,12 @@ const glyphs: Record<string, ReactNode> = {
     </>
   ),
   activity: <path d="M22 12h-4l-3 9L9 3l-3 9H2" />,
+  wallet: (
+    <>
+      <rect x="2" y="6" width="20" height="14" rx="2" />
+      <path d="M2 10h20M16 15h2" />
+    </>
+  ),
   cross: <path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z" />,
   calendar: (
     <>

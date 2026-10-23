@@ -2,6 +2,8 @@ import { useState } from 'react'
 import type { FormEvent } from 'react'
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { api, errorMessage } from '../../api/client'
+import { Button } from '../../components/Button'
+
 
 interface CodeRow {
   code: string
@@ -112,15 +114,15 @@ export function CodeListTab({ list, codeLabel, descriptionLabel, codeLength, des
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>
+          <Button variant="primary" type="submit" disabled={busy}>
             {editing === null ? 'Save' : 'Update'}
-          </button>
-          <button type="button" disabled={busy || editing !== null} onClick={onSearch}>
+          </Button>
+          <Button variant="ghost" disabled={busy || editing !== null} onClick={onSearch}>
             Search
-          </button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear() }}>
+          </Button>
+          <Button variant="link" disabled={busy} onClick={() => { resetFeedback(); clear() }}>
             Clear
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -146,17 +148,15 @@ export function CodeListTab({ list, codeLabel, descriptionLabel, codeLength, des
                       <td className="center">{r.code}</td>
                       <td className="wrap">{r.description}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>
+                        <Button variant="link" disabled={busy} onClick={() => onEdit(r)}>
                           Edit
-                        </button>
-                        <button
-                          type="button"
-                          className="link"
+                        </Button>
+                        <Button variant="link"
                           disabled={busy}
                           onClick={() => window.confirm('Do you want to delete this record?') && (resetFeedback(), remove.mutate(r.code))}
                         >
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

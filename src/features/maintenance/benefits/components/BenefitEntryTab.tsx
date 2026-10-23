@@ -5,6 +5,7 @@ import { errorMessage } from '../../../../api/client'
 import { benefitsApi } from '../api/benefitsApi'
 import type { AmountsForm } from '../benefitLookups'
 import { amountsBody, emptyAmounts, optionLabel, useBenefitLookups, withProduct } from '../benefitLookups'
+import { Button } from '../../../../components/Button'
 
 interface EntryLine {
   code: string
@@ -22,7 +23,8 @@ interface Key {
 }
 
 const emptyKey: Key = { healthCode: '', insuredCode: '', planCode: '', effectiveDate: '' }
-const sameKey = (a: Key, b: Key) => a.healthCode === b.healthCode && a.insuredCode === b.insuredCode && a.planCode === b.planCode && a.effectiveDate === b.effectiveDate
+const sameKey = (a: Key, b: Key) =>
+  a.healthCode === b.healthCode && a.insuredCode === b.insuredCode && a.planCode === b.planCode && a.effectiveDate === b.effectiveDate
 
 /** Benefit Entry tab: enter a benefit set for a plan / insured / health / date, one line per sub category.
  * Lines with an RM per disability are saved. An existing set is changed on the Benefits Listing tab. */
@@ -42,7 +44,11 @@ export function BenefitEntryTab() {
         effectiveDate: k.effectiveDate || undefined,
       }),
     onSuccess: (data, k) => {
-      setAmounts(Object.fromEntries(data.lines.map((l) => [l.code, { days: l.days?.toString() ?? '', ratePerDay: l.ratePerDay ?? '', perDisability: l.perDisability ?? '' }])))
+      setAmounts(
+        Object.fromEntries(
+          data.lines.map((l) => [l.code, { days: l.days?.toString() ?? '', ratePerDay: l.ratePerDay ?? '', perDisability: l.perDisability ?? '' }]),
+        ),
+      )
       setLoaded({ key: k, setExists: data.setExists, names: Object.fromEntries(data.lines.map((l) => [l.code, l.name])) })
     },
   })
@@ -91,15 +97,24 @@ export function BenefitEntryTab() {
       <select value={key[field]} disabled={busy} onChange={(e) => setKey({ ...key, [field]: e.target.value })}>
         <option value="" />
         {options?.map((o) => (
-          <option key={o.code} value={o.code}>{optionLabel(o)}</option>
+          <option key={o.code} value={o.code}>
+            {optionLabel(o)}
+          </option>
         ))}
       </select>
     </label>
   )
   const cell = (code: string, field: keyof AmountsForm, props: { type?: string; maxLength?: number }) => (
     <td className="num">
-      <input {...props} min={props.type ? 0 : undefined} step={props.type ? 1 : undefined} aria-label={`${code} ${field}`}
-        value={amounts[code]?.[field] ?? ''} disabled={busy} onChange={(e) => setAmount(code, field, e.target.value)} />
+      <input
+        {...props}
+        min={props.type ? 0 : undefined}
+        step={props.type ? 1 : undefined}
+        aria-label={`${code} ${field}`}
+        value={amounts[code]?.[field] ?? ''}
+        disabled={busy}
+        onChange={(e) => setAmount(code, field, e.target.value)}
+      />
     </td>
   )
 
@@ -146,16 +161,34 @@ export function BenefitEntryTab() {
         {load.isError && <p className="error">{errorMessage(load.error)}</p>}
         {save.isError && <p className="error">{errorMessage(save.error)}</p>}
         {exists && (
-          <p className="warning">
-            This plan, insured type and effective date already have benefits (shown above). Change them on the Benefits Listing tab.
-          </p>
+          <p className="warning">This plan, insured type and effective date already have benefits (shown above). Change them on the Benefits Listing tab.</p>
         )}
         {done && <p className="success">{done}</p>}
         <p className="muted">Only lines with an RM Per Disability are saved. Days × RM fills RM Per Disability, as in the desktop.</p>
         <div className="actions">
-          <button type="submit" disabled={busy || exists}>Save</button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); load.mutate(key) }}>Search</button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear() }}>Clear</button>
+          <Button variant="primary" type="submit" disabled={busy || exists}>
+            Save
+          </Button>
+          <Button
+            variant="ghost"
+            disabled={busy}
+            onClick={() => {
+              resetFeedback()
+              load.mutate(key)
+            }}
+          >
+            Search
+          </Button>
+          <Button
+            variant="link"
+            disabled={busy}
+            onClick={() => {
+              resetFeedback()
+              clear()
+            }}
+          >
+            Clear
+          </Button>
         </div>
       </form>
     </section>

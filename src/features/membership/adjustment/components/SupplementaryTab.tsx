@@ -3,6 +3,7 @@ import { formatDate, formatMoney } from '../../../../lib/format'
 import { CoveredAction, EndorsementType, Messages, MALE_SALUTATION, OPTIONS, SALUTATIONS, editsPrincipal } from '../constants'
 import { text } from '../memberForm'
 import type { FormRow, FormValue, Option } from '../types'
+import { Button } from '../../../../components/Button'
 
 interface SupplementaryTabProps {
   covered: FormRow[]
@@ -39,16 +40,25 @@ export function SupplementaryTab(props: SupplementaryTabProps) {
   const set = (key: string, value: FormValue) => person && props.onPersonChange({ ...person, [key]: value })
   const field = (key: string, label: string, options: { type?: string; maxLength?: number; disabled?: boolean } = {}) => (
     <FormField label={label}>
-      <input type={options.type ?? 'text'} value={text(person?.[key])} maxLength={options.maxLength} disabled={options.disabled || busy}
+      <input
+        type={options.type ?? 'text'}
+        value={text(person?.[key])}
+        maxLength={options.maxLength}
+        disabled={options.disabled || busy}
         onChange={(e) => set(key, e.target.value)}
-        onBlur={key === 'dateOfBirth' || key === 'planCode' ? () => person && props.onPersonBlur(person) : undefined} />
+        onBlur={key === 'dateOfBirth' || key === 'planCode' ? () => person && props.onPersonBlur(person) : undefined}
+      />
     </FormField>
   )
   const select = (key: string, label: string, options: Option[]) => (
     <FormField label={label}>
       <select value={text(person?.[key])} disabled={busy} onChange={(e) => set(key, e.target.value)}>
         <option value="" />
-        {options.map((o) => <option key={o.code} value={o.code}>{o.code} - {o.name}</option>)}
+        {options.map((o) => (
+          <option key={o.code} value={o.code}>
+            {o.code} - {o.name}
+          </option>
+        ))}
       </select>
     </FormField>
   )
@@ -59,32 +69,70 @@ export function SupplementaryTab(props: SupplementaryTabProps) {
         <table className="grid">
           <thead>
             <tr>
-              <th>Cover</th><th>Name</th><th>Sal.</th><th>IC</th><th>DOB</th><th>Sex</th><th>A/C</th><th>Rel</th><th>Plan</th><th>Status</th>
-              <th>Eff</th><th>Exp</th><th className="num">Annual</th><th className="num">Available</th><th className="num">MCO</th><th className="num">Premium</th>
-              <th className="action-cell"><span className="visually-hidden">Actions</span></th>
+              <th>Cover</th>
+              <th>Name</th>
+              <th>Sal.</th>
+              <th>IC</th>
+              <th>DOB</th>
+              <th>Sex</th>
+              <th>A/C</th>
+              <th>Rel</th>
+              <th>Plan</th>
+              <th>Status</th>
+              <th>Eff</th>
+              <th>Exp</th>
+              <th className="num">Annual</th>
+              <th className="num">Available</th>
+              <th className="num">MCO</th>
+              <th className="num">Premium</th>
+              <th className="action-cell">
+                <span className="visually-hidden">Actions</span>
+              </th>
             </tr>
           </thead>
           <tbody>
             {covered.map((row, index) => (
-              <tr key={row.coverId ? text(row.coverId) : `new-${text(row.icBcPp)}-${text(row.name)}`} className={index === personIndex ? 'selected' : undefined}>
-                <td>{text(row.coverId) || 'new'}</td><td>{text(row.name)}</td><td>{text(row.salutation)}</td><td>{text(row.icBcPp)}</td>
-                <td>{formatDate(row.dateOfBirth)}</td><td>{text(row.sex)}</td><td>{text(row.adultChild)}</td><td>{text(row.relationship)}</td>
-                <td>{text(row.planCode)}</td><td>{statusLabel(row)}</td><td>{formatDate(row.effectiveDate)}</td><td>{formatDate(row.expiryDate)}</td>
-                <td className="num">{formatMoney(row.annualLimit)}</td><td className="num">{formatMoney(row.availableLimit)}</td>
-                <td className="num">{formatMoney(row.mco)}</td><td className="num">{formatMoney(row.premium)}</td>
+              <tr
+                key={row.coverId ? text(row.coverId) : `new-${text(row.icBcPp)}-${text(row.name)}`}
+                className={index === personIndex ? 'selected' : undefined}
+              >
+                <td>{text(row.coverId) || 'new'}</td>
+                <td>{text(row.name)}</td>
+                <td>{text(row.salutation)}</td>
+                <td>{text(row.icBcPp)}</td>
+                <td>{formatDate(row.dateOfBirth)}</td>
+                <td>{text(row.sex)}</td>
+                <td>{text(row.adultChild)}</td>
+                <td>{text(row.relationship)}</td>
+                <td>{text(row.planCode)}</td>
+                <td>{statusLabel(row)}</td>
+                <td>{formatDate(row.effectiveDate)}</td>
+                <td>{formatDate(row.expiryDate)}</td>
+                <td className="num">{formatMoney(row.annualLimit)}</td>
+                <td className="num">{formatMoney(row.availableLimit)}</td>
+                <td className="num">{formatMoney(row.mco)}</td>
+                <td className="num">{formatMoney(row.premium)}</td>
                 <td className="action-cell">
-                  {editPrincipal && row.coverId && <button type="button" className="link" onClick={() => props.onEdit(index)}>Edit</button>}
+                  {editPrincipal && row.coverId && (
+                    <Button variant="link" onClick={() => props.onEdit(index)}>
+                      Edit
+                    </Button>
+                  )}
                   {editing && type === EndorsementType.DeleteSupplementary && row.coverId && (
-                    <button type="button" className="link" onClick={() => confirmMark(index, row, CoveredAction.Remove)}>
+                    <Button variant="link" onClick={() => confirmMark(index, row, CoveredAction.Remove)}>
                       {row.action === CoveredAction.Remove ? 'Undo' : 'Remove'}
-                    </button>
+                    </Button>
                   )}
                   {editing && type === EndorsementType.CancelSupplementary && row.coverId && (
-                    <button type="button" className="link" onClick={() => confirmMark(index, row, CoveredAction.Cancel)}>
+                    <Button variant="link" onClick={() => confirmMark(index, row, CoveredAction.Cancel)}>
                       {row.action === CoveredAction.Cancel ? 'Undo' : 'Cancel'}
-                    </button>
+                    </Button>
                   )}
-                  {row.action === CoveredAction.Add && <button type="button" className="link" onClick={() => props.onRemoveNew(index)}>Remove</button>}
+                  {row.action === CoveredAction.Add && (
+                    <Button variant="link" onClick={() => props.onRemoveNew(index)}>
+                      Remove
+                    </Button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -97,9 +145,16 @@ export function SupplementaryTab(props: SupplementaryTabProps) {
         <fieldset>
           <legend>{adding ? 'Add Supplementary' : `Supplementary ${text(person.coverId)}`}</legend>
           <FormField label="Salutation">
-            <select value={text(person.salutation)} disabled={busy}
-              onChange={(e) => props.onPersonChange({ ...person, salutation: e.target.value, sex: e.target.value === MALE_SALUTATION ? 'M' : 'F' })}>
-              {SALUTATIONS.map((s) => <option key={s} value={s}>{s}</option>)}
+            <select
+              value={text(person.salutation)}
+              disabled={busy}
+              onChange={(e) => props.onPersonChange({ ...person, salutation: e.target.value, sex: e.target.value === MALE_SALUTATION ? 'M' : 'F' })}
+            >
+              {SALUTATIONS.map((s) => (
+                <option key={s} value={s}>
+                  {s}
+                </option>
+              ))}
             </select>
           </FormField>
           {field('name', 'Name *', { maxLength: 100 })}
@@ -150,8 +205,18 @@ export function SupplementaryTab(props: SupplementaryTabProps) {
             <textarea rows={2} value={text(person.exclusion)} disabled={busy} onChange={(e) => set('exclusion', e.target.value)} />
           </FormField>
           <div className="actions">
-            {adding ? <button type="button" onClick={props.onAdd}>Add</button> : <button type="button" onClick={props.onUpdate}>Update</button>}
-            <button type="button" onClick={props.onClear}>Clear</button>
+            {adding ? (
+              <Button variant="ghost" onClick={props.onAdd}>
+                Add
+              </Button>
+            ) : (
+              <Button variant="ghost" onClick={props.onUpdate}>
+                Update
+              </Button>
+            )}
+            <Button variant="link" onClick={props.onClear}>
+              Clear
+            </Button>
           </div>
         </fieldset>
       )}

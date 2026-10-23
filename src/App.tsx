@@ -9,10 +9,23 @@ import { RegistrationPage } from './pages/membership/RegistrationPage'
 import { AdjustmentPage } from './features/membership/adjustment/pages/AdjustmentPage'
 import { UploadBordxPage } from './features/membership/bordx/pages/UploadBordxPage'
 import { TrackingPage } from './features/membership/tracking/pages/TrackingPage'
+import { TempAdjustmentPage } from './features/membership/tempAdjustment/pages/TempAdjustmentPage'
+import { TempRegistrationPage } from './features/membership/tempRegistration/pages/TempRegistrationPage'
+import { LeafletCardPage } from './features/membership/leafletCard/pages/LeafletCardPage'
+import { DeletionPage } from './features/membership/deletion/pages/DeletionPage'
+import { CardControlPage } from './features/membership/cardControl/pages/CardControlPage'
+import { PlutoAsciiPage } from './features/membership/pluto/pages/PlutoAsciiPage'
+import { PlutoUploadPage } from './features/membership/pluto/pages/PlutoUploadPage'
+import { McoPendingPage } from './features/membership/mcoPending/pages/McoPendingPage'
+import { ReinstatementPage } from './features/membership/reinstatement/pages/ReinstatementPage'
 import { PlanMaintenanceScreen } from './pages/maintenance/PlanMaintenanceScreen'
 import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages/BenefitsMaintenanceScreen'
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
 import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
+import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
+import { DepartmentScreen } from './features/maintenance/security/pages/DepartmentScreen'
+import { UserSecurityScreen } from './features/maintenance/security/pages/UserSecurityScreen'
+import { MmaEntryScreen } from './features/maintenance/mmaEntry/pages/MmaEntryScreen'
 import { CaseEnquiryPage } from './pages/case/CaseEnquiryPage'
 import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
 import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
@@ -25,6 +38,12 @@ import { MmaCptPage } from './pages/case/MmaCptPage'
 import { CasePayClaimPage } from './pages/case/CasePayClaimPage'
 import { CaseNonDisclosurePage } from './pages/case/CaseNonDisclosurePage'
 import { CaseAsciiPage, ClaimAsciiPage } from './pages/case/AsciiExportPages'
+import { SunPostingPage } from './features/finance/sunPosting/pages/SunPostingPage'
+import { ReceiptEnquiryPage } from './features/finance/receiptEnquiry/pages/ReceiptEnquiryPage'
+import { InvoiceReceiptPage } from './features/finance/invoiceReceipt/pages/InvoiceReceiptPage'
+import { ReverseReceiptPage } from './features/finance/reverseReceipt/pages/ReverseReceiptPage'
+import { SuspendActivePage } from './features/finance/suspendActive/pages/SuspendActivePage'
+import { ElectronicBankingPage } from './features/finance/electronicBanking/pages/ElectronicBankingPage'
 import { WorksheetRegistrationPage } from './pages/worksheet/WorksheetRegistrationPage'
 import { InvoiceProcessingPage } from './pages/invoice/InvoiceProcessingPage'
 import { WorksheetAdjustmentPage } from './pages/worksheet/WorksheetAdjustmentPage'
@@ -84,14 +103,6 @@ export default function App() {
           element={
             <RequireAccess position={Access.MembershipUploadBordx}>
               <UploadBordxPage />
-            </RequireAccess>
-          }
-        />
-        <Route
-          path="membership/tracking"
-          element={
-            <RequireAccess position={Access.MembershipTracking}>
-              <TrackingPage />
             </RequireAccess>
           }
         />
@@ -256,6 +267,150 @@ export default function App() {
           }
         />
         <Route
+          path="membership/tracking"
+          element={
+            <RequireAccess position={Access.MembershipTracking}>
+              <TrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/temp-adjustment"
+          element={
+            <RequireAccess position={Access.MembershipAdjustment}>
+              <TempAdjustmentPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/temp-registration"
+          element={
+            <RequireAccess position={Access.MembershipRegistration}>
+              <TempRegistrationPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/leaflet-card"
+          element={
+            <RequireAccess position={Access.MembershipEnquiry}>
+              <LeafletCardPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/deletion"
+          element={
+            <RequireAccess position={Access.MembershipAdjustment}>
+              <DeletionPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/card-control"
+          element={
+            <RequireAccess position={Access.MembershipAdjustment}>
+              <CardControlPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/pluto-ascii"
+          element={
+            <RequireAccess position={Access.MembershipUploadBordx}>
+              <PlutoAsciiPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/pluto-upload"
+          element={
+            <RequireAccess position={Access.MembershipUploadBordx}>
+              <PlutoUploadPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/mco-pending"
+          element={
+            <RequireAccess position={Access.MembershipAdjustment}>
+              <McoPendingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="membership/reinstatement"
+          element={
+            <RequireAccess position={Access.MembershipAdjustment}>
+              <ReinstatementPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/receipt-enquiry"
+          element={
+            <RequireAccess position={Access.FinanceReceiptEnquiry}>
+              <ReceiptEnquiryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/invoice-receipt"
+          element={
+            <RequireAccess position={Access.FinanceInvoiceReceipt}>
+              <InvoiceReceiptPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/short-payment"
+          element={
+            <RequireAccess position={Access.FinanceShortPayment}>
+              <InvoiceReceiptPage key="short" shortPayment />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/reverse-receipt"
+          element={
+            <RequireAccess position={Access.FinanceReverseReceipt}>
+              <ReverseReceiptPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/receipt-manual"
+          element={
+            <RequireAccess position={Access.FinanceReceiptManual}>
+              <InvoiceReceiptPage key="manual" manual />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/suspend-active"
+          element={
+            <RequireAccess position={Access.FinanceSuspendActive}>
+              <SuspendActivePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/electronic-banking"
+          element={
+            <RequireAccess position={Access.FinanceElectronicBanking}>
+              <ElectronicBankingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="finance/sun-posting"
+          element={
+            <RequireAccess position={Access.FinanceSunPosting}>
+              <SunPostingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
           path="maintenance/plan"
           element={
             <RequireAccess position={Access.PlanMaintenance}>
@@ -284,6 +439,46 @@ export default function App() {
           element={
             <RequireAccess position={Access.AccountsMaintenance}>
               <AccountsScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/account-transaction"
+          element={
+            <RequireAccess position={Access.AccountTransaction}>
+              <AccountTransactionScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/mma"
+          element={
+            <RequireAccess position={Access.MmaEntry}>
+              <MmaEntryScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/security/department"
+          element={
+            <RequireAccess position={Access.SecurityDepartment}>
+              <DepartmentScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/security/role-management"
+          element={
+            <RequireAccess position={Access.SecurityUsers}>
+              <UserSecurityScreen mode="role" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/security/user-permission"
+          element={
+            <RequireAccess position={Access.SecurityUsers}>
+              <UserSecurityScreen mode="permission" />
             </RequireAccess>
           }
         />

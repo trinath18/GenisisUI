@@ -3,6 +3,7 @@ import type { FormEvent } from 'react'
 import { Navigate, useNavigate } from 'react-router-dom'
 import { errorMessage } from '../api/client'
 import { MustChangePasswordError, useAuth } from '../auth/access'
+import { Button } from '../components/Button'
 
 export function LoginPage() {
   const { session, login, changePassword } = useAuth()
@@ -75,9 +76,9 @@ export function LoginPage() {
           </>
         )}
         {error && <p className="error">{error}</p>}
-        <button type="submit" disabled={busy || !userCode}>
-          {busy ? 'Signing in…' : mustChange ? 'Change password & sign in' : 'Login'}
-        </button>
+        <Button variant="primary" type="submit" busy={busy} busyLabel="Signing in…" disabled={busy || !userCode}>
+          {mustChange ? 'Change password & sign in' : 'Login'}
+        </Button>
       </form>
     </div>
   )

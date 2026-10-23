@@ -5,7 +5,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import { errorMessage } from '../../../../api/client'
 import { entityApi } from '../api/entityApi'
 import { formatMoney } from '../../../../lib/format'
-
+import { Button } from '../../../../components/Button'
 
 interface ProcedureRow {
   index: number
@@ -136,12 +136,29 @@ function ProceduresTab() {
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>{editing === null ? 'Save' : 'Update'}</button>
-          <button type="button" disabled={busy || editing !== null}
-            onClick={() => { resetFeedback(); setFilter((f) => ({ bodyPart: form.bodyPart.trim(), code: form.code.trim(), n: (f?.n ?? 0) + 1 })) }}>
+          <Button variant="primary" type="submit" disabled={busy}>
+            {editing === null ? 'Save' : 'Update'}
+          </Button>
+          <Button
+            variant="ghost"
+            disabled={busy || editing !== null}
+            onClick={() => {
+              resetFeedback()
+              setFilter((f) => ({ bodyPart: form.bodyPart.trim(), code: form.code.trim(), n: (f?.n ?? 0) + 1 }))
+            }}
+          >
             Search
-          </button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear() }}>Clear</button>
+          </Button>
+          <Button
+            variant="link"
+            disabled={busy}
+            onClick={() => {
+              resetFeedback()
+              clear()
+            }}
+          >
+            Clear
+          </Button>
         </div>
       </form>
 
@@ -182,11 +199,16 @@ function ProceduresTab() {
                       <td className="num">{r.partACost}</td>
                       <td className="num">{r.pageNo}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>Edit</button>
-                        <button type="button" className="link" disabled={busy}
-                          onClick={() => window.confirm('Do you want to delete the record?') && (resetFeedback(), remove.mutate(r.index))}>
+                        <Button variant="link" disabled={busy} onClick={() => onEdit(r)}>
+                          Edit
+                        </Button>
+                        <Button
+                          variant="link"
+                          disabled={busy}
+                          onClick={() => window.confirm('Do you want to delete the record?') && (resetFeedback(), remove.mutate(r.index))}
+                        >
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}
@@ -289,37 +311,72 @@ function LookUpTab() {
         <fieldset>
           <label className="form-field">
             <span>Surgeon's Category</span>
-            <input value={form.surgeonCategory} maxLength={10} disabled={busy}
-              onChange={(e) => setForm({ ...form, surgeonCategory: e.target.value.toUpperCase() })} />
+            <input
+              value={form.surgeonCategory}
+              maxLength={10}
+              disabled={busy}
+              onChange={(e) => setForm({ ...form, surgeonCategory: e.target.value.toUpperCase() })}
+            />
           </label>
           <label className="form-field">
             <span>Surgeon's Fees</span>
-            <input type="number" min={0} step="0.01" value={form.surgeonFee} disabled={busy} onChange={(e) => setForm({ ...form, surgeonFee: e.target.value })} />
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              value={form.surgeonFee}
+              disabled={busy}
+              onChange={(e) => setForm({ ...form, surgeonFee: e.target.value })}
+            />
           </label>
           <label className="form-field">
             <span>Anaesthetist's Category</span>
-            <input value={form.anaesthetistCategory} maxLength={50} disabled={busy}
-              onChange={(e) => setForm({ ...form, anaesthetistCategory: e.target.value.toUpperCase() })} />
+            <input
+              value={form.anaesthetistCategory}
+              maxLength={50}
+              disabled={busy}
+              onChange={(e) => setForm({ ...form, anaesthetistCategory: e.target.value.toUpperCase() })}
+            />
           </label>
           <label className="form-field">
             <span>Anaesthetists Fees</span>
-            <input type="number" min={0} step="0.01" value={form.anaesthetistFee} disabled={busy}
-              onChange={(e) => setForm({ ...form, anaesthetistFee: e.target.value })} />
+            <input
+              type="number"
+              min={0}
+              step="0.01"
+              value={form.anaesthetistFee}
+              disabled={busy}
+              onChange={(e) => setForm({ ...form, anaesthetistFee: e.target.value })}
+            />
           </label>
         </fieldset>
         {save.isError && <p className="error">{errorMessage(save.error)}</p>}
         {remove.isError && <p className="error">{errorMessage(remove.error)}</p>}
         {done && <p className="success">{done}</p>}
         <div className="actions">
-          <button type="submit" disabled={busy}>{editing === null ? 'Save' : 'Update'}</button>
-          <button type="button" disabled={busy || editing !== null}
+          <Button variant="primary" type="submit" disabled={busy}>
+            {editing === null ? 'Save' : 'Update'}
+          </Button>
+          <Button
+            variant="ghost"
+            disabled={busy || editing !== null}
             onClick={() => {
               resetFeedback()
               setFilter((f) => ({ surgeonCategory: form.surgeonCategory.trim(), anaesthetistCategory: form.anaesthetistCategory.trim(), n: (f?.n ?? 0) + 1 }))
-            }}>
+            }}
+          >
             Search
-          </button>
-          <button type="button" disabled={busy} onClick={() => { resetFeedback(); clear() }}>Clear</button>
+          </Button>
+          <Button
+            variant="link"
+            disabled={busy}
+            onClick={() => {
+              resetFeedback()
+              clear()
+            }}
+          >
+            Clear
+          </Button>
         </div>
       </form>
 
@@ -349,11 +406,16 @@ function LookUpTab() {
                       <td className="center">{r.anaesthetistCategory}</td>
                       <td className="num">{formatMoney(r.anaesthetistFee)}</td>
                       <td className="action-cell">
-                        <button type="button" className="link" disabled={busy} onClick={() => onEdit(r)}>Edit</button>
-                        <button type="button" className="link" disabled={busy}
-                          onClick={() => window.confirm('Do you want to delete the record?') && (resetFeedback(), remove.mutate(r.index))}>
+                        <Button variant="link" disabled={busy} onClick={() => onEdit(r)}>
+                          Edit
+                        </Button>
+                        <Button
+                          variant="link"
+                          disabled={busy}
+                          onClick={() => window.confirm('Do you want to delete the record?') && (resetFeedback(), remove.mutate(r.index))}
+                        >
                           Delete
-                        </button>
+                        </Button>
                       </td>
                     </tr>
                   ))}

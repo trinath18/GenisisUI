@@ -3,7 +3,10 @@
 Headless Chrome drives the real UI against a real API and the development databases on `MYDELL`. They cover the nine Case
 screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
 Case Audit Review, Case Transfer, Inpatient Case Listing, Claim ASCII and Case ASCII (validation messages, enable/disable
-states, loading, saving, downloads), plus the Worksheet menu (`worksheet.mjs`: Tracking, Send to A/C, Send to A/R, scan codes, access; `worksheet-enquiry.mjs`: Worksheet Enquiry; `worksheet-adjustment.mjs`: Worksheet Adjustment).
+states, loading, saving, downloads), the Worksheet and Invoice menus (`worksheet.mjs`: Tracking, Send to A/C, Send to A/R, scan codes, access; `worksheet-enquiry.mjs`: Worksheet Enquiry; `worksheet-adjustment.mjs`: Worksheet Adjustment), and the eight Finance screens (`finance.mjs`: searches, validation messages, selection rules,
+detail panels, the SUN journal list and the bank file downloads).
+
+`finance.mjs` alone can also run against the Vite dev server: `set E2E_BASE_URL=http://127.0.0.1:5173` and `node e2e/finance.mjs`.
 
 ## Run
 
@@ -46,6 +49,9 @@ The suites ran first on a trimmed development database and then on the full one,
 - Worksheet suite: reads real worksheets (payors `XI`, `AC`, cases `ZZ…`); the three POSTs that would change data (tracking update, send to A/C, send to A/R) are intercepted and answered by the test, so nothing is written (the database writes are covered by the API's rolled-back database tests).
 - ASCII: Claim ASCII payor `GC` (accepted) and `AN` (rejected), Case ASCII payor `BI`; this flags the exported claims / cases and takes batch numbers.
   Nothing is bordxed for real: the bordx request is intercepted and answered by the test.
+
+- Finance (`finance.mjs`): read only. It never confirms a save, post, reversal, stop or re-issue; it uses SUN batch / payor `ST`
+  (Jul–Aug 2021), receipt `RB55092`, invoice `S34041`, case `ST00073162` and credit reference `06082021`.
 
 `cleanup.sql` undoes all of it (idempotent). The suites depend on that development data; if the data changes, adjust the case / payor numbers at the top of each suite.
 Never point them at production.

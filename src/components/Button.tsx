@@ -1,9 +1,9 @@
 import type { ComponentProps } from 'react'
 
-export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'link'
+export type ButtonVariant = 'default' | 'primary' | 'ghost' | 'link' | 'danger'
 
 type ButtonProps = Omit<ComponentProps<'button'>, 'className'> & {
-  /** Visual style; `primary` is the one main action of a screen, `ghost` a secondary action, `link` a quiet action (Clear, Close). */
+  /** Visual style; `primary` is the one main action of a screen, `ghost` a secondary action, `link` a quiet action (Clear, Close), `danger` a destructive one. */
   variant?: ButtonVariant
   /** A request is running: the button is disabled, announced as busy and shows `busyLabel`. */
   busy?: boolean

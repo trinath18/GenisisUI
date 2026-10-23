@@ -13,6 +13,7 @@ import { PolicyWordingTab } from '../../features/membership/enquiry/components/P
 import {
   accountHistoryColumns, benefitColumns, feeFields, lifetimeColumns, nonDisclosureColumns, policyTermFields, takeoverColumns, worksheetColumns,
 } from '../../features/membership/enquiry/enquiryTabColumns'
+import { Button } from '../../components/Button'
 
 type SearchBy = 'number' | 'name' | 'ic' | 'policy'
 
@@ -340,9 +341,9 @@ export function EnquiryPage() {
           <option value="policy">Policy No</option>
         </select>
         <input value={input} onChange={(e) => setInput(e.target.value)} placeholder="Enter at least 3 characters" aria-label="Search text" />
-        <button type="submit" disabled={input.trim().length < 3}>
+        <Button variant="primary" type="submit" disabled={input.trim().length < 3}>
           Show
-        </button>
+        </Button>
       </form>
       {input.trim().length > 0 && input.trim().length < 3 && (
         <p className="error">Enter at least 3 characters to search.</p>

@@ -8,6 +8,7 @@ import { TrackingFilters } from '../components/TrackingFilters'
 import { TrackingResults } from '../components/TrackingResults'
 import { FieldKey, MEMBER_TYPES, META_STALE_MS, MemberType, PRINCIPAL_TYPES, PrincipalType } from '../constants'
 import type { RangeValue, TrackingField, TrackingRequest } from '../types'
+import { Button } from '../../../../components/Button'
 
 /** Membership &gt; Tracking (legacy FrmNewMBMTracking): choose a report, set filters, Search; Print to File exports every row as CSV. */
 export function TrackingPage() {
@@ -54,7 +55,12 @@ export function TrackingPage() {
   }, [meta.data])
 
   if (meta.isLoading) return <p className="muted">Loading…</p>
-  if (meta.isError) return <p className="error" role="alert">{errorMessage(meta.error)}</p>
+  if (meta.isError)
+    return (
+      <p className="error" role="alert">
+        {errorMessage(meta.error)}
+      </p>
+    )
   const data = meta.data!
   const selections = data.reports.filter((r) => r.typeIndex === typeIndex)
   const report = data.reports.find((r) => r.key === reportKey)
@@ -86,29 +92,63 @@ export function TrackingPage() {
       <div className="registration">
         <fieldset>
           <legend>Report</legend>
-          <FormField label="Report Type *"><CodeSelect value={typeIndex === null ? '' : String(typeIndex)} onChange={chooseType} options={reportTypes} /></FormField>
+          <FormField label="Report Type *">
+            <CodeSelect value={typeIndex === null ? '' : String(typeIndex)} onChange={chooseType} options={reportTypes} />
+          </FormField>
           {selections.length > 1 && (
             <FormField label="Report Selection">
-              <select value={reportKey} onChange={(e) => { setReportKey(e.target.value); run.reset() }}>
-                {selections.map((r) => <option key={r.key} value={r.key}>{r.selection}</option>)}
+              <select
+                value={reportKey}
+                onChange={(e) => {
+                  setReportKey(e.target.value)
+                  run.reset()
+                }}
+              >
+                {selections.map((r) => (
+                  <option key={r.key} value={r.key}>
+                    {r.selection}
+                  </option>
+                ))}
               </select>
             </FormField>
           )}
-          <FormField label="MBM Type"><CodeSelect value={memberType} onChange={setMemberType} options={MEMBER_TYPES} allowBlank={false} /></FormField>
-          <FormField label="Principal Type"><CodeSelect value={principalType} onChange={setPrincipalType} options={PRINCIPAL_TYPES} allowBlank={false} /></FormField>
+          <FormField label="MBM Type">
+            <CodeSelect value={memberType} onChange={setMemberType} options={MEMBER_TYPES} allowBlank={false} />
+          </FormField>
+          <FormField label="Principal Type">
+            <CodeSelect value={principalType} onChange={setPrincipalType} options={PRINCIPAL_TYPES} allowBlank={false} />
+          </FormField>
           <div className="actions">
-            <button type="button" disabled={!reportKey || run.isPending} onClick={() => run.mutate()}>{run.isPending ? 'Searching…' : 'Search'}</button>
-            <button type="button" disabled={!run.isPending} onClick={() => abort.current?.abort()}>Stop</button>
-            <button type="button" disabled={!reportKey || exportCsv.isPending} onClick={() => exportCsv.mutate()}>
-              {exportCsv.isPending ? 'Exporting…' : 'Print to File'}
-            </button>
-            <button type="button" onClick={clear}>Clear</button>
-            <button type="button" aria-expanded={showFilters} onClick={() => setShowFilters((s) => !s)}>{showFilters ? 'Hide filters' : 'Show filters'}</button>
+            <Button variant="ghost" busy={run.isPending} busyLabel="Searching…" disabled={!reportKey || run.isPending} onClick={() => run.mutate()}>
+              Search
+            </Button>
+            <Button variant="ghost" disabled={!run.isPending} onClick={() => abort.current?.abort()}>
+              Stop
+            </Button>
+            <Button
+              variant="ghost"
+              busy={exportCsv.isPending}
+              busyLabel="Exporting…"
+              disabled={!reportKey || exportCsv.isPending}
+              onClick={() => exportCsv.mutate()}
+            >
+              Print to File
+            </Button>
+            <Button variant="link" onClick={clear}>
+              Clear
+            </Button>
+            <Button variant="link" aria-expanded={showFilters} onClick={() => setShowFilters((s) => !s)}>
+              {showFilters ? 'Hide filters' : 'Show filters'}
+            </Button>
           </div>
         </fieldset>
         {showFilters && (
           <TrackingFilters
-            groups={groups} values={values} ranges={ranges} blanks={blanks} optionsFor={optionsFor}
+            groups={groups}
+            values={values}
+            ranges={ranges}
+            blanks={blanks}
+            optionsFor={optionsFor}
             onValueChange={(key, value) => setValues((current) => ({ ...current, [key]: value, ...(key === FieldKey.Health ? { [FieldKey.Payor]: '' } : {}) }))}
             onRangeChange={(key, range) => setRanges((current) => ({ ...current, [key]: range }))}
             onBlankChange={(key, blank) => setBlanks((current) => (blank ? [...current, key] : current.filter((k) => k !== key)))}
@@ -116,8 +156,16 @@ export function TrackingPage() {
         )}
       </div>
 
-      {run.isError && <p className="error" role="alert">{errorMessage(run.error)}</p>}
-      {exportCsv.isError && <p className="error" role="alert">{errorMessage(exportCsv.error)}</p>}
+      {run.isError && (
+        <p className="error" role="alert">
+          {errorMessage(run.error)}
+        </p>
+      )}
+      {exportCsv.isError && (
+        <p className="error" role="alert">
+          {errorMessage(exportCsv.error)}
+        </p>
+      )}
       {run.data && <TrackingResults result={run.data} report={report} />}
     </section>
   )

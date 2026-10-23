@@ -15,6 +15,13 @@ export const Access = {
   // Maintenance > Entity (mnuAgent_Click) and Accounts (MaintenanceAccounts_Click) check position 1 too.
   EntityMaintenance: 1,
   AccountsMaintenance: 1,
+  // Maintenance > Account Transaction (MnuAccountTrans_Click) checks position 1 too.
+  AccountTransaction: 1,
+  // Maintenance > Security: the matrix's own Department (111) and User Permission (112) rights, not the desktop's CheckAccess(2).
+  SecurityDepartment: 111,
+  SecurityUsers: 112,
+  // Maintenance > MMA (Procedures/OPCS): no desktop handler; the matrix's Maintenance MMA checkbox.
+  MmaEntry: 147,
   // Case menu positions in mdiMain.frm (CaseEntry=11, CASInMBM=7, CaseAdjustment=12, CaseTracking=15).
   CaseRegistration: 11,
   CaseEnquiry: 7,
@@ -45,6 +52,16 @@ export const Access = {
   WorksheetEnquiry: 13,
   WorksheetSendToAccounts: 24,
   WorksheetSendToAr: 24,
+  // Finance menu (mdiMain.frm): Invoice Receipt / Short Payment / Reverse Receipt check 9, Notification-Suspension and Suspend-Active 12,
+  // Electronic Banking 10, SUN Posting 13. Receipt Enquiry has no check in the desktop and is gated like Invoice Receipt.
+  FinanceReceiptEnquiry: 9,
+  FinanceInvoiceReceipt: 9,
+  FinanceShortPayment: 9,
+  FinanceReverseReceipt: 9,
+  FinanceReceiptManual: 12,
+  FinanceSuspendActive: 12,
+  FinanceElectronicBanking: 10,
+  FinanceSunPosting: 13,
 } as const
 
 export class MustChangePasswordError extends Error {}

@@ -238,6 +238,7 @@ button.ghost:hover:not(:disabled) { background: var(--accent-soft); color: var(-
 .doc-list .doc-name { text-align: left; word-break: break-all; }
 .doc-list .muted { margin-left: auto; white-space: nowrap; }
 .doc-list .link.danger { color: #b91c1c; }
+button.danger:not(:disabled) { background: #b91c1c; border-color: #b91c1c; color: #fff; }
 
 /* ---- Motion: subtle, fast, respects reduced-motion ---- */
 button, .sidebar a, .rail a, .nav-toggle, input, select, textarea, .tabs button {
@@ -343,3 +344,19 @@ abbr.req { color: #b42318; text-decoration: none; margin-left: 3px; }
 .ct-input.fill { width: 100%; }
 .error-panel { max-width: 640px; margin: 48px auto; padding: 24px; border: 1px solid #b42318; border-radius: 8px; background: #fef3f2; }
 .error-panel h2 { margin-top: 0; color: #912018; }
+
+/* Security > User Permission: the access matrix */
+.access-groups { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+.access-groups fieldset { display: flex; flex-direction: column; gap: 4px; align-items: flex-start; }
+.access-groups label.check { display: flex; gap: 6px; align-items: center; font-weight: normal; }
+.access-groups input[type='checkbox'] { width: auto; }
+
+/* ---- Uniform control height: action buttons match the inputs and selects beside them ---- */
+:root { --control-h: 36px; --button-min-w: 84px; }
+input:not([type='checkbox']):not([type='radio']):not([type='file']):not([type='date']), select { height: var(--control-h); box-sizing: border-box; }
+.actions { align-items: center; align-self: end; }
+.actions > button, .search > button, .modal-actions > button, form.actions > button {
+  height: var(--control-h); min-width: var(--button-min-w); padding-block: 0; box-sizing: border-box; display: inline-flex; align-items: center; justify-content: center; white-space: nowrap;
+}
+.actions > button.link, .modal-actions > button.link { min-width: 0; }
+.registration fieldset > .actions { grid-column: 1 / -1; flex-wrap: wrap; justify-self: start; }
