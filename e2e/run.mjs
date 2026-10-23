@@ -9,6 +9,7 @@ const suites = [
   'audit-transfer-listing.mjs',
   'ascii-exports.mjs',
   'finance.mjs',
+  'case-registration.mjs',
   'worksheet.mjs',
   'worksheet-enquiry.mjs',
   'worksheet-adjustment.mjs',

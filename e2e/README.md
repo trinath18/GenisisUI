@@ -1,7 +1,8 @@
 # Browser (end-to-end) tests
 
-Headless Chrome drives the real UI against a real API and the development databases on `MYDELL`. They cover the nine Case
-screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
+Headless Chrome drives the real UI against a real API and the development databases on `MYDELL`. They cover Case Registration
+(`case-registration.mjs`: finding the member, what an expired membership does to Register, the save messages in the desktop's order, the
+confirmations and one real registration) and the nine Case screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
 Case Audit Review, Case Transfer, Inpatient Case Listing, Claim ASCII and Case ASCII (validation messages, enable/disable
 states, loading, saving, downloads), the Worksheet and Invoice menus (`worksheet.mjs`: Tracking, Send to A/C, Send to A/R, scan codes, access; `worksheet-enquiry.mjs`: Worksheet Enquiry; `worksheet-adjustment.mjs`: Worksheet Adjustment), and the eight Finance screens (`finance.mjs`: searches, validation messages, selection rules,
 detail panels, the SUN journal list and the bank file downloads).
@@ -41,6 +42,10 @@ The suites ran first on a trimmed development database and then on the full one,
 ## What they touch
 
 - The ZZ test case `ZZ00000106` (test members `ZZHA0000518*01` / `ZZHA0000316*01`): non-disclosure, pay & claim, transfer (and back).
+- Case Registration (`case-registration.mjs`): registers **one real case** for the ZZ test member as user `E2E` (a new `ZZ` case number, the ten rows
+  the save writes and the ZZ counter in `CAQ2013`), then tries the same patient and admission date again and answers No. `cleanup.sql` deletes every case
+  opened by `E2E` on the ZZ payor, with its rows in the nine case tables and the cross reference, and puts the ZZ counter back. The suite starts by
+  checking that no such case is left from an earlier run. Run `cleanup.sql` after every run of this suite.
 - One real case's audit review (`XI00002733`, which has no audit row) and the audit status on its cross reference.
 - MMA procedures / fees: added and deleted again by the test itself.
 - Worksheet suite (Tracking, Send to A/C, Send to A/R) also checks the search layout: the criteria in the right-hand panel, the results on the first screen, the panel scrolling and sticking, and stacking on a narrow window.

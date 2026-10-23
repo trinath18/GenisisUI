@@ -27,3 +27,23 @@ END
 CLOSE e2e_invoices;
 DEALLOCATE e2e_invoices;
 SELECT 'e2e invoices left' AS what, COUNT(*) AS n FROM genisis.WS_ClaimInvoice WHERE InvNo LIKE 'E2E-%';
+
+-- case-registration.mjs registers a case for the ZZ test member as user E2E. This removes every row such a case wrote (the nine case tables of the main
+-- database and the case cross-reference of the maintenance one, the same ten tables the save writes) and puts the ZZ case counter back to the highest
+-- ZZ case that is left. Only cases opened by E2E on the ZZ test payor are touched.
+DECLARE @e2eCases TABLE (CASNumber nvarchar(15) PRIMARY KEY);
+INSERT @e2eCases SELECT CASNumber FROM dbo.CAS WHERE CaseOpenBy = 'E2E' AND CASNumber LIKE 'ZZ%';
+DELETE dbo.CASOthersTwo WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE dbo.CASOthers WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE dbo.CAS_UD WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE dbo.CASRemarkThree WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE dbo.CASRemarksTwo WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE dbo.CASRemarks WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE dbo.DIAFinal WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE dbo.DIAFirst WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE genisis.Maint_CASCrossReference WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DELETE dbo.CAS WHERE CASNumber IN (SELECT CASNumber FROM @e2eCases);
+DECLARE @removedCases int = (SELECT COUNT(*) FROM @e2eCases);
+PRINT 'e2e registered cases removed: ' + CAST(@removedCases AS varchar);
+UPDATE genisis.Maint_CAQ2013 SET CAQNumber = RIGHT('00000000' + CAST(ISNULL((SELECT MAX(CAST(SUBSTRING(RTRIM(CASNumber), 3, 8) AS bigint)) FROM dbo.CAS WHERE CASNumber LIKE 'ZZ%'), 0) AS varchar(8)), 8) WHERE PAYCode = 'ZZ';
+SELECT 'zz cases / counter' AS what, (SELECT COUNT(*) FROM dbo.CAS WHERE CASNumber LIKE 'ZZ%') AS zzCases, (SELECT MAX(RTRIM(CASNumber)) FROM dbo.CAS WHERE CASNumber LIKE 'ZZ%') AS lastZzCase, (SELECT RTRIM(CAQNumber) FROM genisis.Maint_CAQ2013 WHERE PAYCode = 'ZZ') AS counter, (SELECT COUNT(*) FROM dbo.CAS WHERE CaseOpenBy = 'E2E') AS e2eCasesLeft;
