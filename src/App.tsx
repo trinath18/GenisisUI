@@ -46,6 +46,10 @@ import { SuspendActivePage } from './features/finance/suspendActive/pages/Suspen
 import { ElectronicBankingPage } from './features/finance/electronicBanking/pages/ElectronicBankingPage'
 import { WorksheetRegistrationPage } from './pages/worksheet/WorksheetRegistrationPage'
 import { InvoiceProcessingPage } from './pages/invoice/InvoiceProcessingPage'
+import { InvoiceOriginalUpdatePage } from './pages/invoice/InvoiceOriginalUpdatePage'
+import { InvoiceHospitalAccountingPage } from './pages/invoice/InvoiceHospitalAccountingPage'
+import { InvoiceMemberAccountingPage } from './pages/invoice/InvoiceMemberAccountingPage'
+import { InvoiceTrackingPage } from './pages/invoice/InvoiceTrackingPage'
 import { WorksheetAdjustmentPage } from './pages/worksheet/WorksheetAdjustmentPage'
 import { WorksheetEnquiryPage } from './pages/worksheet/WorksheetEnquiryPage'
 import { WorksheetTrackingPage } from './pages/worksheet/WorksheetTrackingPage'
@@ -215,6 +219,38 @@ export default function App() {
           element={
             <RequireAccess position={Access.InvoiceProcessing}>
               <InvoiceProcessingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/original-update"
+          element={
+            <RequireAccess position={Access.InvoiceOriginalUpdate}>
+              <InvoiceOriginalUpdatePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/member-accounting"
+          element={
+            <RequireAccess position={Access.InvoiceMemberAccounting}>
+              <InvoiceMemberAccountingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/hospital-accounting"
+          element={
+            <RequireAccess position={Access.InvoiceHospitalAccounting}>
+              <InvoiceHospitalAccountingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/tracking"
+          element={
+            <RequireAccess position={Access.InvoiceTracking}>
+              <InvoiceTrackingPage />
             </RequireAccess>
           }
         />

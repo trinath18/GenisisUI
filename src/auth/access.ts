@@ -47,6 +47,12 @@ export const Access = {
   WorksheetRegistration: 22,
   // Invoice > Invoice Processing is CheckAccess(22) in the desktop (mniInvoiceProcess_Click), the same position as the Worksheet Registration scan code.
   InvoiceProcessing: 22,
+  // Invoice > Original Invoice Update has no click handler in the desktop and is hidden: gated like Invoice Processing, which edits the same invoices. Invoice Tracking is
+  // CheckAccess(27) (mnuInvTrack_Click); the two accounting items have no handler either and are gated like Tracking. Keep in step with Genisis.Api/Auth/AccessRight.cs.
+  InvoiceOriginalUpdate: 22,
+  InvoiceTracking: 27,
+  InvoiceHospitalAccounting: 27,
+  InvoiceMemberAccounting: 27,
   WorksheetAdjustment: 23,
   WorksheetTracking: 24,
   WorksheetEnquiry: 13,

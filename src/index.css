@@ -125,6 +125,9 @@ table.grid { border-collapse: collapse; width: 100%; white-space: nowrap; }
 .toast.error { border-color: #b42318; background: #fef3f2; }
 .toast.success { border-color: #067647; background: #ecfdf3; }
 .toast button { background: none; color: #6b7785; padding: 0; }
+/* The stack hangs down over the action bars of the screens: a click on a message goes through to the button under it; only the dismiss button takes clicks. */
+.toasts, .toast { pointer-events: none; }
+.toast button { pointer-events: auto; }
 
 /* Case registration (modern layout, all desktop fields kept). */
 .case-reg fieldset { align-content: start; }

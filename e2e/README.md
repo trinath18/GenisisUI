@@ -2,7 +2,7 @@
 
 Headless Chrome drives the real UI against a real API and the development databases on `MYDELL`. They cover Case Registration
 (`case-registration.mjs`: finding the member, what an expired membership does to Register, the save messages in the desktop's order, the
-confirmations and one real registration) and the nine Case screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
+confirmations and one real registration), the Invoice screens (`invoice-processing.mjs`, `invoice-entry.mjs`, and `invoice-original-update.mjs`, `invoice-accounting.mjs`, `invoice-tracking.mjs` for the four other required Invoice items) and the nine Case screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
 Case Audit Review, Case Transfer, Inpatient Case Listing, Claim ASCII and Case ASCII (validation messages, enable/disable
 states, loading, saving, downloads), the Worksheet and Invoice menus (`worksheet.mjs`: Tracking, Send to A/C, Send to A/R, scan codes, access; `worksheet-enquiry.mjs`: Worksheet Enquiry; `worksheet-adjustment.mjs`: Worksheet Adjustment), and the eight Finance screens (`finance.mjs`: searches, validation messages, selection rules,
 detail panels, the SUN journal list and the bank file downloads).
@@ -46,6 +46,7 @@ The suites ran first on a trimmed development database and then on the full one,
   the save writes and the ZZ counter in `CAQ2013`), then tries the same patient and admission date again and answers No. `cleanup.sql` deletes every case
   opened by `E2E` on the ZZ payor, with its rows in the nine case tables and the cross reference, and puts the ZZ counter back. The suite starts by
   checking that no such case is left from an earlier run. Run `cleanup.sql` after every run of this suite.
+- Invoice Original Update, HOS / MBM Accounting and Invoice Tracking (`invoice-original-update.mjs`, `invoice-accounting.mjs`, `invoice-tracking.mjs`): they read real invoices and write nothing. The PUT of Original Invoice Update and the POSTs that would mark invoices as printed or give them an accounting period are intercepted and answered by the test (the database writes are covered by the API tests, in transactions that are rolled back); the CSV downloads are real and are read back. The accounting suite picks its hospital and payor at run time from the API (a hospital with 3 to 30 unprinted invoices, a payor with 4 to 40).
 - One real case's audit review (`XI00002733`, which has no audit row) and the audit status on its cross reference.
 - MMA procedures / fees: added and deleted again by the test itself.
 - Worksheet suite (Tracking, Send to A/C, Send to A/R) also checks the search layout: the criteria in the right-hand panel, the results on the first screen, the panel scrolling and sticking, and stacking on a narrow window.

@@ -76,7 +76,13 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
   {
     label: 'Invoice',
     prefix: '/invoice',
-    items: [{ to: '/invoice/processing', label: 'Invoice Processing', access: Access.InvoiceProcessing }],
+    items: [
+      { to: '/invoice/processing', label: 'Invoice Processing', access: Access.InvoiceProcessing },
+      { to: '/invoice/original-update', label: 'Original Invoice Update', access: Access.InvoiceOriginalUpdate },
+      { to: '/invoice/member-accounting', label: 'Invoice MBM Accounting', access: Access.InvoiceMemberAccounting },
+      { to: '/invoice/hospital-accounting', label: 'Invoice HOS Accounting', access: Access.InvoiceHospitalAccounting },
+      { to: '/invoice/tracking', label: 'Invoice Tracking', access: Access.InvoiceTracking },
+    ],
   },
   {
     label: 'Worksheet',

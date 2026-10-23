@@ -49,9 +49,9 @@ const untickDateChecks = async () => {
   await sleep(300)
 }
 /**
- * Clicks Register and makes sure the click did something. The validation toasts stack down from the top right over the Register button for a few
- * seconds, so a click soon after a message can land on a toast (the click log shows DIV.toast as the target) and send nothing. That is a defect of the
- * page, not of the test; one retry is allowed and counted in the summary.
+ * Clicks Register and makes sure the click did something. The validation toasts used to stack down from the top right over the Register button, so a click soon after a
+ * message landed on a toast (the click log showed DIV.toast as the target) and sent nothing. The toasts no longer take clicks (index.css), and the suite checks that no click
+ * was ignored; one retry is still allowed so that a stray failure does not hide the checks after it.
  */
 const clickRegister = async () => {
   const before = validates
@@ -183,7 +183,7 @@ await (await t.btn('No')).click()
 await sleep(500)
 check('again: answering No registers nothing more', (await page.$$('.case-no')).length === 0)
 
-console.log(`Register clicks the page ignored and that were repeated: ${retriedClicks}`)
+check('clicks: no Register click was ignored by the page (the messages do not catch clicks)', retriedClicks === 0, `${retriedClicks} repeated`)
 console.log(`screenshots: ${t.shots}`)
 console.log(`registered ${caseNo}: run  sqlcmd -S MYDELL -d HISDB -E -C -b -i e2e/cleanup.sql  to remove it`)
 const ok = t.summary()
