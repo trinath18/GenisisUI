@@ -1,5 +1,5 @@
-// Worksheet > Worksheet Registration, calculation step (legacy frmWorksheetRegGST2015): enter a case and see its worksheet worked out from the invoices and the patient's plan,
-// row by row, beside what the desktop saved. Nothing is written: registering a new worksheet (entering invoices and saving) is not migrated yet.
+// Worksheet > Worksheet Registration (legacy frmWorksheetRegGST2015). The Register tab registers the next worksheet of a case from its invoices and the patient's plan; the other tab
+// works a saved worksheet out again, row by row, beside what the desktop saved, and writes nothing.
 
 import { useState } from 'react'
 import type { FormEvent } from 'react'
@@ -10,9 +10,11 @@ import { DataGrid } from '../../components/DataGrid'
 import type { GridColumn } from '../../components/DataGrid'
 import { ReadField, SelectField, TextField } from '../../components/Field'
 import { ActionBar, PageShell } from '../../components/Screen'
+import { Tabs } from '../../components/Tabs'
 import { amountText, moneyOrDash } from './enquiryRules'
 import { daysText, differingRows, limitDiffers, summaryRows } from './registrationRules'
 import type { CalculationLine, CalculationResult, SummaryRow } from './registrationRules'
+import { RegisterWorksheet } from './RegisterWorksheet'
 
 interface Request {
   cas: string
@@ -49,7 +51,8 @@ const summaryColumns: GridColumn<SummaryRow>[] = [
   },
 ]
 
-export function WorksheetRegistrationPage() {
+/** The Recalculate tab: a saved worksheet worked out again beside what the desktop saved. */
+function SavedWorksheetCalculation() {
   const [caseNo, setCaseNo] = useState('')
   const [error, setError] = useState('')
   const [request, setRequest] = useState<Request | null>(null)
@@ -75,10 +78,10 @@ export function WorksheetRegistrationPage() {
   const differing = result ? differingRows(result.lines) : []
 
   return (
-    <PageShell title="Worksheet Registration" subtitle="Calculate a worksheet from its invoices and the plan, and compare it with what was saved">
+    <>
       <p role="status" className="muted">
-        This page works a saved worksheet out again from its invoices and the patient&apos;s plan. Entering the invoices of a new worksheet and saving it are
-        not available yet, so nothing is written here.
+        This tab works a saved worksheet out again from its invoices and the patient&apos;s plan, and nothing is written here. To register the next worksheet of
+        a case use the Register tab.
       </p>
       <form onSubmit={submit} noValidate>
         <ActionBar label="Case">
@@ -135,6 +138,19 @@ export function WorksheetRegistrationPage() {
           {result.calculated && <p className="muted">Amount due to the member: {amountText(result.lines.reduce((sum, l) => sum + l.toMember, 0))}</p>}
         </>
       )}
+    </>
+  )
+}
+
+/** Worksheet > Worksheet Registration. */
+export function WorksheetRegistrationPage() {
+  return (
+    <PageShell title="Worksheet Registration" subtitle="Register the next worksheet of a case from its invoices and the patient's plan">
+      <Tabs
+        label="Worksheet Registration"
+        tabs={['Register', 'Recalculate a saved worksheet']}
+        panels={[<RegisterWorksheet key="register" />, <SavedWorksheetCalculation key="saved" />]}
+      />
     </PageShell>
   )
 }
