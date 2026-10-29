@@ -1,0 +1,246 @@
+// Claim Bordx menu: Send to Payor and Send to A/C (Bor Delivery), the Insert Worksheet entry and the menu around them. Reads the real bordx; the POSTs that would change them are
+// intercepted and answered here (the database writes are covered by the API's own rolled-back database tests), so nothing is written.
+import { start, sleep, BASE } from './lib.mjs'
+import { mint } from './mint.mjs'
+
+const t = await start()
+const { page, check } = t
+
+const get = async (path, token = mint()) => fetch(`${BASE}${path}`, { headers: { Authorization: `Bearer ${token}` } })
+const json = async (path) => (await get(path)).json()
+const stat = (label) =>
+  page.evaluate(
+    (l) =>
+      [...document.querySelectorAll('.stat')].find((s) => s.querySelector('.stat-label')?.textContent === l)?.querySelector('.stat-value')?.textContent ?? null,
+    label,
+  )
+const tick = (no) => page.evaluate((k) => document.querySelector(`input[aria-label="Select ${k}"]`)?.click(), no)
+const gridRows = async (caption) => (await t.rows(caption)).filter((r) => r.length > 1)
+const headers = (caption) => page.$$eval(`table[aria-label="${caption}"] thead th`, (ths) => ths.map((th) => th.textContent.trim()).filter(Boolean))
+const dialogs = () => page.$$eval('[role=dialog]', (d) => d.map((x) => x.textContent.replace(/\s+/g, ' ').trim()))
+
+const posts = []
+await page.setRequestInterception(true)
+page.on('request', (req) => {
+  if (req.method() === 'POST' && /\/api\/claim-bordx\/delivery\/[a-z-]+\/send$/.test(req.url())) {
+    posts.push({ url: new URL(req.url()).pathname, body: JSON.parse(req.postData()) })
+    return req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Record updated...', updated: 1 }) })
+  }
+  req.continue()
+})
+
+// the data: a payor with a handful of bordx
+let payor = ''
+let rows = []
+for (const candidate of ['AN', 'ST', 'WK', 'AC', 'AH', 'XI', 'IB', 'GC']) {
+  const found = (await json(`/api/claim-bordx/delivery/to-payor/search?useScan=false&payor=${candidate}`)).rows
+  if (found.length >= 3 && found.length <= 800) {
+    payor = candidate
+    rows = found
+    break
+  }
+}
+check('data: a payor with some bordx is found', rows.length >= 3, `${payor} ${rows.length}`)
+
+// ---------------- the API
+const toPayor = await json(`/api/claim-bordx/delivery/to-payor/search?useScan=false&payor=${payor}`)
+const toAccounts = await json(`/api/claim-bordx/delivery/to-accounts/search?useScan=false&payor=${payor}`)
+check(
+  'api: both screens list the payor bordx, unsent and in bordx number order',
+  toPayor.rows.length === rows.length && toAccounts.rows.length === rows.length && toPayor.rows.every((r) => !r.sent),
+)
+check(
+  'api: the list is in bordx number order',
+  toPayor.rows.every((r, i) => i === 0 || toPayor.rows[i - 1].bordxNo <= r.bordxNo),
+)
+check(
+  'api: status 1 (sent) lists none, status 2 (both) lists all',
+  (await json(`/api/claim-bordx/delivery/to-payor/search?useScan=false&payor=${payor}&status=1`)).rows.length === 0 &&
+    (await json(`/api/claim-bordx/delivery/to-payor/search?useScan=false&payor=${payor}&status=2`)).rows.length === rows.length,
+)
+check(
+  'api: an unknown step is not an API route (no JSON answer)',
+  !((await get('/api/claim-bordx/delivery/to-moon/search')).headers.get('content-type') ?? '').includes('json'),
+)
+const refused = await fetch(`${BASE}/api/claim-bordx/delivery/to-payor/send`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${mint()}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ bordxNos: [], date: '2026-10-05' }),
+})
+check(
+  'api: an update with nothing ticked is refused with the desktop message',
+  refused.status === 400 && (await refused.json()).message === 'Please select at least one record to be updated!',
+)
+
+// ---------------- the menu
+await t.go('/claim-bordx/send-to-payor')
+const links = await page.$$eval('.sidebar a', (els) => els.map((e) => e.textContent.trim()))
+const disabled = await page.$$eval('.sidebar span.disabled', (els) => els.map((e) => e.textContent.trim()))
+check(
+  'menu: Insert Worksheet, Send to Payor and Send to A/C are links',
+  ['Insert Worksheet', 'Send to Payor', 'Send to A/C'].every((x) => links.includes(x)),
+  links.join('|'),
+)
+check(
+  'menu: the items of the desktop menu that are not migrated yet are listed and disabled',
+  ['Remove Worksheet', 'Print Bordx', 'Update Bordx', 'Bordx Control', 'Bordx Approval'].every((x) => disabled.includes(x)),
+  disabled.join('|'),
+)
+
+// ---------------- Send to Payor
+check('payor: title', (await page.$eval('h2', (e) => e.textContent)) === 'Send to Payor')
+check(
+  'payor: the status starts on Not Sent and the scan is on',
+  (await t.value('Status')) === '0' && (await page.$eval('input[type=checkbox]', (e) => e.checked)),
+)
+await t.click('Search', 500)
+check('payor: a scan needs a payor', (await t.errors()).includes('Please select a Payor'), JSON.stringify(await t.errors()))
+await t.type('Payor', payor)
+await t.click('Search', 500)
+check('payor: and then a bordx number', (await t.errors()).includes('Please Enter Bordx No'), JSON.stringify(await t.errors()))
+await t.type('Bordx No', rows[0].bordxNo)
+await t.click('Search', 900)
+check(
+  'payor: a scan lists the bordx',
+  (await gridRows('Bordx to send to the payor')).length === 1 && (await stat('Records')) === '1',
+  String((await gridRows('Bordx to send to the payor')).length),
+)
+await t.type('Bordx No', rows[0].bordxNo)
+await t.click('Search', 700)
+check(
+  'payor: scanning it again says so and adds nothing',
+  (await t.toast('Data has been uploaded!')) && (await gridRows('Bordx to send to the payor')).length === 1,
+)
+await t.type('Bordx No', rows[1].bordxNo)
+await t.click('Search', 900)
+check('payor: another scan adds a second row', (await gridRows('Bordx to send to the payor')).length === 2)
+await t.type('Bordx No', 'NO SUCH BORDX')
+await t.click('Search', 900)
+check('payor: an unknown bordx says No record found!', await t.toast('No record found!'))
+
+await t.click('Clear', 300)
+await t.checkbox('Use Scan')
+await t.type('Payor', payor)
+await t.click('Search', 1200)
+const listed = await gridRows('Bordx to send to the payor')
+check('payor: a range search lists every unsent bordx of the payor', listed.length === rows.length, `${listed.length} vs ${rows.length}`)
+check(
+  'payor: the headings are the desktop list headings',
+  JSON.stringify(await headers('Bordx to send to the payor')) ===
+    JSON.stringify(['Payor', 'Bordx No', 'Bordx Date', 'Bordx Amount', 'Bordx Status', 'Sent to Payor Status', 'To Payor', 'Sent By', 'A/C Period']),
+  JSON.stringify(await headers('Bordx to send to the payor')),
+)
+check('payor: the first row is the first bordx and shows Not Sent', listed[0][2] === rows[0].bordxNo && listed[0][6] === 'Not Sent', JSON.stringify(listed[0]))
+const total = rows.reduce((sum, r) => sum + (r.amount ?? 0), 0)
+check(
+  'payor: the counters are the records, none selected and the total amount',
+  (await stat('Records')) === String(rows.length) &&
+    (await stat('Selected')) === '0' &&
+    Math.abs(Number((await stat('Total Amt')).replace(/,/g, '')) - total) < 0.01,
+  `${await stat('Total Amt')} vs ${total}`,
+)
+
+await t.click('Update', 500)
+check('payor: update with nothing ticked says so', await t.toast('Please select at least one record to be updated!'))
+await tick(rows[0].bordxNo)
+await tick(rows[2].bordxNo)
+check('payor: two bordx are ticked', await t.waitFor(async () => (await stat('Selected')) === '2'), String(await stat('Selected')))
+await t.click('Update', 500)
+check('payor: update needs a date', (await t.errors()).includes('Please Enter in date'), JSON.stringify(await t.errors()))
+await t.type('Date', '05102026')
+await t.click('Update', 600)
+check(
+  'payor: update asks Do you want to update the record?',
+  (await dialogs()).some((d) => d.includes('Do you want to update the record?')),
+  JSON.stringify(await dialogs()),
+)
+await (await t.btn('No')).click()
+await sleep(400)
+check('payor: No sends nothing', posts.length === 0)
+await t.click('Update', 600)
+await t.yes()
+check('payor: Yes reports success', await t.toast('Record updated...'))
+const sent = posts.at(-1)
+check(
+  'payor: and sends the date as an ISO day and the two ticked bordx numbers',
+  posts.length === 1 &&
+    sent.url.endsWith('/to-payor/send') &&
+    sent.body.date === '2026-10-05' &&
+    JSON.stringify(sent.body.bordxNos) === JSON.stringify([rows[0].bordxNo, rows[2].bordxNo]),
+  JSON.stringify(sent),
+)
+
+// ---------------- Send to A/C
+await t.go('/claim-bordx/send-to-accounts')
+check('accounts: title', (await page.$eval('h2', (e) => e.textContent)) === 'Send to A/C')
+await t.checkbox('Use Scan')
+await t.type('Payor', payor)
+await t.click('Search', 1200)
+check(
+  'accounts: the headings are the desktop list headings',
+  JSON.stringify(await headers('Bordx to send to accounts')) ===
+    JSON.stringify([
+      'Payor',
+      'Bordx No',
+      'Bordx Date',
+      'Bordx Amount',
+      'Bordx Status',
+      'To Payor',
+      'Fr Payor',
+      'To MNRB',
+      'Fr MNRB',
+      'To A/C',
+      'Sent to AC Status',
+      'Sent By',
+      'A/C Period',
+    ]),
+  JSON.stringify(await headers('Bordx to send to accounts')),
+)
+check('accounts: the range search lists the payor bordx', (await gridRows('Bordx to send to accounts')).length === rows.length)
+check(
+  'accounts: its criteria are the date sent, not the A/C period',
+  (await page.$$eval('label.form-field span', (s) => s.map((x) => x.textContent))).some((x) => x.includes('Date Sent from')) &&
+    !(await page.$$eval('label.form-field span', (s) => s.map((x) => x.textContent))).some((x) => x.includes('A/C Month')),
+)
+await tick(rows[1].bordxNo)
+await t.type('Date', '06102026')
+await t.click('Update', 600)
+await t.yes()
+const sentAc = posts.at(-1)
+check(
+  'accounts: update sends the date and the ticked bordx to the accounts route',
+  posts.length === 2 &&
+    sentAc.url.endsWith('/to-accounts/send') &&
+    sentAc.body.date === '2026-10-06' &&
+    JSON.stringify(sentAc.body.bordxNos) === JSON.stringify([rows[1].bordxNo]),
+  JSON.stringify(sentAc),
+)
+await page.screenshot({ path: `${t.shots}/claim-bordx-accounts.png`, fullPage: true })
+
+// ---------------- Insert Worksheet is the Inpatient Case Listing form
+await t.go('/claim-bordx/insert-worksheet')
+check('insert worksheet: opens the Inpatient Case Listing (FrmWksBordx)', (await page.$eval('h2', (e) => e.textContent)) === 'Inpatient Case Listing')
+
+// ---------------- Access: position 15 withheld
+const access = '1'.repeat(14) + '0' + '1'.repeat(15)
+const limited = await t.browser.newPage()
+await limited.evaluateOnNewDocument(
+  (token, a) =>
+    localStorage.setItem(
+      'genisis.session',
+      JSON.stringify({ token, expiresUtc: '2035-01-01T00:00:00Z', user: { userCode: 'E2E', userName: 'E2E Tester', access: a } }),
+    ),
+  mint(access),
+  access,
+)
+for (const path of ['/claim-bordx/send-to-payor', '/claim-bordx/send-to-accounts', '/claim-bordx/insert-worksheet']) {
+  await limited.goto(`${BASE}${path}`, { waitUntil: 'networkidle0' })
+  await limited.waitForSelector('h2')
+  check(`access: without position 15 ${path} says Access Denied!`, (await limited.$eval('h2', (e) => e.textContent)) === 'Access Denied!')
+}
+check('access: and the API refuses with 403', (await get('/api/claim-bordx/delivery/to-payor/search', mint(access))).status === 403)
+
+console.log(`screenshots: ${t.shots}`)
+const ok = t.summary()
+await t.browser.close()
+process.exit(ok ? 0 : 1)

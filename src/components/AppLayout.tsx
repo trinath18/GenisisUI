@@ -14,7 +14,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'file', label: 'Invoice', to: '/invoice/processing', prefix: '/invoice', access: Access.InvoiceProcessing },
   { icon: 'grid', label: 'Worksheet', to: '/worksheet/tracking', prefix: '/worksheet', access: Access.WorksheetTracking },
   { icon: 'shield', label: 'Claims' },
-  { icon: 'list', label: 'Claim Bordx' },
+  { icon: 'list', label: 'Claim Bordx', to: '/claim-bordx/insert-worksheet', prefix: '/claim-bordx', access: Access.ClaimBordx },
   { icon: 'activity', label: 'Monitoring' },
 ]
 
@@ -94,6 +94,31 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/worksheet/send-to-accounts', label: 'Send to A/C', access: Access.WorksheetSendToAccounts, group: 'Accounts & Tracking' },
       { to: '/worksheet/send-to-ar', label: 'Send to A/R', access: Access.WorksheetSendToAr, group: 'Accounts & Tracking' },
       { to: '/worksheet/tracking', label: 'Tracking', access: Access.WorksheetTracking, group: 'Accounts & Tracking' },
+    ],
+  },
+  {
+    // Desktop order of the Claim Bordx menu; items still to migrate are shown disabled. Insert Worksheet is the form Case > Inpatient Case Listing opens (FrmWksBordx).
+    label: 'Claim Bordx',
+    prefix: '/claim-bordx',
+    items: [
+      { to: '/claim-bordx/insert-worksheet', label: 'Insert Worksheet', access: Access.ClaimBordx, group: 'Worksheet' },
+      { to: '#', label: 'Remove Worksheet', access: Access.ClaimBordx, group: 'Worksheet', pending: true },
+      { to: '#', label: 'Print Bordx', access: Access.ClaimBordx, pending: true },
+      { to: '#', label: 'Print Recovery', access: Access.ClaimBordx, pending: true },
+      { to: '#', label: 'Generate Bordx No', access: Access.ClaimBordx, group: 'Payment Advice', pending: true },
+      { to: '#', label: 'Hospital Report', access: Access.ClaimBordx, group: 'Payment Advice', pending: true },
+      { to: '#', label: 'Update Bordx', access: Access.ClaimBordx, pending: true },
+      { to: '#', label: 'Bordx Send Date', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
+      { to: '/claim-bordx/send-to-payor', label: 'Send to Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
+      { to: '#', label: 'Returned From Payor', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
+      { to: '#', label: 'Returned Fr Payor (Not App)', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
+      { to: '/claim-bordx/send-to-accounts', label: 'Send to A/C', access: Access.ClaimBordx, group: 'Bor Delivery' },
+      { to: '#', label: 'Bordx Control', access: Access.ClaimBordx, group: 'Monitoring', pending: true },
+      { to: '#', label: 'Outstanding Bordx', access: Access.ClaimBordx, group: 'Monitoring', pending: true },
+      { to: '#', label: 'Bordx Approval', access: Access.ClaimBordx, pending: true },
+      { to: '#', label: 'Claim files', access: Access.ClaimBordx, group: 'Storage', pending: true },
+      { to: '#', label: 'Storage Enquiry', access: Access.ClaimBordx, group: 'Storage', pending: true },
+      { to: '#', label: 'Document', access: Access.ClaimBordx, group: 'Storage', pending: true },
     ],
   },
   {

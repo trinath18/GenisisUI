@@ -31,6 +31,7 @@ import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
 import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
 import { CaseTrackingPage } from './pages/case/CaseTrackingPage'
 import { CaseListingPage } from './pages/case/CaseListingPage'
+import { BordxDeliveryPage } from './pages/claimBordx/BordxDeliveryPage'
 import { CaseTransferPage } from './pages/case/CaseTransferPage'
 import { PanelHospitalsPage } from './pages/case/PanelHospitalsPage'
 import { CaseAuditReviewPage } from './pages/case/CaseAuditReviewPage'
@@ -275,6 +276,30 @@ export default function App() {
           element={
             <RequireAccess position={Access.WorksheetEnquiry}>
               <WorksheetEnquiryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/insert-worksheet"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <CaseListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/send-to-payor"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxDeliveryPage kind="to-payor" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/send-to-accounts"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxDeliveryPage kind="to-accounts" />
             </RequireAccess>
           }
         />

@@ -57,6 +57,8 @@ export const Access = {
   WorksheetTracking: 24,
   WorksheetEnquiry: 13,
   WorksheetSendToAccounts: 24,
+  // Claim Bordx (mdiMain.frm): Insert Worksheet checks 15 and Print Bordx 17; the other items have no click handler, so the menu is gated by 15 (a decision, see docs/remaining-work.md).
+  ClaimBordx: 15,
   WorksheetSendToAr: 24,
   // Finance menu (mdiMain.frm): Invoice Receipt / Short Payment / Reverse Receipt check 9, Notification-Suspension and Suspend-Active 12,
   // Electronic Banking 10, SUN Posting 13. Receipt Enquiry has no check in the desktop and is gated like Invoice Receipt.
