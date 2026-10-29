@@ -14,6 +14,7 @@ const suites = [
   'worksheet-enquiry.mjs',
   'worksheet-adjustment.mjs',
   'worksheet-registration.mjs',
+  'claim-bordx-delivery.mjs',
   'invoice-processing.mjs',
   'invoice-entry.mjs',
   'invoice-original-update.mjs',
