@@ -68,6 +68,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/maintenance/entity', label: 'Entity Maintenance', access: Access.EntityMaintenance },
         { to: '/maintenance/accounts', label: 'Accounts', access: Access.AccountsMaintenance },
         { to: '/maintenance/account-transaction', label: 'Account Transaction', access: Access.AccountTransaction },
+        { to: '/maintenance/member', label: 'Member', access: Access.MemberMaintenance },
         { to: '/maintenance/mma', label: 'MMA (Procedures/OPCS)', access: Access.MmaEntry },
         { to: '/maintenance/security/department', label: 'Department', access: Access.SecurityDepartment, group: 'Security' },
         { to: '/maintenance/security/role-management', label: 'Role Management', access: Access.SecurityUsers, group: 'Security' },

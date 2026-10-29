@@ -23,6 +23,7 @@ import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
 import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
 import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
+import { MemberDatesScreen } from './features/maintenance/memberDates/pages/MemberDatesScreen'
 import { DepartmentScreen } from './features/maintenance/security/pages/DepartmentScreen'
 import { UserSecurityScreen } from './features/maintenance/security/pages/UserSecurityScreen'
 import { MmaEntryScreen } from './features/maintenance/mmaEntry/pages/MmaEntryScreen'
@@ -542,6 +543,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.AccountTransaction}>
               <AccountTransactionScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/member"
+          element={
+            <RequireAccess position={Access.MemberMaintenance}>
+              <MemberDatesScreen />
             </RequireAccess>
           }
         />
