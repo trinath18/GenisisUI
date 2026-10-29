@@ -545,6 +545,41 @@ check(
 check('case: and reports success and puts the status back to N', (await t.toast('Record updated...')) && (await t.value('Approved Status')) === 'N')
 fakeCase = false
 
+// ---------------- Hovering the modules in the rail shows each module's own pages, and nothing of the module hovered before
+await t.go('/claim-bordx/send-to-payor')
+const sidebarTitle = () => page.$eval('.sidebar h4', (e) => e.textContent).catch(() => null)
+const sidebarCount = () => page.$$eval('.sidebar > *', (els) => els.length)
+const hoverRail = async (label) => {
+  await page.hover('.rail [aria-label="' + label + '"]')
+  await sleep(250)
+}
+const sizes = {}
+for (const label of ['Claim Bordx', 'Membership', 'Claim Bordx', 'Case', 'Claim Bordx', 'Worksheet', 'Claim Bordx', 'Finance']) {
+  await hoverRail(label)
+  const size = await sidebarCount()
+  check(
+    'hover: ' + label + ' shows its own pages and no leftovers (' + size + ' entries)',
+    (await sidebarTitle()) === label && (sizes[label] === undefined || sizes[label] === size),
+    (await sidebarTitle()) + ' ' + size + ' vs ' + sizes[label],
+  )
+  sizes[label] ??= size
+}
+const shown = await page.$$eval('.sidebar a, .sidebar span', (els) => els.map((e) => e.textContent.trim()))
+check(
+  'hover: Finance (the last one hovered) lists none of the Claim Bordx pages',
+  !shown.some((x) => ['Print Bordx', 'Print Recovery', 'Insert Worksheet', 'Remove Worksheet', 'Bordx Approval'].includes(x)),
+  shown.join('|'),
+)
+await hoverRail('Claims')
+check('hover: Claims shows its own panel, not the Claim Bordx pages', (await sidebarTitle()) === 'Claims')
+await hoverRail('Monitoring')
+check('hover: Monitoring shows its own panel, not the Claim Bordx pages', (await sidebarTitle()) === 'Monitoring')
+await hoverRail('Home')
+check('hover: Home has no pages, so none of the module before shows', (await sidebarTitle()) === null)
+await page.mouse.move(700, 400)
+await sleep(300)
+check("hover: with the pointer off the rail the page's own module (Claim Bordx) shows again", (await sidebarTitle()) === 'Claim Bordx')
+
 // ---------------- Insert Worksheet is the Inpatient Case Listing form
 await t.go('/claim-bordx/insert-worksheet')
 check('insert worksheet: opens the Inpatient Case Listing (FrmWksBordx)', (await page.$eval('h2', (e) => e.textContent)) === 'Inpatient Case Listing')

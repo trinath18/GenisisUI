@@ -52,6 +52,7 @@ button:focus-visible, a:focus-visible { outline: 2px solid var(--accent); outlin
 .sidebar h5.nav-group { margin: 12px 10px 2px; font-size: 10.5px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: #a39aac; }
 .sidebar a, .sidebar span { padding: 7px 10px; border-radius: 6px; color: #334155; text-decoration: none; }
 .sidebar a:hover { background: #f0ebf2; }
+.sidebar .nav-note { margin: 0; padding: 7px 10px; font-size: 13px; }
 .sidebar a.active { background: var(--accent-soft); color: var(--accent-strong); font-weight: 600; }
 .disabled { color: #a0aab4 !important; cursor: not-allowed; }
 .content { padding: 20px 24px; overflow: auto; }
