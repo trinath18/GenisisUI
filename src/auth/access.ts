@@ -19,6 +19,8 @@ export const Access = {
   AccountTransaction: 1,
   // Maintenance > Member (MaintenanceOthers) has no click handler: gated like the other Maintenance items, position 1.
   MemberMaintenance: 1,
+  // Maintenance > Suspension: Suspension_Click checks position 27.
+  Suspension: 27,
   // Maintenance > Security: the matrix's own Department (111) and User Permission (112) rights, not the desktop's CheckAccess(2).
   SecurityDepartment: 111,
   SecurityUsers: 112,
