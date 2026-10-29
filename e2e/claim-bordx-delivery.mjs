@@ -1,4 +1,4 @@
-// Claim Bordx menu: Send to Payor and Send to A/C (Bor Delivery), the Insert Worksheet entry and the menu around them. Reads the real bordx; the POSTs that would change them are
+// Claim Bordx menu: Send to Payor, Returned From Payor, Send to A/C and Bordx Approval (Bor Delivery), Remove Worksheet, the Insert Worksheet entry and the menu around them. Reads the real bordx; the POSTs that would change them are
 // intercepted and answered here (the database writes are covered by the API's own rolled-back database tests), so nothing is written.
 import { start, sleep, BASE } from './lib.mjs'
 import { mint } from './mint.mjs'
@@ -21,6 +21,7 @@ const dialogs = () => page.$$eval('[role=dialog]', (d) => d.map((x) => x.textCon
 
 const posts = []
 let fakeReturn = false
+let fakeSentOut = false
 const fakeRow = (bordxNo, sent) => ({
   payor: 'AB',
   bordxNo,
@@ -35,6 +36,29 @@ const fakeRow = (bordxNo, sent) => ({
 })
 await page.setRequestInterception(true)
 page.on('request', (req) => {
+  if (fakeSentOut && req.method() === 'GET' && /\/api\/claim-bordx\/revise\?/.test(req.url())) {
+    const row = {
+      caseNo: 'ZZ1',
+      claimVersion: 1,
+      claimNo: 'ZZ1 - 1',
+      claimOpenDate: null,
+      mbmNumber: 'M1',
+      patientName: 'P',
+      dateAdmitted: null,
+      dischargeDate: null,
+      totalApproved: 5,
+      caseStatus: 'O',
+    }
+    return req.respond({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ bordxNo: 'NZZ1', bordxDate: '2021-08-06T00:00:00', printedDate: null, items: 1, totalApproved: 5, sentOut: true, rows: [row] }),
+    })
+  }
+  if (req.method() === 'POST' && /\/api\/claim-bordx\/revise\/remove$/.test(req.url())) {
+    posts.push({ url: new URL(req.url()).pathname, body: JSON.parse(req.postData()) })
+    return req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Record updated...', removed: 1 }) })
+  }
   if (fakeReturn && req.method() === 'GET' && /\/api\/claim-bordx\/delivery\/from-payor\/search/.test(req.url())) {
     return req.respond({
       status: 200,
@@ -98,12 +122,12 @@ const links = await page.$$eval('.sidebar a', (els) => els.map((e) => e.textCont
 const disabled = await page.$$eval('.sidebar span.disabled', (els) => els.map((e) => e.textContent.trim()))
 check(
   'menu: Insert Worksheet, Send to Payor and Send to A/C are links',
-  ['Insert Worksheet', 'Send to Payor', 'Returned From Payor', 'Bordx Approval', 'Send to A/C'].every((x) => links.includes(x)),
+  ['Insert Worksheet', 'Remove Worksheet', 'Send to Payor', 'Returned From Payor', 'Bordx Approval', 'Send to A/C'].every((x) => links.includes(x)),
   links.join('|'),
 )
 check(
   'menu: the items of the desktop menu that are not migrated yet are listed and disabled',
-  ['Remove Worksheet', 'Print Bordx', 'Update Bordx', 'Bordx Control', 'Outstanding Bordx'].every((x) => disabled.includes(x)),
+  ['Print Bordx', 'Print Recovery', 'Update Bordx', 'Bordx Control', 'Outstanding Bordx'].every((x) => disabled.includes(x)),
   disabled.join('|'),
 )
 
@@ -327,6 +351,105 @@ check(
   JSON.stringify(approved),
 )
 
+// ---------------- Remove Worksheet (Bordereaux Revise)
+let revise = null
+for (const row of rows) {
+  const found = await json(`/api/claim-bordx/revise?bordxNo=${row.bordxNo}`)
+  if (found.items >= 3 && !found.sentOut) {
+    revise = found
+    break
+  }
+}
+if (!revise)
+  for (const candidate of ['UB', 'UT', 'UC', 'ST', 'AC', 'AN']) {
+    const list = (
+      await json(`/api/claim-bordx/delivery/to-payor/search?useScan=false&payor=${candidate}&bordxFrom=N${candidate}0&bordxTo=N${candidate}9`)
+    ).rows.slice(-6)
+    for (const row of list) {
+      const found = await json(`/api/claim-bordx/revise?bordxNo=${row.bordxNo}`)
+      if (found.items >= 3 && !found.sentOut) {
+        revise = found
+        break
+      }
+    }
+    if (revise) break
+  }
+check('revise: a bordx with several worksheets is found', !!revise, revise?.bordxNo)
+check(
+  'revise: the API answers the worksheets with patient and member',
+  revise.rows.length === revise.items && revise.rows.every((r) => r.patientName && r.mbmNumber),
+)
+check('revise: an unknown bordx has no worksheets', (await json('/api/claim-bordx/revise?bordxNo=NO%20SUCH%20BORDX')).items === 0)
+check(
+  'revise: a lookup without a number is refused with the desktop message',
+  (await (await get('/api/claim-bordx/revise?bordxNo=')).json()).message === 'Please select a Bordx No',
+)
+await t.go('/claim-bordx/remove-worksheet')
+check('revise: title', (await page.$eval('h2', (e) => e.textContent)) === 'Bordereaux Revise')
+await t.click('Go', 500)
+check('revise: Go needs a bordx number', (await t.errors()).includes('Please select a Bordx No'), JSON.stringify(await t.errors()))
+await t.type('Bordx No', 'NO SUCH BORDX')
+await t.click('Go', 800)
+check('revise: an unknown bordx says No record found!', await t.toast('No record found!'))
+await t.type('Bordx No', revise.bordxNo)
+await t.click('Go', 1000)
+const revRows = await gridRows('Worksheets of the bordx')
+check('revise: the list has every worksheet of the bordx', revRows.length === revise.items, `${revRows.length} vs ${revise.items}`)
+check(
+  'revise: the headings are the desktop list headings',
+  JSON.stringify(await headers('Worksheets of the bordx')) ===
+    JSON.stringify(['Claim No', 'Claim Reg Date', 'Mem No', 'Patient', 'DOA', 'DOD', 'Approved Amt', 'Case Status']),
+  JSON.stringify(await headers('Worksheets of the bordx')),
+)
+check(
+  'revise: the counters are the items and the approved amount',
+  (await stat('Items')) === String(revise.items) && Math.abs(Number((await stat('Approved Amount')).replace(/,/g, '')) - revise.totalApproved) < 0.01,
+  `${await stat('Items')} ${await stat('Approved Amount')}`,
+)
+check(
+  'revise: the bordx date is shown',
+  (await page.$$eval('dl.fields dd', (d) => d.map((x) => x.textContent))).some((x) => /^\d\d\/\d\d\/\d{4}$/.test(x)),
+)
+await t.click('Remove', 500)
+check('revise: removing with nothing ticked says so', await t.toast('Please select at least one record to be removed!'))
+const first = revise.rows[0]
+await tick(`${first.caseNo.trim()}-${first.claimVersion}`)
+await t.click('Remove', 600)
+check(
+  'revise: removing asks the desktop question',
+  (await dialogs()).some((d) => d.includes('You are going to remove a worksheet from current Bordereaux.') && d.includes('Are you sure?')),
+  JSON.stringify(await dialogs()),
+)
+const before = posts.length
+await (await t.btn('No')).click()
+await sleep(400)
+check('revise: No removes nothing', posts.length === before)
+await t.click('Remove', 600)
+await t.yes()
+const removal = posts.at(-1)
+check(
+  'revise: Yes sends the bordx and the ticked worksheet',
+  removal.url.endsWith('/revise/remove') &&
+    removal.body.bordxNo === revise.bordxNo &&
+    JSON.stringify(removal.body.items) === JSON.stringify([{ caseNo: first.caseNo, claimVersion: first.claimVersion }]),
+  JSON.stringify(removal),
+)
+check(
+  'revise: and clears the form and reports success',
+  (await t.toast('Record updated...')) && (await gridRows('Worksheets of the bordx')).length === 0 && (await t.value('Bordx No')) === '',
+)
+fakeSentOut = true
+await t.type('Bordx No', 'NZZ1')
+await t.click('Go', 900)
+check(
+  'revise: a bordx that has been sent out says so and cannot be revised',
+  (await t.toast('This Bordx has been sent out.')) && (await (await t.btn('Remove')).evaluate((b) => b.disabled)),
+)
+fakeSentOut = false
+await t.type('Bordx No', 'LOB001')
+await t.click('Go', 900)
+check('revise: a scan code opens another screen', (await page.$eval('h2', (e) => e.textContent)) === 'Inpatient Case Listing')
+
 // ---------------- Insert Worksheet is the Inpatient Case Listing form
 await t.go('/claim-bordx/insert-worksheet')
 check('insert worksheet: opens the Inpatient Case Listing (FrmWksBordx)', (await page.$eval('h2', (e) => e.textContent)) === 'Inpatient Case Listing')
@@ -347,6 +470,7 @@ for (const path of [
   '/claim-bordx/send-to-payor',
   '/claim-bordx/returned-from-payor',
   '/claim-bordx/approval',
+  '/claim-bordx/remove-worksheet',
   '/claim-bordx/send-to-accounts',
   '/claim-bordx/insert-worksheet',
 ]) {

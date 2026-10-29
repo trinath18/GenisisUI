@@ -17,7 +17,7 @@ const targets: Record<string, ScanTarget> = {
   LOC004: { label: 'Case Tracking', route: '/case/tracking' },
   LOW003: { label: 'Worksheet Tracking', route: '/worksheet/tracking' },
   LOB001: { label: 'Inpatient Case Listing', route: '/case/listing' },
-  LOB002: { label: 'Remove Worksheet', route: null },
+  LOB002: { label: 'Remove Worksheet', route: '/claim-bordx/remove-worksheet' },
   LOB003: { label: 'Print Bordx', route: null },
   LOB004: { label: 'Bordx Tracking', route: null },
   LOB005: { label: 'Claim Tracking', route: null },
