@@ -20,8 +20,28 @@ const headers = (caption) => page.$$eval(`table[aria-label="${caption}"] thead t
 const dialogs = () => page.$$eval('[role=dialog]', (d) => d.map((x) => x.textContent.replace(/\s+/g, ' ').trim()))
 
 const posts = []
+let fakeReturn = false
+const fakeRow = (bordxNo, sent) => ({
+  payor: 'AB',
+  bordxNo,
+  bordxDate: '2021-04-01T00:00:00',
+  amount: 100,
+  bordxStatus: 'C',
+  sent,
+  sentOn: sent ? '2021-05-01T00:00:00' : null,
+  sentBy: null,
+  periodMonth: '3',
+  periodYear: '2021',
+})
 await page.setRequestInterception(true)
 page.on('request', (req) => {
+  if (fakeReturn && req.method() === 'GET' && /\/api\/claim-bordx\/delivery\/from-payor\/search/.test(req.url())) {
+    return req.respond({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({ rows: [fakeRow('FAKE0000001', false), fakeRow('FAKE0000002', true)], truncated: false }),
+    })
+  }
   if (req.method() === 'POST' && /\/api\/claim-bordx\/delivery\/[a-z-]+\/send$/.test(req.url())) {
     posts.push({ url: new URL(req.url()).pathname, body: JSON.parse(req.postData()) })
     return req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Record updated...', updated: 1 }) })
@@ -78,7 +98,7 @@ const links = await page.$$eval('.sidebar a', (els) => els.map((e) => e.textCont
 const disabled = await page.$$eval('.sidebar span.disabled', (els) => els.map((e) => e.textContent.trim()))
 check(
   'menu: Insert Worksheet, Send to Payor and Send to A/C are links',
-  ['Insert Worksheet', 'Send to Payor', 'Send to A/C'].every((x) => links.includes(x)),
+  ['Insert Worksheet', 'Send to Payor', 'Returned From Payor', 'Send to A/C'].every((x) => links.includes(x)),
   links.join('|'),
 )
 check(
@@ -217,6 +237,49 @@ check(
 )
 await page.screenshot({ path: `${t.shots}/claim-bordx-accounts.png`, fullPage: true })
 
+// ---------------- Returned From Payor
+check(
+  'returned: nothing in the data has been sent to accounts yet, so the list is empty',
+  (await json('/api/claim-bordx/delivery/from-payor/search?useScan=false')).rows.length === 0,
+)
+await t.go('/claim-bordx/returned-from-payor')
+check('returned: title', (await page.$eval('h2', (e) => e.textContent)) === 'Returned From Payor')
+check(
+  'returned: the status starts on Not Returned',
+  (await t.value('Status')) === '0' && (await page.$$eval('select option', (o) => o.map((x) => x.textContent))).join('|') === 'Not Returned|Returned|Both',
+)
+await t.checkbox('Use Scan')
+await t.type('Payor', payor)
+await t.click('Search', 900)
+check('returned: a search with nothing sent to accounts says No record found!', await t.toast('No record found!'))
+fakeReturn = true
+await t.click('Search', 900)
+check(
+  'returned: the headings are the desktop list headings',
+  JSON.stringify(await headers('Bordx returned from the payor')) ===
+    JSON.stringify(['Payor', 'Bordx No', 'Bordx Date', 'Bordx Amount', 'Bordx Status', 'Returned Fr Payor Status', 'Fr Payor', 'A/C Period']),
+  JSON.stringify(await headers('Bordx returned from the payor')),
+)
+const returned = await gridRows('Bordx returned from the payor')
+check(
+  'returned: the list shows Not Returned and Returned with the A/C period',
+  returned.length === 2 && returned[0][6] === 'Not Returned' && returned[1][6] === 'Returned' && returned[0][8] === '3/2021',
+  JSON.stringify(returned),
+)
+await tick('FAKE0000002')
+check('returned: a bordx already returned cannot be ticked', (await t.toast('Record has been Updated!')) && (await stat('Selected')) === '0')
+await tick('FAKE0000001')
+await t.type('Date', '07102026')
+await t.click('Update', 600)
+await t.yes()
+const back = posts.at(-1)
+check(
+  'returned: update sends the date and the ticked bordx to the from-payor route',
+  back.url.endsWith('/from-payor/send') && back.body.date === '2026-10-07' && JSON.stringify(back.body.bordxNos) === JSON.stringify(['FAKE0000001']),
+  JSON.stringify(back),
+)
+fakeReturn = false
+
 // ---------------- Insert Worksheet is the Inpatient Case Listing form
 await t.go('/claim-bordx/insert-worksheet')
 check('insert worksheet: opens the Inpatient Case Listing (FrmWksBordx)', (await page.$eval('h2', (e) => e.textContent)) === 'Inpatient Case Listing')
@@ -233,7 +296,7 @@ await limited.evaluateOnNewDocument(
   mint(access),
   access,
 )
-for (const path of ['/claim-bordx/send-to-payor', '/claim-bordx/send-to-accounts', '/claim-bordx/insert-worksheet']) {
+for (const path of ['/claim-bordx/send-to-payor', '/claim-bordx/returned-from-payor', '/claim-bordx/send-to-accounts', '/claim-bordx/insert-worksheet']) {
   await limited.goto(`${BASE}${path}`, { waitUntil: 'networkidle0' })
   await limited.waitForSelector('h2')
   check(`access: without position 15 ${path} says Access Denied!`, (await limited.$eval('h2', (e) => e.textContent)) === 'Access Denied!')

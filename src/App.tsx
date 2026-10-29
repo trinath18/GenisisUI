@@ -296,6 +296,14 @@ export default function App() {
           }
         />
         <Route
+          path="claim-bordx/returned-from-payor"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxDeliveryPage kind="from-payor" />
+            </RequireAccess>
+          }
+        />
+        <Route
           path="claim-bordx/send-to-accounts"
           element={
             <RequireAccess position={Access.ClaimBordx}>

@@ -1,5 +1,5 @@
-// Claim Bordx > Bor Delivery > Send to Payor and Send to A/C (legacy FrmSendtoPayor and FrmSendtoAC): the form values, the checks the desktop made before searching and updating, and the
-// requests. The server repeats the checks. The two screens differ in their criteria (an A/C period for the payor, the date sent to accounts for accounts) and in their list columns.
+// Claim Bordx > Bor Delivery > Send to Payor, Send to A/C and Returned From Payor (legacy FrmSendtoPayor, FrmSendtoAC and FrmReturnPayor): the form values, the checks the desktop made before searching and updating, and the
+// requests. The server repeats the checks. The screens differ in their criteria (an A/C period for the payor screens, the date sent to accounts for accounts) and in their list columns.
 
 import * as yup from 'yup'
 import type { Option } from '../../components/Field'
@@ -7,7 +7,7 @@ import { amount, dmyDate, optionalText } from '../../lib/validation'
 import { isoDmy, isoToDmy, num, S } from '../case/caseShared'
 import { payorCode } from '../worksheet/worksheetRules'
 
-export type DeliveryKind = 'to-payor' | 'to-accounts'
+export type DeliveryKind = 'to-payor' | 'to-accounts' | 'from-payor'
 
 export interface DeliveryRow {
   payor: string | null
@@ -64,26 +64,47 @@ export const deliveryDefaults: DeliveryValues = {
   sendDate: '',
 }
 
-/** cboStatus: "0 - Not Sent", "1 - Sent", "2 - Both". */
-export const deliveryStatusOptions: Option[] = [
-  { value: '0', label: 'Not Sent' },
-  { value: '1', label: 'Sent' },
+/** cboStatus: "0 - Not Sent", "1 - Sent", "2 - Both"; Returned From Payor says "Not Returned" and "Returned". */
+export const deliveryStatusOptions = (kind: DeliveryKind): Option[] => [
+  { value: '0', label: kind === 'from-payor' ? 'Not Returned' : 'Not Sent' },
+  { value: '1', label: kind === 'from-payor' ? 'Returned' : 'Sent' },
   { value: '2', label: 'Both' },
 ]
 
 /** What each screen is called and what its step is called in its list. */
-export const deliveryScreens: Record<DeliveryKind, { title: string; subtitle: string; statusLabel: string; file: string }> = {
+export const deliveryScreens: Record<
+  DeliveryKind,
+  { title: string; subtitle: string; statusLabel: string; file: string; caption: string; doneText: string; todoText: string; dateLabel: string }
+> = {
   'to-payor': {
     title: 'Send to Payor',
     subtitle: 'Search bordx, tick the ones sent to their payor and record the date.',
     statusLabel: 'Sent to Payor Status',
     file: 'bordx-send-to-payor.csv',
+    caption: 'Bordx to send to the payor',
+    doneText: 'Sent',
+    todoText: 'Not Sent',
+    dateLabel: 'To Payor',
+  },
+  'from-payor': {
+    title: 'Returned From Payor',
+    subtitle: 'Search the bordx sent to accounts, tick the ones the payor returned and record the date.',
+    statusLabel: 'Returned Fr Payor Status',
+    file: 'bordx-returned-from-payor.csv',
+    caption: 'Bordx returned from the payor',
+    doneText: 'Returned',
+    todoText: 'Not Returned',
+    dateLabel: 'Fr Payor',
   },
   'to-accounts': {
     title: 'Send to A/C',
     subtitle: 'Search bordx, tick the ones sent to accounts and record the date.',
     statusLabel: 'Sent to AC Status',
     file: 'bordx-send-to-accounts.csv',
+    caption: 'Bordx to send to accounts',
+    doneText: 'Sent',
+    todoText: 'Not Sent',
+    dateLabel: 'To A/C',
   },
 }
 
@@ -118,7 +139,7 @@ export const deliveryParams = (kind: DeliveryKind, v: DeliveryValues) => ({
   dateTo: isoDmy(v.dateTo) ?? undefined,
   amountFrom: num(v.amountFrom) ?? undefined,
   amountTo: num(v.amountTo) ?? undefined,
-  ...(kind === 'to-payor'
+  ...(kind !== 'to-accounts'
     ? { monthFrom: text(v.monthFrom), monthTo: text(v.monthTo), yearFrom: text(v.yearFrom), yearTo: text(v.yearTo) }
     : { sentFrom: isoDmy(v.sentFrom) ?? undefined, sentTo: isoDmy(v.sentTo) ?? undefined }),
   status: text(v.status),
@@ -167,4 +188,4 @@ export const periodText = (r: Pick<DeliveryRow, 'periodMonth' | 'periodYear'>) =
 export const dayText = (value: string | null) => isoToDmy(value)
 
 /** The step's status as the list shows it. */
-export const sentText = (r: Pick<DeliveryRow, 'sent'>) => (r.sent ? 'Sent' : 'Not Sent')
+export const sentText = (kind: DeliveryKind) => (r: Pick<DeliveryRow, 'sent'>) => deliveryScreens[kind][r.sent ? 'doneText' : 'todoText']

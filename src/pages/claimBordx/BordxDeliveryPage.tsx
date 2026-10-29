@@ -1,5 +1,5 @@
-// Claim Bordx > Bor Delivery > Send to Payor and Send to A/C (legacy FrmSendtoPayor and FrmSendtoAC, "Bordx Delivery" and "Bordx Sent to A/C"): search bordx, tick the ones that were
-// handed over and record the date. One page serves both screens; they differ in their criteria and list columns (bordxDeliveryRules.ts).
+// Claim Bordx > Bor Delivery > Send to Payor, Send to A/C and Returned From Payor (legacy FrmSendtoPayor, FrmSendtoAC and FrmReturnPayor, "Bordx Delivery" and "Bordx Sent to A/C"): search bordx,
+// tick the ones that were handed over and record the date. One page serves the screens; they differ in their criteria and list columns (bordxDeliveryRules.ts).
 
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -39,33 +39,33 @@ import type { DeliveryKind, DeliveryRow, DeliveryValues } from './bordxDeliveryR
 
 const money = (r: DeliveryRow) => (r.amount == null ? '' : formatMoney(r.amount))
 
-const common = (statusLabel: string): GridColumn<DeliveryRow>[] => [
+const common = (kind: DeliveryKind): GridColumn<DeliveryRow>[] => [
   { key: 'payor', label: 'Payor' },
   { key: 'bordxNo', label: 'Bordx No' },
   { key: 'bordxDate', label: 'Bordx Date', value: (r) => dayText(r.bordxDate), sortBy: (r) => r.bordxDate ?? '' },
   { key: 'amount', label: 'Bordx Amount', align: 'right', value: money, sortBy: (r) => r.amount ?? 0 },
   { key: 'bordxStatus', label: 'Bordx Status' },
-  { key: 'sent', label: statusLabel, value: sentText },
+  { key: 'sent', label: deliveryScreens[kind].statusLabel, value: sentText(kind) },
 ]
 
 const columnsOf = (kind: DeliveryKind): GridColumn<DeliveryRow>[] => {
-  const statusLabel = deliveryScreens[kind].statusLabel
   const date = (key: keyof DeliveryRow, label: string): GridColumn<DeliveryRow> => ({
     key,
     label,
     value: (r) => dayText(r[key] as string | null),
     sortBy: (r) => String(r[key] ?? ''),
   })
+  if (kind === 'from-payor') return [...common(kind), date('sentOn', 'Fr Payor'), { key: 'period', label: 'A/C Period', value: periodText }]
   return kind === 'to-payor'
-    ? [...common(statusLabel), date('sentOn', 'To Payor'), { key: 'sentBy', label: 'Sent By' }, { key: 'period', label: 'A/C Period', value: periodText }]
+    ? [...common(kind), date('sentOn', 'To Payor'), { key: 'sentBy', label: 'Sent By' }, { key: 'period', label: 'A/C Period', value: periodText }]
     : [
-        ...common(statusLabel).slice(0, 5),
+        ...common(kind).slice(0, 5),
         date('toPayorDate', 'To Payor'),
         date('fromPayorDate', 'Fr Payor'),
         date('toMnrbDate', 'To MNRB'),
         date('fromMnrbDate', 'Fr MNRB'),
         date('sentOn', 'To A/C'),
-        common(statusLabel)[5],
+        common(kind)[5],
         { key: 'sentBy', label: 'Sent By' },
         { key: 'period', label: 'A/C Period', value: periodText },
       ]
@@ -176,7 +176,7 @@ export function BordxDeliveryPage({ kind }: { kind: DeliveryKind }) {
               <div className="ct-pair">
                 <NumberRange label="Bordx Amt" from="amountFrom" to="amountTo" {...pair} />
               </div>
-              {kind === 'to-payor' ? (
+              {kind !== 'to-accounts' ? (
                 <>
                   <div className="ct-pair">
                     <TextRange label="A/C Month" from="monthFrom" to="monthTo" maxLength={2} {...pair} />
@@ -205,7 +205,7 @@ export function BordxDeliveryPage({ kind }: { kind: DeliveryKind }) {
                 <TextField label="Bordx No to" maxLength={20} {...register('bordxTo')} />
               </>
             )}
-            <SelectField label="Status" options={deliveryStatusOptions} blank={false} {...register('status')} />
+            <SelectField label="Status" options={deliveryStatusOptions(kind)} blank={false} {...register('status')} />
           </fieldset>
 
           <fieldset>
@@ -236,7 +236,7 @@ export function BordxDeliveryPage({ kind }: { kind: DeliveryKind }) {
           </ActionBar>
 
           <DataGrid
-            caption={`Bordx to send ${kind === 'to-payor' ? 'to the payor' : 'to accounts'}`}
+            caption={deliveryScreens[kind].caption}
             columns={columnsOf(kind)}
             rows={list.rows}
             rowKey={deliveryKey}

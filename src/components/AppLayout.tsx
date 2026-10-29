@@ -110,7 +110,7 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '#', label: 'Update Bordx', access: Access.ClaimBordx, pending: true },
       { to: '#', label: 'Bordx Send Date', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
       { to: '/claim-bordx/send-to-payor', label: 'Send to Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
-      { to: '#', label: 'Returned From Payor', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
+      { to: '/claim-bordx/returned-from-payor', label: 'Returned From Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
       { to: '#', label: 'Returned Fr Payor (Not App)', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
       { to: '/claim-bordx/send-to-accounts', label: 'Send to A/C', access: Access.ClaimBordx, group: 'Bor Delivery' },
       { to: '#', label: 'Bordx Control', access: Access.ClaimBordx, group: 'Monitoring', pending: true },

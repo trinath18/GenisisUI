@@ -7,6 +7,8 @@ import {
   deliverySearchProblem,
   deliveryTickProblem,
   deliveryUpdateProblem,
+  deliveryScreens,
+  deliveryStatusOptions,
   isBordxListed,
   periodText,
   sentText,
@@ -62,6 +64,8 @@ describe('deliveryParams', () => {
     const v = values({ useScan: false, monthFrom: '3', yearTo: '2021', sentFrom: '10/04/2021' })
     const payor: Record<string, unknown> = deliveryParams('to-payor', v)
     expect([payor.monthFrom, payor.yearTo, 'sentFrom' in payor]).toEqual(['3', '2021', false])
+    const returned: Record<string, unknown> = deliveryParams('from-payor', v)
+    expect([returned.monthFrom, returned.yearTo, 'sentFrom' in returned]).toEqual(['3', '2021', false])
     const accounts: Record<string, unknown> = deliveryParams('to-accounts', v)
     expect(['monthFrom' in accounts, accounts.sentFrom]).toEqual([false, '2021-04-10'])
   })
@@ -98,7 +102,17 @@ describe('the list', () => {
     expect(periodText(row({ periodMonth: '3', periodYear: '2021' }))).toBe('3/2021')
   })
 
-  it('shows the step as Sent or Not Sent', () => {
-    expect([sentText(row()), sentText(row({ sent: true }))]).toEqual(['Not Sent', 'Sent'])
+  it('shows the step as Sent or Not Sent, and Returned or Not Returned for the return from the payor', () => {
+    expect([sentText('to-payor')(row()), sentText('to-accounts')(row({ sent: true }))]).toEqual(['Not Sent', 'Sent'])
+    expect([sentText('from-payor')(row()), sentText('from-payor')(row({ sent: true }))]).toEqual(['Not Returned', 'Returned'])
+  })
+
+  it('offers the three statuses the desktop drop-down had, worded for the screen', () => {
+    expect(deliveryStatusOptions('to-payor').map((o) => o.label)).toEqual(['Not Sent', 'Sent', 'Both'])
+    expect(deliveryStatusOptions('from-payor').map((o) => o.label)).toEqual(['Not Returned', 'Returned', 'Both'])
+  })
+
+  it('names the three screens as the desktop did', () => {
+    expect(Object.values(deliveryScreens).map((s) => s.title)).toEqual(['Send to Payor', 'Returned From Payor', 'Send to A/C'])
   })
 })
