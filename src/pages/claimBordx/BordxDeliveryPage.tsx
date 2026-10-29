@@ -22,6 +22,7 @@ import type { SearchResult } from '../worksheet/worksheetRules'
 import {
   deliveryDefaults,
   deliveryKey,
+  deliveryNeedsDate,
   deliveryParams,
   deliveryRequest,
   deliveryScreens,
@@ -55,6 +56,7 @@ const columnsOf = (kind: DeliveryKind): GridColumn<DeliveryRow>[] => {
     value: (r) => dayText(r[key] as string | null),
     sortBy: (r) => String(r[key] ?? ''),
   })
+  if (kind === 'approval') return [...common(kind), { key: 'sentBy', label: 'Approved By' }, date('sentOn', 'Approved Date')]
   if (kind === 'from-payor') return [...common(kind), date('sentOn', 'Fr Payor'), { key: 'period', label: 'A/C Period', value: periodText }]
   return kind === 'to-payor'
     ? [...common(kind), date('sentOn', 'To Payor'), { key: 'sentBy', label: 'Sent By' }, { key: 'period', label: 'A/C Period', value: periodText }]
@@ -137,18 +139,18 @@ export function BordxDeliveryPage({ kind }: { kind: DeliveryKind }) {
 
   /** CmdToPayor_Click / CmdToAC_Click: something ticked, the date, "Do you want to update the record?"; the server refuses a bordx that was already sent. */
   async function send() {
-    const problem = deliveryUpdateProblem(list.ticked.length, getValues())
+    const problem = deliveryUpdateProblem(list.ticked.length, getValues(), deliveryNeedsDate(kind))
     if (problem?.field) {
       setError(problem.field, { message: problem.message })
       return setFocus(problem.field)
     }
     if (problem) return notify(problem.message, 'error')
-    if (!(await trigger('sendDate'))) return setFocus('sendDate')
+    if (deliveryNeedsDate(kind) && !(await trigger('sendDate'))) return setFocus('sendDate')
     if (!(await ask('Do you want to update the record?'))) return
     setBusy(true)
     try {
       const v = getValues()
-      const { data } = await api.post<{ message: string }>(`/api/claim-bordx/delivery/${kind}/send`, deliveryRequest(v, list.ticked))
+      const { data } = await api.post<{ message: string }>(`/api/claim-bordx/delivery/${kind}/send`, deliveryRequest(kind, v, list.ticked))
       notify(data.message, 'success')
       list.clear()
       if (!v.useScan) list.replace((await load(kind, v)).rows)
@@ -176,7 +178,7 @@ export function BordxDeliveryPage({ kind }: { kind: DeliveryKind }) {
               <div className="ct-pair">
                 <NumberRange label="Bordx Amt" from="amountFrom" to="amountTo" {...pair} />
               </div>
-              {kind !== 'to-accounts' ? (
+              {kind === 'to-payor' || kind === 'from-payor' ? (
                 <>
                   <div className="ct-pair">
                     <TextRange label="A/C Month" from="monthFrom" to="monthTo" maxLength={2} {...pair} />
@@ -186,9 +188,11 @@ export function BordxDeliveryPage({ kind }: { kind: DeliveryKind }) {
                   </div>
                 </>
               ) : (
-                <div className="ct-pair">
-                  <DateRange label="Date Sent" from="sentFrom" to="sentTo" control={control} register={register} />
-                </div>
+                kind === 'to-accounts' && (
+                  <div className="ct-pair">
+                    <DateRange label="Date Sent" from="sentFrom" to="sentTo" control={control} register={register} />
+                  </div>
+                )
               )}
             </>
           }
@@ -208,10 +212,12 @@ export function BordxDeliveryPage({ kind }: { kind: DeliveryKind }) {
             <SelectField label="Status" options={deliveryStatusOptions(kind)} blank={false} {...register('status')} />
           </fieldset>
 
-          <fieldset>
-            <legend>{screen.title}</legend>
-            <DateField control={control} name="sendDate" label="Date" hint="Applies to the ticked bordx." />
-          </fieldset>
+          {deliveryNeedsDate(kind) && (
+            <fieldset>
+              <legend>{screen.title}</legend>
+              <DateField control={control} name="sendDate" label="Date" hint="Applies to the ticked bordx." />
+            </fieldset>
+          )}
 
           <ActionBar label={`${screen.title} actions`}>
             <Button variant="primary" type="submit" busy={busy} busyLabel="Working…">

@@ -304,6 +304,14 @@ export default function App() {
           }
         />
         <Route
+          path="claim-bordx/approval"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxDeliveryPage kind="approval" />
+            </RequireAccess>
+          }
+        />
+        <Route
           path="claim-bordx/send-to-accounts"
           element={
             <RequireAccess position={Access.ClaimBordx}>

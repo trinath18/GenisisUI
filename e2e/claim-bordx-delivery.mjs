@@ -98,12 +98,12 @@ const links = await page.$$eval('.sidebar a', (els) => els.map((e) => e.textCont
 const disabled = await page.$$eval('.sidebar span.disabled', (els) => els.map((e) => e.textContent.trim()))
 check(
   'menu: Insert Worksheet, Send to Payor and Send to A/C are links',
-  ['Insert Worksheet', 'Send to Payor', 'Returned From Payor', 'Send to A/C'].every((x) => links.includes(x)),
+  ['Insert Worksheet', 'Send to Payor', 'Returned From Payor', 'Bordx Approval', 'Send to A/C'].every((x) => links.includes(x)),
   links.join('|'),
 )
 check(
   'menu: the items of the desktop menu that are not migrated yet are listed and disabled',
-  ['Remove Worksheet', 'Print Bordx', 'Update Bordx', 'Bordx Control', 'Bordx Approval'].every((x) => disabled.includes(x)),
+  ['Remove Worksheet', 'Print Bordx', 'Update Bordx', 'Bordx Control', 'Outstanding Bordx'].every((x) => disabled.includes(x)),
   disabled.join('|'),
 )
 
@@ -280,6 +280,53 @@ check(
 )
 fakeReturn = false
 
+// ---------------- Bordx Approval
+const approvalApi = await json(`/api/claim-bordx/delivery/approval/search?useScan=false&payor=${payor}`)
+check('approval: the API lists the payor bordx, none approved yet', approvalApi.rows.length === rows.length && approvalApi.rows.every((r) => !r.sent))
+await t.go('/claim-bordx/approval')
+check('approval: title', (await page.$eval('h2', (e) => e.textContent)) === 'Bordx Approval')
+check(
+  'approval: the status starts on Not Approved',
+  (await t.value('Status')) === '0' && (await page.$$eval('select option', (o) => o.map((x) => x.textContent))).join('|') === 'Not Approved|Approved|Both',
+)
+const approvalLabels = await page.$$eval('label.form-field span', (x) => x.map((e) => e.textContent))
+check(
+  'approval: it asks for no date and has no A/C period or date sent criteria',
+  !approvalLabels.includes('Date') && !approvalLabels.some((l) => l.includes('A/C Month') || l.includes('Date Sent')),
+  approvalLabels.join('|'),
+)
+await t.checkbox('Use Scan')
+await t.type('Payor', payor)
+await t.click('Search', 1200)
+check(
+  'approval: the headings are the desktop list headings',
+  JSON.stringify(await headers('Bordx to approve')) ===
+    JSON.stringify(['Payor', 'Bordx No', 'Bordx Date', 'Bordx Amount', 'Bordx Status', 'Approved Status', 'Approved By', 'Approved Date']),
+  JSON.stringify(await headers('Bordx to approve')),
+)
+check(
+  'approval: the range search lists the payor bordx as Not Approved',
+  (await gridRows('Bordx to approve')).length === rows.length && (await gridRows('Bordx to approve'))[0][6] === 'Not Approved',
+)
+await t.click('Update', 500)
+check('approval: update with nothing ticked says so', await t.toast('Please select at least one record to be updated!'))
+await tick(rows[0].bordxNo)
+await t.click('Update', 600)
+check(
+  'approval: with something ticked it asks to confirm and needs no date',
+  (await dialogs()).some((d) => d.includes('Do you want to update the record?')),
+  JSON.stringify(await dialogs()),
+)
+await t.yes()
+const approved = posts.at(-1)
+const now = new Date()
+const today = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-')
+check(
+  'approval: update sends today and the ticked bordx to the approval route',
+  approved.url.endsWith('/approval/send') && approved.body.date === today && JSON.stringify(approved.body.bordxNos) === JSON.stringify([rows[0].bordxNo]),
+  JSON.stringify(approved),
+)
+
 // ---------------- Insert Worksheet is the Inpatient Case Listing form
 await t.go('/claim-bordx/insert-worksheet')
 check('insert worksheet: opens the Inpatient Case Listing (FrmWksBordx)', (await page.$eval('h2', (e) => e.textContent)) === 'Inpatient Case Listing')
@@ -296,7 +343,13 @@ await limited.evaluateOnNewDocument(
   mint(access),
   access,
 )
-for (const path of ['/claim-bordx/send-to-payor', '/claim-bordx/returned-from-payor', '/claim-bordx/send-to-accounts', '/claim-bordx/insert-worksheet']) {
+for (const path of [
+  '/claim-bordx/send-to-payor',
+  '/claim-bordx/returned-from-payor',
+  '/claim-bordx/approval',
+  '/claim-bordx/send-to-accounts',
+  '/claim-bordx/insert-worksheet',
+]) {
   await limited.goto(`${BASE}${path}`, { waitUntil: 'networkidle0' })
   await limited.waitForSelector('h2')
   check(`access: without position 15 ${path} says Access Denied!`, (await limited.$eval('h2', (e) => e.textContent)) === 'Access Denied!')

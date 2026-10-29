@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   deliveryDefaults,
+  deliveryNeedsDate,
   deliveryParams,
   deliveryRequest,
   deliverySchema,
@@ -64,6 +65,8 @@ describe('deliveryParams', () => {
     const v = values({ useScan: false, monthFrom: '3', yearTo: '2021', sentFrom: '10/04/2021' })
     const payor: Record<string, unknown> = deliveryParams('to-payor', v)
     expect([payor.monthFrom, payor.yearTo, 'sentFrom' in payor]).toEqual(['3', '2021', false])
+    const approval: Record<string, unknown> = deliveryParams('approval', v)
+    expect(['monthFrom' in approval, 'sentFrom' in approval]).toEqual([false, false])
     const returned: Record<string, unknown> = deliveryParams('from-payor', v)
     expect([returned.monthFrom, returned.yearTo, 'sentFrom' in returned]).toEqual(['3', '2021', false])
     const accounts: Record<string, unknown> = deliveryParams('to-accounts', v)
@@ -89,10 +92,17 @@ describe('ticking and updating', () => {
   })
 
   it('sends the date as an ISO day and the ticked bordx numbers', () => {
-    expect(deliveryRequest({ sendDate: '05/10/2026' }, [row(), row({ bordxNo: 'NAB0000002' })])).toEqual({
+    expect(deliveryRequest('to-payor', { sendDate: '05/10/2026' }, [row(), row({ bordxNo: 'NAB0000002' })])).toEqual({
       date: '2026-10-05',
       bordxNos: ['NAB0000001', 'NAB0000002'],
     })
+  })
+
+  it('approves on the day of the update, with no date field and no date check', () => {
+    expect(deliveryRequest('approval', { sendDate: '' }, [row()], new Date(2026, 9, 7))).toEqual({ date: '2026-10-07', bordxNos: ['NAB0000001'] })
+    expect([deliveryNeedsDate('approval'), deliveryNeedsDate('to-payor')]).toEqual([false, true])
+    expect(deliveryUpdateProblem(1, { sendDate: '' }, false)).toBeNull()
+    expect(deliveryUpdateProblem(0, { sendDate: '' }, false)).toEqual({ field: null, message: 'Please select at least one record to be updated!' })
   })
 })
 
@@ -110,9 +120,10 @@ describe('the list', () => {
   it('offers the three statuses the desktop drop-down had, worded for the screen', () => {
     expect(deliveryStatusOptions('to-payor').map((o) => o.label)).toEqual(['Not Sent', 'Sent', 'Both'])
     expect(deliveryStatusOptions('from-payor').map((o) => o.label)).toEqual(['Not Returned', 'Returned', 'Both'])
+    expect(deliveryStatusOptions('approval').map((o) => o.label)).toEqual(['Not Approved', 'Approved', 'Both'])
   })
 
-  it('names the three screens as the desktop did', () => {
-    expect(Object.values(deliveryScreens).map((s) => s.title)).toEqual(['Send to Payor', 'Returned From Payor', 'Send to A/C'])
+  it('names the screens as the desktop did', () => {
+    expect(Object.values(deliveryScreens).map((s) => s.title)).toEqual(['Send to Payor', 'Returned From Payor', 'Bordx Approval', 'Send to A/C'])
   })
 })

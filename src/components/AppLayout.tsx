@@ -115,7 +115,7 @@ const sections: { label: string; prefix: string; items: { to: string; label: str
       { to: '/claim-bordx/send-to-accounts', label: 'Send to A/C', access: Access.ClaimBordx, group: 'Bor Delivery' },
       { to: '#', label: 'Bordx Control', access: Access.ClaimBordx, group: 'Monitoring', pending: true },
       { to: '#', label: 'Outstanding Bordx', access: Access.ClaimBordx, group: 'Monitoring', pending: true },
-      { to: '#', label: 'Bordx Approval', access: Access.ClaimBordx, pending: true },
+      { to: '/claim-bordx/approval', label: 'Bordx Approval', access: Access.ClaimBordx },
       { to: '#', label: 'Claim files', access: Access.ClaimBordx, group: 'Storage', pending: true },
       { to: '#', label: 'Storage Enquiry', access: Access.ClaimBordx, group: 'Storage', pending: true },
       { to: '#', label: 'Document', access: Access.ClaimBordx, group: 'Storage', pending: true },

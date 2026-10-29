@@ -7,7 +7,7 @@ import { amount, dmyDate, optionalText } from '../../lib/validation'
 import { isoDmy, isoToDmy, num, S } from '../case/caseShared'
 import { payorCode } from '../worksheet/worksheetRules'
 
-export type DeliveryKind = 'to-payor' | 'to-accounts' | 'from-payor'
+export type DeliveryKind = 'to-payor' | 'to-accounts' | 'from-payor' | 'approval'
 
 export interface DeliveryRow {
   payor: string | null
@@ -66,8 +66,8 @@ export const deliveryDefaults: DeliveryValues = {
 
 /** cboStatus: "0 - Not Sent", "1 - Sent", "2 - Both"; Returned From Payor says "Not Returned" and "Returned". */
 export const deliveryStatusOptions = (kind: DeliveryKind): Option[] => [
-  { value: '0', label: kind === 'from-payor' ? 'Not Returned' : 'Not Sent' },
-  { value: '1', label: kind === 'from-payor' ? 'Returned' : 'Sent' },
+  { value: '0', label: deliveryScreens[kind].todoText },
+  { value: '1', label: deliveryScreens[kind].doneText },
   { value: '2', label: 'Both' },
 ]
 
@@ -95,6 +95,16 @@ export const deliveryScreens: Record<
     doneText: 'Returned',
     todoText: 'Not Returned',
     dateLabel: 'Fr Payor',
+  },
+  approval: {
+    title: 'Bordx Approval',
+    subtitle: 'Search bordx and tick the ones to approve; they are approved today.',
+    statusLabel: 'Approved Status',
+    file: 'bordx-approval.csv',
+    caption: 'Bordx to approve',
+    doneText: 'Approved',
+    todoText: 'Not Approved',
+    dateLabel: 'Approved Date',
   },
   'to-accounts': {
     title: 'Send to A/C',
@@ -139,9 +149,10 @@ export const deliveryParams = (kind: DeliveryKind, v: DeliveryValues) => ({
   dateTo: isoDmy(v.dateTo) ?? undefined,
   amountFrom: num(v.amountFrom) ?? undefined,
   amountTo: num(v.amountTo) ?? undefined,
-  ...(kind !== 'to-accounts'
+  ...(kind === 'to-payor' || kind === 'from-payor'
     ? { monthFrom: text(v.monthFrom), monthTo: text(v.monthTo), yearFrom: text(v.yearFrom), yearTo: text(v.yearTo) }
-    : { sentFrom: isoDmy(v.sentFrom) ?? undefined, sentTo: isoDmy(v.sentTo) ?? undefined }),
+    : {}),
+  ...(kind === 'to-accounts' ? { sentFrom: isoDmy(v.sentFrom) ?? undefined, sentTo: isoDmy(v.sentTo) ?? undefined } : {}),
   status: text(v.status),
 })
 
@@ -164,17 +175,23 @@ export const isBordxListed = (rows: readonly { bordxNo: string }[], bordxNo: str
   return rows.some((r) => r.bordxNo.trim().toUpperCase() === wanted)
 }
 
-/** The update button's checks: something ticked, then the date; null when the update may go ahead. */
-export const deliveryUpdateProblem = (ticked: number, v: Pick<DeliveryValues, 'sendDate'>) =>
+/** Bordx Approval has no date field: the bordx are approved on the day they are ticked and updated. */
+export const deliveryNeedsDate = (kind: DeliveryKind) => kind !== 'approval'
+
+/** The update button's checks: something ticked, then the date (not asked on Bordx Approval); null when the update may go ahead. */
+export const deliveryUpdateProblem = (ticked: number, v: Pick<DeliveryValues, 'sendDate'>, needsDate = true) =>
   ticked === 0
     ? { field: null, message: 'Please select at least one record to be updated!' }
-    : v.sendDate.trim() === ''
+    : needsDate && v.sendDate.trim() === ''
       ? { field: 'sendDate' as const, message: 'Please Enter in date' }
       : null
 
-/** The request of the update: the date as an ISO day and the ticked bordx numbers. */
-export const deliveryRequest = (v: Pick<DeliveryValues, 'sendDate'>, ticked: readonly DeliveryRow[]) => ({
-  date: isoDmy(v.sendDate),
+/** The request of the update: the date as an ISO day (today on Bordx Approval) and the ticked bordx numbers. */
+export const deliveryRequest = (kind: DeliveryKind, v: Pick<DeliveryValues, 'sendDate'>, ticked: readonly DeliveryRow[], today = new Date()) => ({
+  date:
+    kind === 'approval'
+      ? [today.getFullYear(), String(today.getMonth() + 1).padStart(2, '0'), String(today.getDate()).padStart(2, '0')].join('-')
+      : isoDmy(v.sendDate),
   bordxNos: ticked.map((r) => r.bordxNo),
 })
 
