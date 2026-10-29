@@ -32,6 +32,7 @@ import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
 import { CaseTrackingPage } from './pages/case/CaseTrackingPage'
 import { CaseListingPage } from './pages/case/CaseListingPage'
 import { BordxDeliveryPage } from './pages/claimBordx/BordxDeliveryPage'
+import { BordxReturnCasePage } from './pages/claimBordx/BordxReturnCasePage'
 import { BordxRevisePage } from './pages/claimBordx/BordxRevisePage'
 import { CaseTransferPage } from './pages/case/CaseTransferPage'
 import { PanelHospitalsPage } from './pages/case/PanelHospitalsPage'
@@ -309,6 +310,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ClaimBordx}>
               <BordxDeliveryPage kind="from-payor" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/returned-not-approved"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxReturnCasePage />
             </RequireAccess>
           }
         />

@@ -22,6 +22,7 @@ const dialogs = () => page.$$eval('[role=dialog]', (d) => d.map((x) => x.textCon
 const posts = []
 let fakeReturn = false
 let fakeSentOut = false
+let fakeCase = false
 const fakeRow = (bordxNo, sent) => ({
   payor: 'AB',
   bordxNo,
@@ -36,6 +37,32 @@ const fakeRow = (bordxNo, sent) => ({
 })
 await page.setRequestInterception(true)
 page.on('request', (req) => {
+  if (fakeCase && req.method() === 'GET' && /\/api\/claim-bordx\/return-case\/versions/.test(req.url())) {
+    return req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify([1, 2]) })
+  }
+  if (fakeCase && req.method() === 'GET' && /\/api\/claim-bordx\/return-case\?/.test(req.url())) {
+    const version = Number(new URL(req.url()).searchParams.get('version'))
+    return req.respond({
+      status: 200,
+      contentType: 'application/json',
+      body: JSON.stringify({
+        payor: 'AB',
+        caseNo: 'FAKE1',
+        claimVersion: version,
+        claimNo: `FAKE1-${version}`,
+        approvedAmount: 1234.5,
+        appStatus: 'P',
+        bordxNo: 'NAB0000009',
+        bordxDate: '2021-04-01T00:00:00',
+        bordxAmount: 9999,
+        bordxStatus: 'C',
+      }),
+    })
+  }
+  if (req.method() === 'POST' && /\/api\/claim-bordx\/return-case$/.test(req.url())) {
+    posts.push({ url: new URL(req.url()).pathname, body: JSON.parse(req.postData()) })
+    return req.respond({ status: 200, contentType: 'application/json', body: JSON.stringify({ message: 'Record updated...' }) })
+  }
   if (fakeSentOut && req.method() === 'GET' && /\/api\/claim-bordx\/revise\?/.test(req.url())) {
     const row = {
       caseNo: 'ZZ1',
@@ -122,7 +149,9 @@ const links = await page.$$eval('.sidebar a', (els) => els.map((e) => e.textCont
 const disabled = await page.$$eval('.sidebar span.disabled', (els) => els.map((e) => e.textContent.trim()))
 check(
   'menu: Insert Worksheet, Send to Payor and Send to A/C are links',
-  ['Insert Worksheet', 'Remove Worksheet', 'Send to Payor', 'Returned From Payor', 'Bordx Approval', 'Send to A/C'].every((x) => links.includes(x)),
+  ['Insert Worksheet', 'Remove Worksheet', 'Send to Payor', 'Returned From Payor', 'Returned Fr Payor (Not App)', 'Bordx Approval', 'Send to A/C'].every((x) =>
+    links.includes(x),
+  ),
   links.join('|'),
 )
 check(
@@ -450,6 +479,72 @@ await t.type('Bordx No', 'LOB001')
 await t.click('Go', 900)
 check('revise: a scan code opens another screen', (await page.$eval('h2', (e) => e.textContent)) === 'Inpatient Case Listing')
 
+// ---------------- Returned Fr Payor (Not App)
+const realCase = revise ? revise.rows[0].caseNo.trim() : 'AB1'
+const notSent = await get(`/api/claim-bordx/return-case?caseNo=${encodeURIComponent(realCase)}&version=1`)
+check(
+  'case: the API says the bordx was not sent to the payor, with the desktop message',
+  notSent.status === 404 && (await notSent.json()).message === 'Bordx not send to Payor!',
+)
+check(
+  'case: a lookup without a case number is refused',
+  (await (await get('/api/claim-bordx/return-case?caseNo=&version=1')).json()).message === 'Please Enter Claim No',
+)
+const badStatus = await fetch(`${BASE}/api/claim-bordx/return-case`, {
+  method: 'POST',
+  headers: { Authorization: `Bearer ${mint()}`, 'Content-Type': 'application/json' },
+  body: JSON.stringify({ caseNo: 'X', version: 1, status: 'A' }),
+})
+check(
+  'case: an approved status other than N or Y is refused',
+  badStatus.status === 400 && (await badStatus.json()).message === 'Approved Status must be N - No or Y - Yes.',
+)
+await t.go('/claim-bordx/returned-not-approved')
+check('case: title', (await page.$eval('h2', (e) => e.textContent)) === 'Returned From Payor (Not App)')
+check('case: the version starts on 1 and the approved status on N - No', (await t.value('Version')) === '1' && (await t.value('Approved Status')) === 'N')
+await t.click('Search', 500)
+check('case: search needs a claim number', (await t.errors()).includes('Please Enter Claim No'), JSON.stringify(await t.errors()))
+await t.type('Claim No', realCase)
+await page.keyboard.press('Tab')
+check('case: leaving the box looks it up and a bordx not sent to the payor says so', await t.toast('Bordx not send to Payor!'))
+await t.click('Update', 500)
+check('case: update without a worksheet says so', await t.toast('Please Enter Claim No'))
+fakeCase = true
+await t.type('Claim No', 'FAKE1')
+await page.keyboard.press('Tab')
+await sleep(900)
+check(
+  'case: leaving the box fills the version drop-down',
+  JSON.stringify(await page.$$eval('label.form-field select option', (o) => o.map((x) => x.textContent))).includes('"1","2"'),
+  JSON.stringify(await page.$$eval('label.form-field select option', (o) => o.map((x) => x.textContent))),
+)
+const boxes = await page.$$eval('dl.fields dd', (d) => d.map((x) => x.textContent.trim()))
+check('case: and shows the worksheet and its bordx', boxes.join('|') === 'AB|FAKE1-1|1,234.50|P|NAB0000009|01/04/2021|9,999.00|C', boxes.join('|'))
+await t.select('Version', '2')
+await t.click('Search', 700)
+check('case: another version is looked up', (await page.$$eval('dl.fields dd', (d) => d.map((x) => x.textContent.trim())))[1] === 'FAKE1-2')
+await t.select('Approved Status', 'Y')
+await t.click('Update', 600)
+check(
+  'case: update asks Do you want to update the record?',
+  (await dialogs()).some((d) => d.includes('Do you want to update the record?')),
+  JSON.stringify(await dialogs()),
+)
+const casePosts = posts.length
+await (await t.btn('No')).click()
+await sleep(400)
+check('case: No sets nothing', posts.length === casePosts)
+await t.click('Update', 600)
+await t.yes()
+const setCase = posts.at(-1)
+check(
+  'case: Yes sends the worksheet and the status',
+  setCase.url.endsWith('/return-case') && JSON.stringify(setCase.body) === JSON.stringify({ caseNo: 'FAKE1', version: 2, status: 'Y' }),
+  JSON.stringify(setCase),
+)
+check('case: and reports success and puts the status back to N', (await t.toast('Record updated...')) && (await t.value('Approved Status')) === 'N')
+fakeCase = false
+
 // ---------------- Insert Worksheet is the Inpatient Case Listing form
 await t.go('/claim-bordx/insert-worksheet')
 check('insert worksheet: opens the Inpatient Case Listing (FrmWksBordx)', (await page.$eval('h2', (e) => e.textContent)) === 'Inpatient Case Listing')
@@ -470,6 +565,7 @@ for (const path of [
   '/claim-bordx/send-to-payor',
   '/claim-bordx/returned-from-payor',
   '/claim-bordx/approval',
+  '/claim-bordx/returned-not-approved',
   '/claim-bordx/remove-worksheet',
   '/claim-bordx/send-to-accounts',
   '/claim-bordx/insert-worksheet',
