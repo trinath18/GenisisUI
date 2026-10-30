@@ -135,7 +135,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '#', label: 'Outstanding Bordx', access: Access.ClaimBordx, group: 'Monitoring', pending: true },
         { to: '/claim-bordx/approval', label: 'Bordx Approval', access: Access.ClaimBordx },
         { to: '#', label: 'Claim files', access: Access.ClaimBordx, group: 'Storage', pending: true },
-        { to: '#', label: 'Storage Enquiry', access: Access.ClaimBordx, group: 'Storage', pending: true },
+        { to: '/claim-bordx/storage-enquiry', label: 'Storage Enquiry', access: Access.ClaimBordx, group: 'Storage' },
         { to: '#', label: 'Document', access: Access.ClaimBordx, group: 'Storage', pending: true },
       ],
     },
