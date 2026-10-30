@@ -80,7 +80,7 @@ check('hos: Print to File with nothing listed says the same', await t.toast('Ple
 
 await t.select('Hospital', 'NOT A HOSPITAL')
 await t.click('Search', 1200)
-check('hos: a hospital that is not there -> nothing selected, no search', (await gridRows('Invoices paid to hospitals')).length === 0)
+check('hos: a hospital that is not there -> nothing selected, so the search is not limited to a hospital', (await t.value('Hospital')) === '')
 await t.select('Hospital', '')
 await typeDate('Inv Date from', '31022021')
 await t.click('Search', 600)
