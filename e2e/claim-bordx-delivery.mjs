@@ -156,7 +156,7 @@ check(
 )
 check(
   'menu: the items of the desktop menu that are not migrated yet are listed and disabled',
-  ['Print Bordx', 'Print Recovery', 'Update Bordx', 'Generate Bordx No', 'Hospital Report', 'Claim files'].every((x) => disabled.includes(x)),
+  ['Print Bordx', 'Update Bordx', 'Generate Bordx No', 'Hospital Report', 'Claim files'].every((x) => disabled.includes(x)),
   disabled.join('|'),
 )
 

@@ -122,7 +122,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/claim-bordx/insert-worksheet', label: 'Insert Worksheet', access: Access.ClaimBordx, group: 'Worksheet' },
         { to: '/claim-bordx/remove-worksheet', label: 'Remove Worksheet', access: Access.ClaimBordx, group: 'Worksheet' },
         { to: '#', label: 'Print Bordx', access: Access.ClaimBordx, pending: true },
-        { to: '#', label: 'Print Recovery', access: Access.ClaimBordx, pending: true },
+        { to: '/claim-bordx/print-recovery', label: 'Print Recovery', access: Access.ClaimBordx },
         { to: '#', label: 'Generate Bordx No', access: Access.ClaimBordx, group: 'Payment Advice', pending: true },
         { to: '#', label: 'Hospital Report', access: Access.ClaimBordx, group: 'Payment Advice', pending: true },
         { to: '#', label: 'Update Bordx', access: Access.ClaimBordx, pending: true },
