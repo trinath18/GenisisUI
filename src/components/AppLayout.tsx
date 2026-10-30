@@ -131,7 +131,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/claim-bordx/returned-from-payor', label: 'Returned From Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/returned-not-approved', label: 'Returned Fr Payor (Not App)', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/send-to-accounts', label: 'Send to A/C', access: Access.ClaimBordx, group: 'Bor Delivery' },
-        { to: '#', label: 'Bordx Control', access: Access.ClaimBordx, group: 'Monitoring', pending: true },
+        { to: '/claim-bordx/bordx-control', label: 'Bordx Control', access: Access.ClaimBordx, group: 'Monitoring' },
         { to: '#', label: 'Outstanding Bordx', access: Access.ClaimBordx, group: 'Monitoring', pending: true },
         { to: '/claim-bordx/approval', label: 'Bordx Approval', access: Access.ClaimBordx },
         { to: '#', label: 'Claim files', access: Access.ClaimBordx, group: 'Storage', pending: true },
