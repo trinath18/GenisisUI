@@ -37,6 +37,7 @@ import { BordxDeliveryPage } from './pages/claimBordx/BordxDeliveryPage'
 import { BordxReturnCasePage } from './pages/claimBordx/BordxReturnCasePage'
 import { BordxControlPage } from './pages/claimBordx/BordxControlPage'
 import { BordxRevisePage } from './pages/claimBordx/BordxRevisePage'
+import { OutstandingBordxPage } from './pages/claimBordx/OutstandingBordxPage'
 import { StorageDocumentPage } from './pages/claimBordx/StorageDocumentPage'
 import { StorageEnquiryPage } from './pages/claimBordx/StorageEnquiryPage'
 import { CaseTransferPage } from './pages/case/CaseTransferPage'
@@ -299,6 +300,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ClaimBordx}>
               <BordxRevisePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/outstanding-bordx"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <OutstandingBordxPage />
             </RequireAccess>
           }
         />

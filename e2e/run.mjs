@@ -18,6 +18,7 @@ const suites = [
   'claim-bordx-storage.mjs',
   'claim-bordx-storage-document.mjs',
   'claim-bordx-control.mjs',
+  'claim-bordx-outstanding.mjs',
   'maintenance-member.mjs',
   'maintenance-suspension.mjs',
   'invoice-processing.mjs',
