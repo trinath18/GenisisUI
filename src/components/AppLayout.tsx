@@ -15,6 +15,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'grid', label: 'Worksheet', to: '/worksheet/tracking', prefix: '/worksheet', access: Access.WorksheetTracking },
   { icon: 'shield', label: 'Claims', prefix: '#claims' },
   { icon: 'list', label: 'Claim Bordx', to: '/claim-bordx/insert-worksheet', prefix: '/claim-bordx', access: Access.ClaimBordx },
+  { icon: 'calendar', label: 'Receipt', to: '/receipt/tracking', prefix: '/receipt', access: Access.ReceiptTracking },
   { icon: 'activity', label: 'Monitoring', prefix: '#monitoring' },
 ]
 
@@ -106,6 +107,17 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       items: [
         { to: '#', label: 'Claim Report', access: 0, group: 'DCU Tracking', pending: true },
         { to: '#', label: 'Claim Pass to A/C', access: 0, pending: true },
+      ],
+    },
+    {
+      // Desktop order of the Receipt menu; the receipt entry forms still to migrate are shown disabled ("Payor (Manual)" is not marked Required).
+      label: 'Receipt',
+      prefix: '/receipt',
+      items: [
+        { to: '#', label: 'From Member', access: Access.ReceiptTracking, pending: true },
+        { to: '#', label: 'Others', access: Access.ReceiptTracking, pending: true },
+        { to: '#', label: 'Payor', access: Access.ReceiptTracking, pending: true },
+        { to: '/receipt/tracking', label: 'Receipt Tracking', access: Access.ReceiptTracking },
       ],
     },
     {

@@ -37,6 +37,7 @@ import { BordxDeliveryPage } from './pages/claimBordx/BordxDeliveryPage'
 import { BordxReturnCasePage } from './pages/claimBordx/BordxReturnCasePage'
 import { BordxControlPage } from './pages/claimBordx/BordxControlPage'
 import { BordxRevisePage } from './pages/claimBordx/BordxRevisePage'
+import { ReceiptTrackingPage } from './pages/receipt/ReceiptTrackingPage'
 import { PrintRecoveryPage } from './pages/claimBordx/PrintRecoveryPage'
 import { OutstandingBordxPage } from './pages/claimBordx/OutstandingBordxPage'
 import { StorageDocumentPage } from './pages/claimBordx/StorageDocumentPage'
@@ -301,6 +302,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ClaimBordx}>
               <BordxRevisePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="receipt/tracking"
+          element={
+            <RequireAccess position={Access.ReceiptTracking}>
+              <ReceiptTrackingPage />
             </RequireAccess>
           }
         />
