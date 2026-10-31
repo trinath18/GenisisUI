@@ -70,8 +70,10 @@ export async function start(downloadPath) {
     async click(text, wait = 300) {
       await (await t.btn(text)).click()
       await sleep(wait)
-      // a slow search leaves its button busy (aria-busy); wait for it instead of relying on the pause alone
-      await page.waitForFunction(() => !document.querySelector('button[aria-busy=true]'), { timeout: 120000 }).catch(() => {})
+      // a slow search leaves its button busy (aria-busy); wait for it instead of relying on the pause alone. A confirmation that is waiting for the answer also keeps it busy, so an open dialog ends the wait.
+      await page
+        .waitForFunction(() => !document.querySelector('button[aria-busy=true]') || !!document.querySelector('[role=dialog]'), { timeout: 120000 })
+        .catch(() => {})
     },
     async isDisabled(text) {
       return (await t.btn(text)).evaluate((b) => b.disabled)
