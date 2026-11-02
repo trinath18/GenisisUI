@@ -123,7 +123,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       items: [
         { to: '#', label: 'Generate Invoice', access: Access.ContributionRefundListing, pending: true },
         { to: '#', label: 'Generate Invoice (Endorsement)', access: Access.ContributionRefundListing, pending: true },
-        { to: '#', label: 'MCO Reinstatement', access: Access.ContributionRefundListing, pending: true },
+        { to: '/contribution-billing/mco-reinstatement', label: 'MCO Reinstatement', access: Access.ContributionInvoicing },
         { to: '/contribution-billing/refund-listing', label: 'Refund Listing', access: Access.ContributionRefundListing },
       ],
     },

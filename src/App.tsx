@@ -37,6 +37,7 @@ import { BordxDeliveryPage } from './pages/claimBordx/BordxDeliveryPage'
 import { BordxReturnCasePage } from './pages/claimBordx/BordxReturnCasePage'
 import { BordxControlPage } from './pages/claimBordx/BordxControlPage'
 import { BordxRevisePage } from './pages/claimBordx/BordxRevisePage'
+import { McoReinstatementPage } from './pages/contributionBilling/McoReinstatementPage'
 import { RefundListingPage } from './pages/contributionBilling/RefundListingPage'
 import { StorageEntryPage } from './pages/claimBordx/StorageEntryPage'
 import { ReceiptTrackingPage } from './pages/receipt/ReceiptTrackingPage'
@@ -304,6 +305,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ClaimBordx}>
               <BordxRevisePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="contribution-billing/mco-reinstatement"
+          element={
+            <RequireAccess position={Access.ContributionInvoicing}>
+              <McoReinstatementPage />
             </RequireAccess>
           }
         />
