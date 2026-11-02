@@ -44,6 +44,7 @@ import { UpdateBordxPage } from './pages/claimBordx/UpdateBordxPage'
 import { ReceiptTrackingPage } from './pages/receipt/ReceiptTrackingPage'
 import { PrintRecoveryPage } from './pages/claimBordx/PrintRecoveryPage'
 import { OutstandingBordxPage } from './pages/claimBordx/OutstandingBordxPage'
+import { PaymentAdviceBordxPage } from './pages/claimBordx/PaymentAdviceBordxPage'
 import { PrintBordxPage } from './pages/claimBordx/PrintBordxPage'
 import { StorageDocumentPage } from './pages/claimBordx/StorageDocumentPage'
 import { StorageEnquiryPage } from './pages/claimBordx/StorageEnquiryPage'
@@ -331,6 +332,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ReceiptTracking}>
               <ReceiptTrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/payment-advice-bordx"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <PaymentAdviceBordxPage />
             </RequireAccess>
           }
         />
