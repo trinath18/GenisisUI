@@ -22,6 +22,7 @@ const suites = [
   'claim-bordx-outstanding.mjs',
   'claim-bordx-recovery.mjs',
   'receipt-tracking.mjs',
+  'contribution-refund-listing.mjs',
   'maintenance-member.mjs',
   'maintenance-suspension.mjs',
   'invoice-processing.mjs',

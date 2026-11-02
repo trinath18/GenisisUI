@@ -16,6 +16,13 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'shield', label: 'Claims', prefix: '#claims' },
   { icon: 'list', label: 'Claim Bordx', to: '/claim-bordx/insert-worksheet', prefix: '/claim-bordx', access: Access.ClaimBordx },
   { icon: 'calendar', label: 'Receipt', to: '/receipt/tracking', prefix: '/receipt', access: Access.ReceiptTracking },
+  {
+    icon: 'coins',
+    label: 'Contribution Billing',
+    to: '/contribution-billing/refund-listing',
+    prefix: '/contribution-billing',
+    access: Access.ContributionRefundListing,
+  },
   { icon: 'activity', label: 'Monitoring', prefix: '#monitoring' },
 ]
 
@@ -107,6 +114,17 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       items: [
         { to: '#', label: 'Claim Report', access: 0, group: 'DCU Tracking', pending: true },
         { to: '#', label: 'Claim Pass to A/C', access: 0, pending: true },
+      ],
+    },
+    {
+      // Desktop order of the Contribution Billing menu; the screens still to migrate are shown disabled. Receipt MCO/Others is Finance > Invoice Receipt (Outstanding).
+      label: 'Contribution Billing',
+      prefix: '/contribution-billing',
+      items: [
+        { to: '#', label: 'Generate Invoice', access: Access.ContributionRefundListing, pending: true },
+        { to: '#', label: 'Generate Invoice (Endorsement)', access: Access.ContributionRefundListing, pending: true },
+        { to: '#', label: 'MCO Reinstatement', access: Access.ContributionRefundListing, pending: true },
+        { to: '/contribution-billing/refund-listing', label: 'Refund Listing', access: Access.ContributionRefundListing },
       ],
     },
     {

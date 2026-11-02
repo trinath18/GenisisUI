@@ -19,6 +19,8 @@ export const Access = {
   AccountTransaction: 1,
   // Maintenance > Member (MaintenanceOthers) has no click handler: gated like the other Maintenance items, position 1.
   MemberMaintenance: 1,
+  // Contribution Billing > Refund Listing: mnuMCORefundListing, CheckAccess(21).
+  ContributionRefundListing: 21,
   // Receipt > Receipt Tracking has no click handler: gated like Finance > Receipt Enquiry, position 9.
   ReceiptTracking: 9,
   // Maintenance > Suspension: Suspension_Click checks position 27.
