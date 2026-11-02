@@ -146,7 +146,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/claim-bordx/bordx-control', label: 'Bordx Control', access: Access.ClaimBordx, group: 'Monitoring' },
         { to: '/claim-bordx/outstanding-bordx', label: 'Outstanding Bordx', access: Access.ClaimBordx, group: 'Monitoring' },
         { to: '/claim-bordx/approval', label: 'Bordx Approval', access: Access.ClaimBordx },
-        { to: '#', label: 'Claim files', access: Access.ClaimBordx, group: 'Storage', pending: true },
+        { to: '/claim-bordx/storage-claim-files', label: 'Claim files', access: Access.ClaimBordx, group: 'Storage' },
         { to: '/claim-bordx/storage-enquiry', label: 'Storage Enquiry', access: Access.ClaimBordx, group: 'Storage' },
         { to: '/claim-bordx/storage-document', label: 'Document', access: Access.ClaimBordx, group: 'Storage' },
       ],
