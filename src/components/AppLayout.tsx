@@ -155,7 +155,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/claim-bordx/print-recovery', label: 'Print Recovery', access: Access.ClaimBordx },
         { to: '#', label: 'Generate Bordx No', access: Access.ClaimBordx, group: 'Payment Advice', pending: true },
         { to: '#', label: 'Hospital Report', access: Access.ClaimBordx, group: 'Payment Advice', pending: true },
-        { to: '#', label: 'Update Bordx', access: Access.ClaimBordx, pending: true },
+        { to: '/claim-bordx/update-bordx', label: 'Update Bordx', access: Access.ClaimBordx },
         { to: '#', label: 'Bordx Send Date', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
         { to: '/claim-bordx/send-to-payor', label: 'Send to Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/returned-from-payor', label: 'Returned From Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },

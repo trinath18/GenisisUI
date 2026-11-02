@@ -18,6 +18,7 @@ const suites = [
   'claim-bordx-storage.mjs',
   'claim-bordx-storage-document.mjs',
   'claim-bordx-storage-entry.mjs',
+  'claim-bordx-update.mjs',
   'claim-bordx-control.mjs',
   'claim-bordx-outstanding.mjs',
   'claim-bordx-recovery.mjs',

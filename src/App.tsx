@@ -40,6 +40,7 @@ import { BordxRevisePage } from './pages/claimBordx/BordxRevisePage'
 import { McoReinstatementPage } from './pages/contributionBilling/McoReinstatementPage'
 import { RefundListingPage } from './pages/contributionBilling/RefundListingPage'
 import { StorageEntryPage } from './pages/claimBordx/StorageEntryPage'
+import { UpdateBordxPage } from './pages/claimBordx/UpdateBordxPage'
 import { ReceiptTrackingPage } from './pages/receipt/ReceiptTrackingPage'
 import { PrintRecoveryPage } from './pages/claimBordx/PrintRecoveryPage'
 import { OutstandingBordxPage } from './pages/claimBordx/OutstandingBordxPage'
@@ -329,6 +330,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ReceiptTracking}>
               <ReceiptTrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/update-bordx"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <UpdateBordxPage />
             </RequireAccess>
           }
         />
