@@ -21,6 +21,8 @@ export const Access = {
   MemberMaintenance: 1,
   // Contribution Billing > Refund Listing: mnuMCORefundListing, CheckAccess(21).
   ContributionRefundListing: 21,
+  // Claim Bordx > Print Bordx: mnuPrintBordx, CheckAccess(17).
+  ClaimBordxPrint: 17,
   // Contribution Billing > MCO Reinstatement has no click handler: gated like Generate Invoice (position 8), the other screen that makes MCO invoices.
   ContributionInvoicing: 8,
   // Receipt > Receipt Tracking has no click handler: gated like Finance > Receipt Enquiry, position 9.
