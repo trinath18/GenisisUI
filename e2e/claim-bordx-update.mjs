@@ -56,8 +56,8 @@ check(
 check('api: the total adds the approved amounts', Math.abs(unbordxed.totalApproved - unbordxed.rows.reduce((s, r) => s + (r.totalApproved ?? 0), 0)) < 0.005)
 const everything = await json(`${U}?${q({ payor: 'TA', unbordxedOnly: false })}`)
 check(
-  'api: without the Search Empty Data box the worksheets in a bordx are listed too',
-  everything.rows.length > unbordxed.rows.length && everything.rows.some((r) => r.bordxNo),
+  'api: without the Search Empty Data box the void worksheets (bordx VOID) are listed too',
+  everything.rows.length > unbordxed.rows.length && everything.rows.some((r) => r.bordxNo === 'VOID'),
 )
 const small = await json(`${U}?${q({ payor: 'TA', amount: 'le' })}`)
 const big = await json(`${U}?${q({ payor: 'TA', amount: 'gt' })}`)
@@ -95,13 +95,9 @@ check(
   missing.status === 404 && missing.message === 'Worksheet ZZ-NO-CASE-1 not found',
   JSON.stringify(missing),
 )
-const inBordx = everything.rows.find((r) => r.bordxNo)
-const already = await refused({ claims: [{ caseNo: inBordx.caseNo, version: inBordx.claimVersion }], bordxNo: 'ZZ-E2E-1', bordxDate: '2026-10-30' })
-check(
-  'api: a worksheet that is in a bordx already is refused and nothing is saved',
-  already.status === 409 && already.message.endsWith('is in a bordx already'),
-  JSON.stringify(already),
-)
+const voided = everything.rows.find((r) => r.bordxNo === 'VOID')
+const already = await refused({ claims: [{ caseNo: voided.caseNo, version: voided.claimVersion }], bordxNo: 'ZZ-E2E-1', bordxDate: '2026-10-30' })
+check('api: a void worksheet is refused and nothing is saved', already.status === 400 && already.message.endsWith('is void'), JSON.stringify(already))
 check('api: nothing was written', (await json(`${U}?${q({ payor: 'TA' })}`)).rows.length === unbordxed.rows.length)
 
 // ---------------- the screen
@@ -195,7 +191,7 @@ check(
   (await rowsOf()).length === 0 && (await stat('Records')) === '0' && (await stat('Amt Checked')) === '0.00',
 )
 
-// a worksheet that is in a bordx already cannot be ticked
+// a void worksheet cannot be ticked
 await t.click('Clear', 300)
 await t.type('Payor', 'TA')
 await page.evaluate(() =>
@@ -206,13 +202,9 @@ await page.evaluate(() =>
 )
 await t.click('Search', 2500)
 const everyRow = await rowsOf()
-const bordxedIndex = everyRow.findIndex((r) => r[16])
+const bordxedIndex = everyRow.findIndex((r) => r[16] === 'VOID')
 await tick(bordxedIndex)
-check(
-  'screen: a worksheet in a bordx already cannot be ticked',
-  (await t.toast('Claim has been bordxed!')) && (await stat('Amt Checked')) === '0.00',
-  `${bordxedIndex}`,
-)
+check('screen: a void worksheet cannot be ticked', (await t.toast('Claim is void!')) && (await stat('Amt Checked')) === '0.00', `${bordxedIndex}`)
 check('screen: nothing was written', (await json(`${U}?${q({ payor: 'TA' })}`)).rows.length === unbordxed.rows.length)
 
 // ---------------- access: position 15 withheld

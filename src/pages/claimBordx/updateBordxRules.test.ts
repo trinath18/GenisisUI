@@ -57,6 +57,7 @@ describe('Update Bordx search', () => {
 
   it('refuses a worksheet that is in a bordx already and totals the approved amounts', () => {
     expect(tickProblem(row({ bordxNo: 'B1' }))).toBe('Claim has been bordxed!')
+    expect(tickProblem(row({ bordxNo: 'VOID' }))).toBe('Claim is void!')
     expect(tickProblem(row())).toBeNull()
     expect(rowKey(row())).toBe('TA00001-2')
     expect(totalApproved([row(), row({ totalApproved: null }), row({ totalApproved: 4 })])).toBe(1004.5)

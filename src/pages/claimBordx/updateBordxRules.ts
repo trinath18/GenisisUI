@@ -143,8 +143,8 @@ export const searchParams = (v: SearchValues) => ({
 /** The key of a worksheet of the list. */
 export const rowKey = (r: UpdateRow) => `${r.caseNo}-${r.claimVersion}`
 
-/** lstWorksheetTrackList_ItemCheck: a worksheet that is in a bordx already cannot be ticked (the desktop moved it, leaving the old bordx's totals as they were). */
-export const tickProblem = (r: UpdateRow) => (r.bordxNo ? 'Claim has been bordxed!' : null)
+/** A worksheet that is in a bordx already cannot be ticked, nor a void one (its bordx reference is VOID): the desktop's list could hold either and moved them into the bordx. */
+export const tickProblem = (r: UpdateRow) => (r.bordxNo === 'VOID' ? 'Claim is void!' : r.bordxNo ? 'Claim has been bordxed!' : null)
 
 /** cmdBordx_Click's checks in the desktop's order; null when the update may go ahead. */
 export const updateProblem = (rows: number, ticked: number, v: UpdateValues) => {
