@@ -42,6 +42,7 @@ import { McoReinstatementPage } from './pages/contributionBilling/McoReinstateme
 import { RefundListingPage } from './pages/contributionBilling/RefundListingPage'
 import { StorageEntryPage } from './pages/claimBordx/StorageEntryPage'
 import { UpdateBordxPage } from './pages/claimBordx/UpdateBordxPage'
+import { DcuReportPage } from './pages/authorize/DcuReportPage'
 import { InvoiceHospitalPage } from './pages/posting/InvoiceHospitalPage'
 import { ReceiptMemberPage } from './pages/receipt/ReceiptMemberPage'
 import { ReceiptPayorPage } from './pages/receipt/ReceiptPayorPage'
@@ -337,6 +338,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ContributionRefundListing}>
               <RefundListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="authorize/dcu-report"
+          element={
+            <RequireAccess position={Access.AuthorizeDcuReport}>
+              <DcuReportPage />
             </RequireAccess>
           }
         />

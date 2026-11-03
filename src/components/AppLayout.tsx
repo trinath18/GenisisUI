@@ -13,7 +13,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'wallet', label: 'Finance', to: '/finance/sun-posting', prefix: '/finance', access: Access.FinanceSunPosting },
   { icon: 'file', label: 'Invoice', to: '/invoice/processing', prefix: '/invoice', access: Access.InvoiceProcessing },
   { icon: 'grid', label: 'Worksheet', to: '/worksheet/tracking', prefix: '/worksheet', access: Access.WorksheetTracking },
-  { icon: 'shield', label: 'Claims', prefix: '#claims' },
+  { icon: 'shield', label: 'Claims', to: '/authorize/dcu-report', prefix: '/authorize', access: Access.AuthorizeDcuReport },
   { icon: 'list', label: 'Claim Bordx', to: '/claim-bordx/insert-worksheet', prefix: '/claim-bordx', access: Access.ClaimBordx },
   { icon: 'calendar', label: 'Receipt', to: '/receipt/tracking', prefix: '/receipt', access: Access.ReceiptTracking },
   { icon: 'file', label: 'Posting', to: '/posting/invoice-hospital', prefix: '/posting', access: Access.PostingInvoiceHospital },
@@ -109,11 +109,11 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       ],
     },
     {
-      // Authorize Claims of the desktop menu: nothing is migrated yet, so its entries are shown disabled.
+      // Authorize Claims of the desktop menu: DCU Tracking > Claim Report is built (the Jupiter report is the same form); Claim Pass to A/C is still to migrate and is shown disabled.
       label: 'Claims',
-      prefix: '#claims',
+      prefix: '/authorize',
       items: [
-        { to: '#', label: 'Claim Report', access: 0, group: 'DCU Tracking', pending: true },
+        { to: '/authorize/dcu-report', label: 'Claim Report', access: Access.AuthorizeDcuReport, group: 'DCU Tracking' },
         { to: '#', label: 'Claim Pass to A/C', access: 0, pending: true },
       ],
     },

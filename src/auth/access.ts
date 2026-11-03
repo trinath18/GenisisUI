@@ -88,6 +88,8 @@ export const Access = {
   FinanceSunPosting: 13,
   // Posting > Invoice > Hospital has no click handler: gated like Finance > SUN Posting, position 13.
   PostingInvoiceHospital: 13,
+  // Authorize Claims > DCU Tracking > Claim Report has no click handler: gated like Claim Tracking, position 16.
+  AuthorizeDcuReport: 16,
 } as const
 
 export class MustChangePasswordError extends Error {}

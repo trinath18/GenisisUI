@@ -29,6 +29,7 @@ const suites = [
   'receipt-from-member.mjs',
   'receipt-from-payor.mjs',
   'posting-invoice-hospital.mjs',
+  'authorize-dcu-report.mjs',
   'contribution-refund-listing.mjs',
   'contribution-mco-reinstatement.mjs',
   'contribution-generate-invoice.mjs',
