@@ -44,6 +44,7 @@ import { UpdateBordxPage } from './pages/claimBordx/UpdateBordxPage'
 import { ReceiptTrackingPage } from './pages/receipt/ReceiptTrackingPage'
 import { PrintRecoveryPage } from './pages/claimBordx/PrintRecoveryPage'
 import { OutstandingBordxPage } from './pages/claimBordx/OutstandingBordxPage'
+import { HospitalReportPage } from './pages/claimBordx/HospitalReportPage'
 import { PaymentAdviceBordxPage } from './pages/claimBordx/PaymentAdviceBordxPage'
 import { PrintBordxPage } from './pages/claimBordx/PrintBordxPage'
 import { StorageDocumentPage } from './pages/claimBordx/StorageDocumentPage'
@@ -332,6 +333,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ReceiptTracking}>
               <ReceiptTrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/hospital-report"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <HospitalReportPage />
             </RequireAccess>
           }
         />

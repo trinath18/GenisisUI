@@ -21,6 +21,7 @@ const suites = [
   'claim-bordx-update.mjs',
   'claim-bordx-print.mjs',
   'claim-bordx-payment-advice.mjs',
+  'claim-bordx-hospital-report.mjs',
   'claim-bordx-control.mjs',
   'claim-bordx-outstanding.mjs',
   'claim-bordx-recovery.mjs',
