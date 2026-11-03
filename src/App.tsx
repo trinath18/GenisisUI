@@ -42,6 +42,7 @@ import { McoReinstatementPage } from './pages/contributionBilling/McoReinstateme
 import { RefundListingPage } from './pages/contributionBilling/RefundListingPage'
 import { StorageEntryPage } from './pages/claimBordx/StorageEntryPage'
 import { UpdateBordxPage } from './pages/claimBordx/UpdateBordxPage'
+import { InvoiceHospitalPage } from './pages/posting/InvoiceHospitalPage'
 import { ReceiptMemberPage } from './pages/receipt/ReceiptMemberPage'
 import { ReceiptPayorPage } from './pages/receipt/ReceiptPayorPage'
 import { ReceiptTrackingPage } from './pages/receipt/ReceiptTrackingPage'
@@ -336,6 +337,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ContributionRefundListing}>
               <RefundListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="posting/invoice-hospital"
+          element={
+            <RequireAccess position={Access.PostingInvoiceHospital}>
+              <InvoiceHospitalPage />
             </RequireAccess>
           }
         />

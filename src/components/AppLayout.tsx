@@ -16,6 +16,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'shield', label: 'Claims', prefix: '#claims' },
   { icon: 'list', label: 'Claim Bordx', to: '/claim-bordx/insert-worksheet', prefix: '/claim-bordx', access: Access.ClaimBordx },
   { icon: 'calendar', label: 'Receipt', to: '/receipt/tracking', prefix: '/receipt', access: Access.ReceiptTracking },
+  { icon: 'file', label: 'Posting', to: '/posting/invoice-hospital', prefix: '/posting', access: Access.PostingInvoiceHospital },
   {
     icon: 'coins',
     label: 'Contribution Billing',
@@ -125,6 +126,15 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '#', label: 'Generate Invoice (Endorsement)', access: Access.ContributionRefundListing, pending: true },
         { to: '/contribution-billing/mco-reinstatement', label: 'MCO Reinstatement', access: Access.ContributionInvoicing },
         { to: '/contribution-billing/refund-listing', label: 'Refund Listing', access: Access.ContributionRefundListing },
+      ],
+    },
+    {
+      // Posting > Invoice: Hospital here; Member is Finance > SUN Posting (the same form, listed as another door).
+      label: 'Posting',
+      prefix: '/posting',
+      items: [
+        { to: '/posting/invoice-hospital', label: 'Hospital', access: Access.PostingInvoiceHospital, group: 'Invoice' },
+        { to: '/finance/sun-posting', label: 'Member', access: Access.FinanceSunPosting, group: 'Invoice' },
       ],
     },
     {

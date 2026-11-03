@@ -86,6 +86,8 @@ export const Access = {
   FinanceSuspendActive: 12,
   FinanceElectronicBanking: 10,
   FinanceSunPosting: 13,
+  // Posting > Invoice > Hospital has no click handler: gated like Finance > SUN Posting, position 13.
+  PostingInvoiceHospital: 13,
 } as const
 
 export class MustChangePasswordError extends Error {}
