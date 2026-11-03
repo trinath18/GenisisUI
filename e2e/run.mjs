@@ -28,6 +28,7 @@ const suites = [
   'receipt-tracking.mjs',
   'contribution-refund-listing.mjs',
   'contribution-mco-reinstatement.mjs',
+  'contribution-generate-invoice.mjs',
   'maintenance-member.mjs',
   'maintenance-suspension.mjs',
   'invoice-processing.mjs',

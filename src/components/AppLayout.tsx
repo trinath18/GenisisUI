@@ -121,7 +121,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       label: 'Contribution Billing',
       prefix: '/contribution-billing',
       items: [
-        { to: '#', label: 'Generate Invoice', access: Access.ContributionRefundListing, pending: true },
+        { to: '/contribution-billing/generate-invoice', label: 'Generate Invoice', access: Access.ContributionInvoicing },
         { to: '#', label: 'Generate Invoice (Endorsement)', access: Access.ContributionRefundListing, pending: true },
         { to: '/contribution-billing/mco-reinstatement', label: 'MCO Reinstatement', access: Access.ContributionInvoicing },
         { to: '/contribution-billing/refund-listing', label: 'Refund Listing', access: Access.ContributionRefundListing },

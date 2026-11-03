@@ -79,9 +79,9 @@ check(
 )
 const side = await page.$$eval('.sidebar > *', (els) => els.map((e) => e.textContent.trim()))
 check(
-  'menu: the unbuilt Contribution Billing screens are disabled and MCO Reinstatement and Refund Listing are the links',
-  ['Generate Invoice', 'Generate Invoice (Endorsement)'].every((x) => side.includes(x)) &&
-    (await page.$$eval('.sidebar a', (a) => a.map((x) => x.textContent.trim()))).join() === 'MCO Reinstatement,Refund Listing',
+  'menu: Generate Invoice (Endorsement) is disabled and Generate Invoice, MCO Reinstatement and Refund Listing are the links',
+  side.includes('Generate Invoice (Endorsement)') &&
+    (await page.$$eval('.sidebar a', (a) => a.map((x) => x.textContent.trim()))).join() === 'Generate Invoice,MCO Reinstatement,Refund Listing',
   side.join('|'),
 )
 check('screen: Print is off until a search found something', await t.isDisabled('Print'))
