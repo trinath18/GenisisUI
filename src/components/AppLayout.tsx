@@ -134,7 +134,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       items: [
         { to: '/receipt/from-member', label: 'From Member', access: Access.ReceiptMember },
         { to: '#', label: 'Others', access: Access.ReceiptTracking, pending: true },
-        { to: '#', label: 'Payor', access: Access.ReceiptTracking, pending: true },
+        { to: '/receipt/from-payor', label: 'Payor', access: Access.ReceiptPayor },
         { to: '/receipt/tracking', label: 'Receipt Tracking', access: Access.ReceiptTracking },
       ],
     },

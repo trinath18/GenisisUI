@@ -43,6 +43,7 @@ import { RefundListingPage } from './pages/contributionBilling/RefundListingPage
 import { StorageEntryPage } from './pages/claimBordx/StorageEntryPage'
 import { UpdateBordxPage } from './pages/claimBordx/UpdateBordxPage'
 import { ReceiptMemberPage } from './pages/receipt/ReceiptMemberPage'
+import { ReceiptPayorPage } from './pages/receipt/ReceiptPayorPage'
 import { ReceiptTrackingPage } from './pages/receipt/ReceiptTrackingPage'
 import { PrintRecoveryPage } from './pages/claimBordx/PrintRecoveryPage'
 import { OutstandingBordxPage } from './pages/claimBordx/OutstandingBordxPage'
@@ -343,6 +344,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ReceiptMember}>
               <ReceiptMemberPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="receipt/from-payor"
+          element={
+            <RequireAccess position={Access.ReceiptPayor}>
+              <ReceiptPayorPage />
             </RequireAccess>
           }
         />

@@ -29,6 +29,8 @@ export const Access = {
   ReceiptTracking: 9,
   // Receipt > From Member has no click handler: gated like Receipt Tracking, position 9.
   ReceiptMember: 9,
+  // Receipt > Payor has no click handler: gated like Receipt > From Member, position 9.
+  ReceiptPayor: 9,
   // Maintenance > Suspension: Suspension_Click checks position 27.
   Suspension: 27,
   // Maintenance > Security: the matrix's own Department (111) and User Permission (112) rights, not the desktop's CheckAccess(2).

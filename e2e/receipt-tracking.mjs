@@ -72,9 +72,9 @@ check(
 )
 const side = await page.$$eval('.sidebar > *', (els) => els.map((e) => e.textContent.trim()))
 check(
-  'menu: the Receipt menu lists Others and Payor disabled and From Member and Receipt Tracking as links',
+  'menu: the Receipt menu lists Others disabled and From Member, Payor and Receipt Tracking as links',
   ['From Member', 'Others', 'Payor'].every((x) => side.includes(x)) &&
-    (await page.$$eval('.sidebar a', (a) => a.map((x) => x.textContent.trim()))).join() === 'From Member,Receipt Tracking',
+    (await page.$$eval('.sidebar a', (a) => a.map((x) => x.textContent.trim()))).join() === 'From Member,Payor,Receipt Tracking',
   side.join('|'),
 )
 await t.type('Payor', pick.payorCode)
