@@ -24,6 +24,12 @@ import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/Ent
 import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
 import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
 import { MemberDatesScreen } from './features/maintenance/memberDates/pages/MemberDatesScreen'
+import { CompanyInfoPage } from './pages/maintenance/CompanyInfoPage'
+import { ContraAllocationPage } from './pages/payment/ContraAllocationPage'
+import { PaymentEnquiryHospitalPage } from './pages/payment/PaymentEnquiryHospitalPage'
+import { PaymentEnquiryMemberPage } from './pages/payment/PaymentEnquiryMemberPage'
+import { ReceiptOthersPage } from './pages/receipt/ReceiptOthersPage'
+import { PanelHospitalMaintenancePage } from './pages/maintenance/PanelHospitalMaintenancePage'
 import { SuspensionScreen } from './features/maintenance/suspension/pages/SuspensionScreen'
 import { DepartmentScreen } from './features/maintenance/security/pages/DepartmentScreen'
 import { UserSecurityScreen } from './features/maintenance/security/pages/UserSecurityScreen'
@@ -338,6 +344,38 @@ export default function App() {
           element={
             <RequireAccess position={Access.ContributionRefundListing}>
               <RefundListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/enquiry-member"
+          element={
+            <RequireAccess position={Access.PaymentEnquiry}>
+              <PaymentEnquiryMemberPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/enquiry-hospital"
+          element={
+            <RequireAccess position={Access.PaymentEnquiry}>
+              <PaymentEnquiryHospitalPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/contra-allocation"
+          element={
+            <RequireAccess position={Access.PaymentContraAllocation}>
+              <ContraAllocationPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="receipt/others"
+          element={
+            <RequireAccess position={Access.ReceiptOthers}>
+              <ReceiptOthersPage />
             </RequireAccess>
           }
         />
@@ -714,6 +752,22 @@ export default function App() {
           element={
             <RequireAccess position={Access.MemberMaintenance}>
               <MemberDatesScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/panel-hospitals"
+          element={
+            <RequireAccess position={Access.PanelHospitalMaintenance}>
+              <PanelHospitalMaintenancePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/company-info"
+          element={
+            <RequireAccess position={Access.CompanyInfo}>
+              <CompanyInfoPage />
             </RequireAccess>
           }
         />

@@ -19,6 +19,10 @@ export const Access = {
   AccountTransaction: 1,
   // Maintenance > Member (MaintenanceOthers) has no click handler: gated like the other Maintenance items, position 1.
   MemberMaintenance: 1,
+  // Maintenance > Company Info has no click handler (its menu item is disabled): gated like its siblings, position 1.
+  CompanyInfo: 1,
+  // Maintenance > Panel Hospital Maintenance has no click handler: gated like its siblings, position 1.
+  PanelHospitalMaintenance: 1,
   // Contribution Billing > Refund Listing: mnuMCORefundListing, CheckAccess(21).
   ContributionRefundListing: 21,
   // Claim Bordx > Print Bordx: mnuPrintBordx, CheckAccess(17).
@@ -90,6 +94,12 @@ export const Access = {
   PostingInvoiceHospital: 13,
   // Authorize Claims > DCU Tracking > Claim Report has no click handler: gated like Claim Tracking, position 16.
   AuthorizeDcuReport: 16,
+  // Receipt > Others has no click handler: gated like Receipt Tracking, position 9.
+  ReceiptOthers: 9,
+  // Payment > Contra Allocation has no click handler: gated like Finance > Suspend / Active, position 12.
+  PaymentContraAllocation: 12,
+  // Payment > Enquiry > Payment To Hospital / To Member have no click handler: gated like the other Payment screens, position 12.
+  PaymentEnquiry: 12,
 } as const
 
 export class MustChangePasswordError extends Error {}

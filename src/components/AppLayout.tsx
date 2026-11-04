@@ -15,6 +15,7 @@ const rail: { icon: IconName; label: string; prefix?: string; to?: string; acces
   { icon: 'grid', label: 'Worksheet', to: '/worksheet/tracking', prefix: '/worksheet', access: Access.WorksheetTracking },
   { icon: 'shield', label: 'Claims', to: '/authorize/dcu-report', prefix: '/authorize', access: Access.AuthorizeDcuReport },
   { icon: 'list', label: 'Claim Bordx', to: '/claim-bordx/insert-worksheet', prefix: '/claim-bordx', access: Access.ClaimBordx },
+  { icon: 'wallet', label: 'Payment', to: '/payment/contra-allocation', prefix: '/payment', access: Access.PaymentContraAllocation },
   { icon: 'calendar', label: 'Receipt', to: '/receipt/tracking', prefix: '/receipt', access: Access.ReceiptTracking },
   { icon: 'file', label: 'Posting', to: '/posting/invoice-hospital', prefix: '/posting', access: Access.PostingInvoiceHospital },
   {
@@ -78,6 +79,8 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/maintenance/accounts', label: 'Accounts', access: Access.AccountsMaintenance },
         { to: '/maintenance/account-transaction', label: 'Account Transaction', access: Access.AccountTransaction },
         { to: '/maintenance/member', label: 'Member', access: Access.MemberMaintenance },
+        { to: '/maintenance/panel-hospitals', label: 'Panel Hospital Maintenance', access: Access.PanelHospitalMaintenance },
+        { to: '/maintenance/company-info', label: 'Company Info', access: Access.CompanyInfo },
         { to: '/maintenance/suspension', label: 'Suspension', access: Access.Suspension },
         { to: '/maintenance/mma', label: 'MMA (Procedures/OPCS)', access: Access.MmaEntry },
         { to: '/maintenance/security/department', label: 'Department', access: Access.SecurityDepartment, group: 'Security' },
@@ -138,12 +141,33 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       ],
     },
     {
+      // Desktop order of the Payment menu. Payment > Update Invoice is the form Invoice > Original Invoice Update (frmUpdateInvoice) and To Member > Chq. Reissue is Finance > Suspend / Active (frmPaymentMBMReissue), each listed as another door to the built screen; the forms of To Hospital, Pay2MBM, Pay2MBM(Auto), Chq. Cancellation, Payor,
+      // Others, Payment Tracking and PV Update are not in the source tree, so those items are shown disabled.
+      label: 'Payment',
+      prefix: '/payment',
+      items: [
+        { to: '#', label: 'To Hospital', access: Access.PaymentContraAllocation, pending: true },
+        { to: '#', label: 'Pay2MBM(Auto)', access: Access.PaymentContraAllocation, group: 'To Member', pending: true },
+        { to: '#', label: 'Pay2MBM', access: Access.PaymentContraAllocation, group: 'To Member', pending: true },
+        { to: '#', label: 'Chq. Cancellation', access: Access.PaymentContraAllocation, group: 'To Member', pending: true },
+        { to: '/finance/suspend-active', label: 'Chq. Reissue', access: Access.FinanceSuspendActive, group: 'To Member' },
+        { to: '#', label: 'Payor', access: Access.PaymentContraAllocation, pending: true },
+        { to: '#', label: 'Others', access: Access.PaymentContraAllocation, pending: true },
+        { to: '/payment/contra-allocation', label: 'Contra Allocation', access: Access.PaymentContraAllocation },
+        { to: '/invoice/original-update', label: 'Update Invoice', access: Access.InvoiceOriginalUpdate },
+        { to: '#', label: 'Payment Tracking', access: Access.PaymentContraAllocation, pending: true },
+        { to: '/payment/enquiry-hospital', label: 'Payment To Hospital', access: Access.PaymentEnquiry, group: 'Enquiry' },
+        { to: '/payment/enquiry-member', label: 'Payment To Member', access: Access.PaymentEnquiry, group: 'Enquiry' },
+        { to: '#', label: 'PV Update (Manual)', access: Access.PaymentContraAllocation, pending: true },
+      ],
+    },
+    {
       // Desktop order of the Receipt menu; the receipt entry forms still to migrate are shown disabled ("Payor (Manual)" is not marked Required).
       label: 'Receipt',
       prefix: '/receipt',
       items: [
         { to: '/receipt/from-member', label: 'From Member', access: Access.ReceiptMember },
-        { to: '#', label: 'Others', access: Access.ReceiptTracking, pending: true },
+        { to: '/receipt/others', label: 'Others', access: Access.ReceiptOthers },
         { to: '/receipt/from-payor', label: 'Payor', access: Access.ReceiptPayor },
         { to: '/receipt/tracking', label: 'Receipt Tracking', access: Access.ReceiptTracking },
       ],
