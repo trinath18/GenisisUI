@@ -141,8 +141,8 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       ],
     },
     {
-      // Desktop order of the Payment menu. Payment > Update Invoice is the form Invoice > Original Invoice Update (frmUpdateInvoice) and To Member > Chq. Reissue (frmPaymentMBMReissue) and Chq. Cancellation (FrmPaymentMBMReverse: a cancelled cheque is the C row Suspend / Active writes) are Finance > Suspend / Active, each listed as another door to the built screen; the forms of Pay2MBM, Pay2MBM(Auto), Payor,
-      // Others and PV Update are not in the source tree; they are rebuilt one by one (Payment Tracking, To Hospital, Pay2MBM, Pay2MBM(Auto), Payor and Others are) and shown disabled until then.
+      // Desktop order of the Payment menu. Payment > Update Invoice is the form Invoice > Original Invoice Update (frmUpdateInvoice) and To Member > Chq. Reissue (frmPaymentMBMReissue) and Chq. Cancellation (FrmPaymentMBMReverse: a cancelled cheque is the C row Suspend / Active writes) are Finance > Suspend / Active, each listed as another door to the built screen; the forms of To Hospital, Pay2MBM,
+      // Pay2MBM(Auto), Payor, Others and PV Update (Manual) are not in the source tree and are rebuilt on the data they read and wrote (the API's docs/payment-screens.md lists the assumptions).
       label: 'Payment',
       prefix: '/payment',
       items: [
@@ -158,7 +158,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/payment/tracking', label: 'Payment Tracking', access: Access.PaymentTracking },
         { to: '/payment/enquiry-hospital', label: 'Payment To Hospital', access: Access.PaymentEnquiry, group: 'Enquiry' },
         { to: '/payment/enquiry-member', label: 'Payment To Member', access: Access.PaymentEnquiry, group: 'Enquiry' },
-        { to: '#', label: 'PV Update (Manual)', access: Access.PaymentContraAllocation, pending: true },
+        { to: '/payment/pv-update', label: 'PV Update (Manual)', access: Access.PaymentPvUpdate },
       ],
     },
     {
