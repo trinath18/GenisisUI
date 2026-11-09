@@ -141,12 +141,12 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       ],
     },
     {
-      // Desktop order of the Payment menu. Payment > Update Invoice is the form Invoice > Original Invoice Update (frmUpdateInvoice) and To Member > Chq. Reissue is Finance > Suspend / Active (frmPaymentMBMReissue), each listed as another door to the built screen; the forms of To Hospital, Pay2MBM, Pay2MBM(Auto), Chq. Cancellation, Payor,
-      // Others, Payment Tracking and PV Update are not in the source tree, so those items are shown disabled.
+      // Desktop order of the Payment menu. Payment > Update Invoice is the form Invoice > Original Invoice Update (frmUpdateInvoice) and To Member > Chq. Reissue is Finance > Suspend / Active (frmPaymentMBMReissue), each listed as another door to the built screen; the forms of Pay2MBM, Pay2MBM(Auto), Chq. Cancellation, Payor,
+      // Others and PV Update are not in the source tree; they are rebuilt one by one (Payment Tracking and To Hospital are) and shown disabled until then.
       label: 'Payment',
       prefix: '/payment',
       items: [
-        { to: '#', label: 'To Hospital', access: Access.PaymentContraAllocation, pending: true },
+        { to: '/payment/to-hospital', label: 'To Hospital', access: Access.PaymentToHospital },
         { to: '#', label: 'Pay2MBM(Auto)', access: Access.PaymentContraAllocation, group: 'To Member', pending: true },
         { to: '#', label: 'Pay2MBM', access: Access.PaymentContraAllocation, group: 'To Member', pending: true },
         { to: '#', label: 'Chq. Cancellation', access: Access.PaymentContraAllocation, group: 'To Member', pending: true },

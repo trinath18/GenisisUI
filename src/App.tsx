@@ -29,6 +29,7 @@ import { ContraAllocationPage } from './pages/payment/ContraAllocationPage'
 import { PaymentEnquiryHospitalPage } from './pages/payment/PaymentEnquiryHospitalPage'
 import { PaymentEnquiryMemberPage } from './pages/payment/PaymentEnquiryMemberPage'
 import { PaymentTrackingPage } from './pages/payment/PaymentTrackingPage'
+import { PaymentToHospitalPage } from './pages/payment/PaymentToHospitalPage'
 import { ReceiptOthersPage } from './pages/receipt/ReceiptOthersPage'
 import { PanelHospitalMaintenancePage } from './pages/maintenance/PanelHospitalMaintenancePage'
 import { SuspensionScreen } from './features/maintenance/suspension/pages/SuspensionScreen'
@@ -361,6 +362,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.PaymentEnquiry}>
               <PaymentEnquiryHospitalPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/to-hospital"
+          element={
+            <RequireAccess position={Access.PaymentToHospital}>
+              <PaymentToHospitalPage />
             </RequireAccess>
           }
         />
