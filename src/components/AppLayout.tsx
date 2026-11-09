@@ -121,12 +121,12 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       ],
     },
     {
-      // Desktop order of the Contribution Billing menu; the screens still to migrate are shown disabled. Receipt MCO/Others is Finance > Invoice Receipt (Outstanding).
+      // Desktop order of the Contribution Billing menu (the hidden items are not Required and not shown). Generate Invoice (Endorsement) is Generate Invoice by endorsement bordx date (its form is not in the source tree); Receipt MCO/Others is Finance > Invoice Receipt (Outstanding).
       label: 'Contribution Billing',
       prefix: '/contribution-billing',
       items: [
         { to: '/contribution-billing/generate-invoice', label: 'Generate Invoice', access: Access.ContributionInvoicing },
-        { to: '#', label: 'Generate Invoice (Endorsement)', access: Access.ContributionRefundListing, pending: true },
+        { to: '/contribution-billing/generate-invoice-endorsement', label: 'Generate Invoice (Endorsement)', access: Access.ContributionInvoicing },
         { to: '/contribution-billing/mco-reinstatement', label: 'MCO Reinstatement', access: Access.ContributionInvoicing },
         { to: '/contribution-billing/refund-listing', label: 'Refund Listing', access: Access.ContributionRefundListing },
       ],

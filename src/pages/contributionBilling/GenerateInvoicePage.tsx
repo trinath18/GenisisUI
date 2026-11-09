@@ -18,6 +18,8 @@ import { api, errorMessage } from '../../api/client'
 import { useWorksheetLookups } from '../worksheet/useWorksheetLookups'
 import {
   criteriaOptions,
+  endorsementCriteriaOptions,
+  ranged,
   groupByOptions,
   invoiceColumns,
   invoiceDefaults,
@@ -43,7 +45,8 @@ const columns: GridColumn<InvoiceRow>[] = invoiceColumns.map((c, i) => ({
   align: c.label === 'BMco' || c.label === 'Mco' ? 'right' : undefined,
 }))
 
-export function GenerateInvoicePage() {
+/** Generate Invoice, or with `endorsement` Generate Invoice (Endorsement): the same invoice, of the members picked by their endorsement bordx date. */
+export function GenerateInvoicePage({ endorsement = false }: { endorsement?: boolean }) {
   const navigate = useNavigate()
   const lookups = useWorksheetLookups()
   const [busy, setBusy] = useState(false)
@@ -130,13 +133,20 @@ export function GenerateInvoicePage() {
   const listed = result !== null
 
   return (
-    <PageShell title="Member MCO Fees" subtitle="MCO invoice of a bordx batch or range, or of an invoice.">
+    <PageShell
+      title={endorsement ? 'Member MCO Fees (Endorsement)' : 'Member MCO Fees'}
+      subtitle={
+        endorsement
+          ? 'MCO invoice of the members endorsed in a range of endorsement bordx dates, or of an invoice.'
+          : 'MCO invoice of a bordx batch or range, or of an invoice.'
+      }
+    >
       <form onSubmit={(e: FormEvent) => void search(e)} noValidate className="screen-form">
         <fieldset>
           <legend>Enter Criteria For Searching</legend>
           <SelectField
             label="MCO Criteria"
-            options={criteriaOptions}
+            options={endorsement ? endorsementCriteriaOptions : criteriaOptions}
             error={error.criteria}
             {...form.register('criteria', { onChange: (e: { target: { value: string } }) => changeCriteria(e.target.value) })}
           />
@@ -145,8 +155,10 @@ export function GenerateInvoicePage() {
           )}
           {criteria === 'batch' && <DateField control={form.control} name="bordxDate" label="Bordx Date" />}
           {criteria === 'batch' && <TextField label="Batch No" maxLength={5} error={error.batchNo} {...form.register('batchNo')} />}
-          {criteria === 'range' && <DateField control={form.control} name="bordxFrom" label="Bordx Date from" />}
-          {criteria === 'range' && <DateField control={form.control} name="bordxTo" label="Bordx Date to" />}
+          {ranged(criteria) && (
+            <DateField control={form.control} name="bordxFrom" label={criteria === 'endorsement' ? 'Endorsement Date from' : 'Bordx Date from'} />
+          )}
+          {ranged(criteria) && <DateField control={form.control} name="bordxTo" label={criteria === 'endorsement' ? 'Endorsement Date to' : 'Bordx Date to'} />}
           {criteria === 'invoice' && <TextField label="Invoice No" maxLength={40} error={error.invoiceNo} {...form.register('invoiceNo')} />}
           <SelectField label="Group By" blank={false} options={groupByOptions} {...form.register('groupBy', { onChange: () => setResult(null) })} />
           {groupBy === 'group' && criteria !== 'invoice' && (

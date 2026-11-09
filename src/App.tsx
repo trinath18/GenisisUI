@@ -333,7 +333,15 @@ export default function App() {
           path="contribution-billing/generate-invoice"
           element={
             <RequireAccess position={Access.ContributionInvoicing}>
-              <GenerateInvoicePage />
+              <GenerateInvoicePage key="bordx" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="contribution-billing/generate-invoice-endorsement"
+          element={
+            <RequireAccess position={Access.ContributionInvoicing}>
+              <GenerateInvoicePage key="endorsement" endorsement />
             </RequireAccess>
           }
         />

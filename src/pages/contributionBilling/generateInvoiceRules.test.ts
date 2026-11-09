@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import {
   criteriaOptions,
+  endorsementCriteriaOptions,
   groupByOptions,
   invoiceColumns,
   invoiceDefaults,
@@ -98,6 +99,21 @@ describe('Generate Invoice checks', () => {
       'Please Enter Group Company!',
     )
     expect(searchProblem(v({ criteria: 'invoice', invoiceNo: 'S1', groupBy: 'group' }))).toBeNull()
+  })
+
+  it('picks the endorsed members by a range of endorsement bordx dates (Generate Invoice (Endorsement))', () => {
+    expect(endorsementCriteriaOptions.map((o) => o.label)).toEqual(['Endorsement Range', 'Invoice Number'])
+    expect(searchProblem(v({ criteria: 'endorsement' }))?.message).toBe('Please Enter Payor!')
+    expect(searchProblem(v({ criteria: 'endorsement', payor: 'BS' }))?.message).toBe('Please Enter Endorsement Date From!')
+    expect(searchProblem(v({ criteria: 'endorsement', payor: 'BS', bordxFrom: '05/08/2021' }))?.message).toBe('Please Enter Endorsement Date To!')
+    expect(searchProblem(v({ criteria: 'endorsement', payor: 'BS', bordxFrom: '05/08/2021', bordxTo: '05/08/2021' }))).toBeNull()
+    expect(invoiceParams(v({ criteria: 'endorsement', payor: 'BS', bordxFrom: '05/08/2021', bordxTo: '06/08/2021', bordxDate: '01/01/2021' }))).toMatchObject({
+      criteria: 'endorsement',
+      payor: 'BS',
+      bordxFrom: '2021-08-05',
+      bordxTo: '2021-08-06',
+      bordxDate: undefined,
+    })
   })
 
   it('asks for the report type before it checks the search', () => {

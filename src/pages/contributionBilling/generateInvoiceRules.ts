@@ -104,6 +104,16 @@ export const criteriaOptions: Option[] = [
   { value: 'invoice', label: 'Invoice Number' },
 ]
 
+/** Generate Invoice (Endorsement) (frmMCOFeesListingEndt, rebuilt: its source is missing): the members of a payor whose endorsement bordx date is in a range, or an invoice. There is no endorsement
+ * batch: MBM.MBMENDtBatchNo is empty on every endorsed member. */
+export const endorsementCriteriaOptions: Option[] = [
+  { value: 'endorsement', label: 'Endorsement Range' },
+  { value: 'invoice', label: 'Invoice Number' },
+]
+
+/** The criteria that take a range of dates (the bordx dates, or the endorsement bordx dates). */
+export const ranged = (criteria: string) => criteria === 'range' || criteria === 'endorsement'
+
 /** OptPayor, OptByDept, OptGrpCom. */
 export const groupByOptions: Option[] = [
   { value: 'payor', label: 'By Payor' },
@@ -166,6 +176,10 @@ export const searchProblem = (v: InvoiceValues) => {
     if (v.payor.trim() === '') return { field: 'payor' as const, message: 'Please Enter Payor!' }
     if (!isoDmy(v.bordxFrom)) return { field: 'bordxFrom' as const, message: 'Please Enter Bordereaux Date From!' }
     if (!isoDmy(v.bordxTo)) return { field: 'bordxTo' as const, message: 'Please Enter Bordereaux Date To!' }
+  } else if (v.criteria === 'endorsement') {
+    if (v.payor.trim() === '') return { field: 'payor' as const, message: 'Please Enter Payor!' }
+    if (!isoDmy(v.bordxFrom)) return { field: 'bordxFrom' as const, message: 'Please Enter Endorsement Date From!' }
+    if (!isoDmy(v.bordxTo)) return { field: 'bordxTo' as const, message: 'Please Enter Endorsement Date To!' }
   } else if (v.invoiceNo.trim() === '') return { field: 'invoiceNo' as const, message: 'Please Enter Invoice No!' }
   if (v.groupBy === 'group' && v.criteria !== 'invoice' && v.groupCompany.trim() === '')
     return { field: 'groupCompany' as const, message: 'Please Enter Group Company!' }
@@ -184,8 +198,8 @@ export const invoiceParams = (v: InvoiceValues) => ({
   payor: v.criteria === 'invoice' ? undefined : text(v.payor),
   bordxDate: v.criteria === 'batch' ? (isoDmy(v.bordxDate) ?? undefined) : undefined,
   batchNo: v.criteria === 'batch' ? text(v.batchNo) : undefined,
-  bordxFrom: v.criteria === 'range' ? (isoDmy(v.bordxFrom) ?? undefined) : undefined,
-  bordxTo: v.criteria === 'range' ? (isoDmy(v.bordxTo) ?? undefined) : undefined,
+  bordxFrom: ranged(v.criteria) ? (isoDmy(v.bordxFrom) ?? undefined) : undefined,
+  bordxTo: ranged(v.criteria) ? (isoDmy(v.bordxTo) ?? undefined) : undefined,
   invoiceNo: v.criteria === 'invoice' ? text(v.invoiceNo) : undefined,
   groupBy: v.groupBy,
   groupCompany: v.groupBy === 'group' && v.criteria !== 'invoice' ? text(v.groupCompany) : undefined,
