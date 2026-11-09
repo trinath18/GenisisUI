@@ -32,6 +32,7 @@ import { PaymentTrackingPage } from './pages/payment/PaymentTrackingPage'
 import { PaymentToHospitalPage } from './pages/payment/PaymentToHospitalPage'
 import { PaymentToPayorPage } from './pages/payment/PaymentToPayorPage'
 import { PaymentOthersPage } from './pages/payment/PaymentOthersPage'
+import { PaymentToMemberPage } from './pages/payment/PaymentToMemberPage'
 import { ReceiptOthersPage } from './pages/receipt/ReceiptOthersPage'
 import { PanelHospitalMaintenancePage } from './pages/maintenance/PanelHospitalMaintenancePage'
 import { SuspensionScreen } from './features/maintenance/suspension/pages/SuspensionScreen'
@@ -364,6 +365,22 @@ export default function App() {
           element={
             <RequireAccess position={Access.PaymentEnquiry}>
               <PaymentEnquiryHospitalPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/to-member"
+          element={
+            <RequireAccess position={Access.PaymentToMember}>
+              <PaymentToMemberPage key="dn" source="dn" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/to-member-auto"
+          element={
+            <RequireAccess position={Access.PaymentToMember}>
+              <PaymentToMemberPage key="auto" source="auto" />
             </RequireAccess>
           }
         />
