@@ -30,6 +30,7 @@ import { PaymentEnquiryHospitalPage } from './pages/payment/PaymentEnquiryHospit
 import { PaymentEnquiryMemberPage } from './pages/payment/PaymentEnquiryMemberPage'
 import { PaymentTrackingPage } from './pages/payment/PaymentTrackingPage'
 import { PaymentToHospitalPage } from './pages/payment/PaymentToHospitalPage'
+import { PaymentToPayorPage } from './pages/payment/PaymentToPayorPage'
 import { ReceiptOthersPage } from './pages/receipt/ReceiptOthersPage'
 import { PanelHospitalMaintenancePage } from './pages/maintenance/PanelHospitalMaintenancePage'
 import { SuspensionScreen } from './features/maintenance/suspension/pages/SuspensionScreen'
@@ -362,6 +363,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.PaymentEnquiry}>
               <PaymentEnquiryHospitalPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/to-payor"
+          element={
+            <RequireAccess position={Access.PaymentPayor}>
+              <PaymentToPayorPage />
             </RequireAccess>
           }
         />
