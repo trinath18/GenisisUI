@@ -138,9 +138,9 @@ export function PaymentPvUpdatePage() {
             <legend>{locked ? `PV ${detail.pvNo}: ${locked}` : `PV ${detail.pvNo}`}</legend>
             <SelectField label="Payment Mode" blank={false} options={modeOptions} {...edit.register('paymentMode')} />
             {mode === 'ONLINE' ? (
-              <TextField label="Cheque No" readOnly value={onlineChequeNo(chequeDate)} hint="The cheque date, for an online payment" />
+              <TextField key="online-cheque" label="Cheque No" readOnly value={onlineChequeNo(chequeDate)} hint="The cheque date, for an online payment" />
             ) : (
-              <TextField label="Cheque No" required maxLength={40} error={errors.chequeNo} {...edit.register('chequeNo')} />
+              <TextField key="cheque" label="Cheque No" required maxLength={40} error={errors.chequeNo} {...edit.register('chequeNo')} />
             )}
             <DateField control={edit.control} name="chequeDate" label="Cheque Date" required />
             {detail.source === 'member' && <TextField label="Pay To" wide maxLength={120} error={errors.payTo} {...edit.register('payTo')} />}
