@@ -100,6 +100,14 @@ export const Access = {
   PaymentContraAllocation: 12,
   // Payment > Enquiry > Payment To Hospital / To Member have no click handler: gated like the other Payment screens, position 12.
   PaymentEnquiry: 12,
+  // Payment > To Hospital, To Member (Pay2MBM(Auto), Pay2MBM, Chq. Cancellation), Payor, Others, Payment Tracking and PV Update (Manual): no click handler and no form in the
+  // source tree; gated like the other Payment screens, position 12 (a decision).
+  PaymentTracking: 12,
+  PaymentToHospital: 12,
+  PaymentToMember: 12,
+  PaymentPayor: 12,
+  PaymentOthers: 12,
+  PaymentPvUpdate: 12,
 } as const
 
 export class MustChangePasswordError extends Error {}

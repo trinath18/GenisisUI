@@ -155,7 +155,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '#', label: 'Others', access: Access.PaymentContraAllocation, pending: true },
         { to: '/payment/contra-allocation', label: 'Contra Allocation', access: Access.PaymentContraAllocation },
         { to: '/invoice/original-update', label: 'Update Invoice', access: Access.InvoiceOriginalUpdate },
-        { to: '#', label: 'Payment Tracking', access: Access.PaymentContraAllocation, pending: true },
+        { to: '/payment/tracking', label: 'Payment Tracking', access: Access.PaymentTracking },
         { to: '/payment/enquiry-hospital', label: 'Payment To Hospital', access: Access.PaymentEnquiry, group: 'Enquiry' },
         { to: '/payment/enquiry-member', label: 'Payment To Member', access: Access.PaymentEnquiry, group: 'Enquiry' },
         { to: '#', label: 'PV Update (Manual)', access: Access.PaymentContraAllocation, pending: true },
