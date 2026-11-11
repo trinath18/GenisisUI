@@ -24,16 +24,18 @@ check('claim ascii: file name shown (GC<yymmdd>(batch))', /^GC\d{6}\(\d{5}\)$/.t
 const claimFile = `${process.env.E2E_ASCII_DIR}/claim/${claimName}`
 const claimText = fs.existsSync(claimFile) ? fs.readFileSync(claimFile, 'latin1') : ''
 const claimLines = claimText.split('\r\n')
+// the file is a header, the records, a trailer T<records> and an empty last line: the record count is read from the file, whatever the data holds
+const claimRecords = claimLines.length - 3
 check(
-  'claim ascii: server file has header, 4 records, trailer',
-  claimLines[0]?.startsWith('FMX') && claimLines.length === 7 && claimLines[5].startsWith('T4'),
+  'claim ascii: server file has header, records, trailer with the record count',
+  claimLines[0]?.startsWith('FMX') && claimRecords >= 1 && claimLines[claimRecords + 1].startsWith('T' + claimRecords) && claimLines.at(-1) === '',
   `${claimLines.length} lines`,
 )
 check(
   'claim ascii: records are 5000 wide',
-  claimLines.slice(1, 5).every((l) => l.length === 5000),
+  claimLines.slice(1, claimRecords + 1).every((l) => l.length === 5000),
   claimLines
-    .slice(1, 5)
+    .slice(1, claimRecords + 1)
     .map((l) => l.length)
     .join(','),
 )

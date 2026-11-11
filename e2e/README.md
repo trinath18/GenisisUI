@@ -1,9 +1,10 @@
 # Browser (end-to-end) tests
 
-Headless Chrome drives the real UI against a real API and the development databases on `MYDELL`. They cover the nine Case
-screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
+Headless Chrome drives the real UI against a real API and the development databases on `MYDELL`. They cover Case Registration
+(`case-registration.mjs`: finding the member, what an expired membership does to Register, the save messages in the desktop's order, the
+confirmations and one real registration), the Invoice screens (`invoice-processing.mjs`, `invoice-entry.mjs`, and `invoice-original-update.mjs`, `invoice-accounting.mjs`, `invoice-tracking.mjs` for the four other required Invoice items) and the nine Case screens added after Registration / Adjustment / Tracking: Panel Hospitals, Non-Disclosure Info, Pay & Claim, MMA/CPT,
 Case Audit Review, Case Transfer, Inpatient Case Listing, Claim ASCII and Case ASCII (validation messages, enable/disable
-states, loading, saving, downloads), and the eight Finance screens (`finance.mjs`: searches, validation messages, selection rules,
+states, loading, saving, downloads), the Worksheet and Invoice menus (`worksheet.mjs`: Tracking, Send to A/C, Send to A/R, scan codes, access; `worksheet-enquiry.mjs`: Worksheet Enquiry; `worksheet-adjustment.mjs`: Worksheet Adjustment), the Claim Bordx menu (`claim-bordx-delivery.mjs`: Send to Payor, Returned From Payor, Send to A/C, Bordx Approval, the Insert Worksheet entry, the menu and access; the update POSTs are intercepted, nothing is written), and the eight Finance screens (`finance.mjs`: searches, validation messages, selection rules,
 detail panels, the SUN journal list and the bank file downloads).
 
 `finance.mjs` alone can also run against the Vite dev server: `set E2E_BASE_URL=http://127.0.0.1:5173` and `node e2e/finance.mjs`.
@@ -34,11 +35,24 @@ detail panels, the SUN journal list and the bank file downloads).
 
 3. Restore the data the run wrote: `sqlcmd -S MYDELL -d HISDB -E -C -b -i e2e/cleanup.sql`.
 
+## Data dependence
+
+The suites ran first on a trimmed development database and then on the full one, and three checks had assumed the trimmed data. The Claim ASCII check now reads the record count from the file (header, N records, trailer T<N>) instead of expecting 4; the listing suite patches the search result so that ZN00007106 has no group company (a complete database has no group worksheet without one, which is the case the group-company rule is for); and the Tracking scan check waits for the search to finish instead of for a fixed 600 ms (the search is slower on the full tables).
+
 ## What they touch
 
 - The ZZ test case `ZZ00000106` (test members `ZZHA0000518*01` / `ZZHA0000316*01`): non-disclosure, pay & claim, transfer (and back).
+- Case Registration (`case-registration.mjs`): registers **one real case** for the ZZ test member as user `E2E` (a new `ZZ` case number, the ten rows
+  the save writes and the ZZ counter in `CAQ2013`), then tries the same patient and admission date again and answers No. `cleanup.sql` deletes every case
+  opened by `E2E` on the ZZ payor, with its rows in the nine case tables and the cross reference, and puts the ZZ counter back. The suite starts by
+  checking that no such case is left from an earlier run. Run `cleanup.sql` after every run of this suite.
+- Invoice Original Update, HOS / MBM Accounting and Invoice Tracking (`invoice-original-update.mjs`, `invoice-accounting.mjs`, `invoice-tracking.mjs`): they read real invoices and write nothing. The PUT of Original Invoice Update and the POSTs that would mark invoices as printed or give them an accounting period are intercepted and answered by the test (the database writes are covered by the API tests, in transactions that are rolled back); the CSV downloads are real and are read back. The accounting suite picks its hospital and payor at run time from the API (a hospital with 3 to 30 unprinted invoices, a payor with 4 to 40).
 - One real case's audit review (`XI00002733`, which has no audit row) and the audit status on its cross reference.
 - MMA procedures / fees: added and deleted again by the test itself.
+- Worksheet suite (Tracking, Send to A/C, Send to A/R) also checks the search layout: the criteria in the right-hand panel, the results on the first screen, the panel scrolling and sticking, and stacking on a narrow window.
+- Worksheet Adjustment suite: reads real worksheets and intercepts every request that writes (the save, the debit note numbering, the excess letter, which marks the case), so nothing is written; the notes, the Excess letter and Final LG are checked against fixtures.
+- Worksheet Enquiry suite: read-only; it picks a case with several worksheet versions through the API and writes nothing.
+- Worksheet suite: reads real worksheets (payors `XI`, `AC`, cases `ZZ…`); the three POSTs that would change data (tracking update, send to A/C, send to A/R) are intercepted and answered by the test, so nothing is written (the database writes are covered by the API's rolled-back database tests).
 - ASCII: Claim ASCII payor `GC` (accepted) and `AN` (rejected), Case ASCII payor `BI`; this flags the exported claims / cases and takes batch numbers.
   Nothing is bordxed for real: the bordx request is intercepted and answered by the test.
 

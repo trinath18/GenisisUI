@@ -4,7 +4,49 @@ import { fileURLToPath } from 'node:url'
 import path from 'node:path'
 
 const here = path.dirname(fileURLToPath(import.meta.url))
-const suites = ['panel-nondisclosure-payclaim-mma.mjs', 'audit-transfer-listing.mjs', 'ascii-exports.mjs', 'finance.mjs']
+const suites = [
+  'panel-nondisclosure-payclaim-mma.mjs',
+  'audit-transfer-listing.mjs',
+  'ascii-exports.mjs',
+  'finance.mjs',
+  'case-registration.mjs',
+  'worksheet.mjs',
+  'worksheet-enquiry.mjs',
+  'worksheet-adjustment.mjs',
+  'worksheet-registration.mjs',
+  'claim-bordx-delivery.mjs',
+  'claim-bordx-storage.mjs',
+  'claim-bordx-storage-document.mjs',
+  'claim-bordx-storage-entry.mjs',
+  'claim-bordx-update.mjs',
+  'claim-bordx-print.mjs',
+  'claim-bordx-payment-advice.mjs',
+  'claim-bordx-hospital-report.mjs',
+  'claim-bordx-control.mjs',
+  'claim-bordx-outstanding.mjs',
+  'claim-bordx-recovery.mjs',
+  'receipt-tracking.mjs',
+  'receipt-from-member.mjs',
+  'receipt-from-payor.mjs',
+  'posting-invoice-hospital.mjs',
+  'authorize-dcu-report.mjs',
+  'maintenance-company-info.mjs',
+  'maintenance-panel-hospitals.mjs',
+  'payment-contra-allocation.mjs',
+  'receipt-others.mjs',
+  'payment-enquiry-hospital.mjs',
+  'payment-enquiry-member.mjs',
+  'contribution-refund-listing.mjs',
+  'contribution-mco-reinstatement.mjs',
+  'contribution-generate-invoice.mjs',
+  'maintenance-member.mjs',
+  'maintenance-suspension.mjs',
+  'invoice-processing.mjs',
+  'invoice-entry.mjs',
+  'invoice-original-update.mjs',
+  'invoice-accounting.mjs',
+  'invoice-tracking.mjs',
+]
 
 for (const name of ['E2E_JWT_KEY', 'E2E_ASCII_DIR']) {
   if (!process.env[name]) {

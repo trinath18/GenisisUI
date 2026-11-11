@@ -19,7 +19,7 @@ type F = Record<string, string | undefined>
 function Head({ f }: { f: F }) {
   return (
     <div className="letter-head">
-      <strong>MEDIEXPRESS (M) SDN. BHD.</strong>
+      <strong>GENISIS SDN BHD</strong>
       <span>{f.systemDate}</span>
     </div>
   )
@@ -52,7 +52,7 @@ function Signoff({ f }: { f: F }) {
         <br />
         <strong>{f.staffName}</strong>
         <br />
-        <span className="muted">MediExpress (M) Sdn. Bhd.</span>
+        <span className="muted">Genisis Sdn Bhd</span>
       </p>
     </div>
   )
@@ -87,7 +87,7 @@ function TakeHomeDrugs({ f }: { f: F }) {
       <PatientBlock f={f} />
       <p>
         Please arrange the take-home drugs for the above patient and forward the itemised list together with
-        the discharge summary to MediExpress for review.
+        the discharge summary to Genisis for review.
       </p>
       <p className="muted">Prepared by: {f.staffCode}</p>
       <Signoff f={f} />
@@ -251,7 +251,7 @@ function ReimbursementRequest({ f }: { f: F }) {
       <PatientBlock f={f} />
       <p>
         To process the reimbursement for the above hospitalisation, please forward the original
-        itemised bills, receipts and the completed claim documentation to MediExpress for review.
+        itemised bills, receipts and the completed claim documentation to Genisis for review.
       </p>
       <Signoff f={f} />
     </>

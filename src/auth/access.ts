@@ -17,6 +17,26 @@ export const Access = {
   AccountsMaintenance: 1,
   // Maintenance > Account Transaction (MnuAccountTrans_Click) checks position 1 too.
   AccountTransaction: 1,
+  // Maintenance > Member (MaintenanceOthers) has no click handler: gated like the other Maintenance items, position 1.
+  MemberMaintenance: 1,
+  // Maintenance > Company Info has no click handler (its menu item is disabled): gated like its siblings, position 1.
+  CompanyInfo: 1,
+  // Maintenance > Panel Hospital Maintenance has no click handler: gated like its siblings, position 1.
+  PanelHospitalMaintenance: 1,
+  // Contribution Billing > Refund Listing: mnuMCORefundListing, CheckAccess(21).
+  ContributionRefundListing: 21,
+  // Claim Bordx > Print Bordx: mnuPrintBordx, CheckAccess(17).
+  ClaimBordxPrint: 17,
+  // Contribution Billing > MCO Reinstatement has no click handler: gated like Generate Invoice (position 8), the other screen that makes MCO invoices.
+  ContributionInvoicing: 8,
+  // Receipt > Receipt Tracking has no click handler: gated like Finance > Receipt Enquiry, position 9.
+  ReceiptTracking: 9,
+  // Receipt > From Member has no click handler: gated like Receipt Tracking, position 9.
+  ReceiptMember: 9,
+  // Receipt > Payor has no click handler: gated like Receipt > From Member, position 9.
+  ReceiptPayor: 9,
+  // Maintenance > Suspension: Suspension_Click checks position 27.
+  Suspension: 27,
   // Maintenance > Security: the matrix's own Department (111) and User Permission (112) rights, not the desktop's CheckAccess(2).
   SecurityDepartment: 111,
   SecurityUsers: 112,
@@ -41,6 +61,25 @@ export const Access = {
   CaseNonDisclosure: 12,
   PanelHospitals: 7,
   MmaCpt: 1,
+  // Worksheet menu. Registration (22) and Adjustment (23) are the positions the desktop's scan codes LOW001 / LOW002 checked, Tracking (24)
+  // is LOW003, Enquiry (13) is mnuWSEnq_Click. Send to A/C and Send to A/R have no click handler and are gated like Tracking.
+  // Keep in step with Genisis.Api/Auth/AccessRight.cs.
+  WorksheetRegistration: 22,
+  // Invoice > Invoice Processing is CheckAccess(22) in the desktop (mniInvoiceProcess_Click), the same position as the Worksheet Registration scan code.
+  InvoiceProcessing: 22,
+  // Invoice > Original Invoice Update has no click handler in the desktop and is hidden: gated like Invoice Processing, which edits the same invoices. Invoice Tracking is
+  // CheckAccess(27) (mnuInvTrack_Click); the two accounting items have no handler either and are gated like Tracking. Keep in step with Genisis.Api/Auth/AccessRight.cs.
+  InvoiceOriginalUpdate: 22,
+  InvoiceTracking: 27,
+  InvoiceHospitalAccounting: 27,
+  InvoiceMemberAccounting: 27,
+  WorksheetAdjustment: 23,
+  WorksheetTracking: 24,
+  WorksheetEnquiry: 13,
+  WorksheetSendToAccounts: 24,
+  // Claim Bordx (mdiMain.frm): Insert Worksheet checks 15 and Print Bordx 17; the other items have no click handler, so the menu is gated by 15 (a decision, see docs/remaining-work.md).
+  ClaimBordx: 15,
+  WorksheetSendToAr: 24,
   // Finance menu (mdiMain.frm): Invoice Receipt / Short Payment / Reverse Receipt check 9, Notification-Suspension and Suspend-Active 12,
   // Electronic Banking 10, SUN Posting 13. Receipt Enquiry has no check in the desktop and is gated like Invoice Receipt.
   FinanceReceiptEnquiry: 9,
@@ -51,6 +90,24 @@ export const Access = {
   FinanceSuspendActive: 12,
   FinanceElectronicBanking: 10,
   FinanceSunPosting: 13,
+  // Posting > Invoice > Hospital has no click handler: gated like Finance > SUN Posting, position 13.
+  PostingInvoiceHospital: 13,
+  // Authorize Claims > DCU Tracking > Claim Report has no click handler: gated like Claim Tracking, position 16.
+  AuthorizeDcuReport: 16,
+  // Receipt > Others has no click handler: gated like Receipt Tracking, position 9.
+  ReceiptOthers: 9,
+  // Payment > Contra Allocation has no click handler: gated like Finance > Suspend / Active, position 12.
+  PaymentContraAllocation: 12,
+  // Payment > Enquiry > Payment To Hospital / To Member have no click handler: gated like the other Payment screens, position 12.
+  PaymentEnquiry: 12,
+  // Payment > To Hospital, To Member (Pay2MBM(Auto), Pay2MBM, Chq. Cancellation), Payor, Others, Payment Tracking and PV Update (Manual): no click handler and no form in the
+  // source tree; gated like the other Payment screens, position 12 (a decision).
+  PaymentTracking: 12,
+  PaymentToHospital: 12,
+  PaymentToMember: 12,
+  PaymentPayor: 12,
+  PaymentOthers: 12,
+  PaymentPvUpdate: 12,
 } as const
 
 export class MustChangePasswordError extends Error {}

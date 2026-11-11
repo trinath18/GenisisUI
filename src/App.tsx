@@ -23,6 +23,20 @@ import { BenefitsMaintenanceScreen } from './features/maintenance/benefits/pages
 import { EntityMaintenanceScreen } from './features/maintenance/entity/pages/EntityMaintenanceScreen'
 import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsScreen'
 import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
+import { MemberDatesScreen } from './features/maintenance/memberDates/pages/MemberDatesScreen'
+import { CompanyInfoPage } from './pages/maintenance/CompanyInfoPage'
+import { ContraAllocationPage } from './pages/payment/ContraAllocationPage'
+import { PaymentEnquiryHospitalPage } from './pages/payment/PaymentEnquiryHospitalPage'
+import { PaymentEnquiryMemberPage } from './pages/payment/PaymentEnquiryMemberPage'
+import { PaymentTrackingPage } from './pages/payment/PaymentTrackingPage'
+import { PaymentToHospitalPage } from './pages/payment/PaymentToHospitalPage'
+import { PaymentToPayorPage } from './pages/payment/PaymentToPayorPage'
+import { PaymentOthersPage } from './pages/payment/PaymentOthersPage'
+import { PaymentToMemberPage } from './pages/payment/PaymentToMemberPage'
+import { PaymentPvUpdatePage } from './pages/payment/PaymentPvUpdatePage'
+import { ReceiptOthersPage } from './pages/receipt/ReceiptOthersPage'
+import { PanelHospitalMaintenancePage } from './pages/maintenance/PanelHospitalMaintenancePage'
+import { SuspensionScreen } from './features/maintenance/suspension/pages/SuspensionScreen'
 import { DepartmentScreen } from './features/maintenance/security/pages/DepartmentScreen'
 import { UserSecurityScreen } from './features/maintenance/security/pages/UserSecurityScreen'
 import { MmaEntryScreen } from './features/maintenance/mmaEntry/pages/MmaEntryScreen'
@@ -31,6 +45,27 @@ import { CaseRegistrationPage } from './pages/case/CaseRegistrationPage'
 import { CaseAdjustmentPage } from './pages/case/CaseAdjustmentPage'
 import { CaseTrackingPage } from './pages/case/CaseTrackingPage'
 import { CaseListingPage } from './pages/case/CaseListingPage'
+import { BordxDeliveryPage } from './pages/claimBordx/BordxDeliveryPage'
+import { BordxReturnCasePage } from './pages/claimBordx/BordxReturnCasePage'
+import { BordxControlPage } from './pages/claimBordx/BordxControlPage'
+import { BordxRevisePage } from './pages/claimBordx/BordxRevisePage'
+import { GenerateInvoicePage } from './pages/contributionBilling/GenerateInvoicePage'
+import { McoReinstatementPage } from './pages/contributionBilling/McoReinstatementPage'
+import { RefundListingPage } from './pages/contributionBilling/RefundListingPage'
+import { StorageEntryPage } from './pages/claimBordx/StorageEntryPage'
+import { UpdateBordxPage } from './pages/claimBordx/UpdateBordxPage'
+import { DcuReportPage } from './pages/authorize/DcuReportPage'
+import { InvoiceHospitalPage } from './pages/posting/InvoiceHospitalPage'
+import { ReceiptMemberPage } from './pages/receipt/ReceiptMemberPage'
+import { ReceiptPayorPage } from './pages/receipt/ReceiptPayorPage'
+import { ReceiptTrackingPage } from './pages/receipt/ReceiptTrackingPage'
+import { PrintRecoveryPage } from './pages/claimBordx/PrintRecoveryPage'
+import { OutstandingBordxPage } from './pages/claimBordx/OutstandingBordxPage'
+import { HospitalReportPage } from './pages/claimBordx/HospitalReportPage'
+import { PaymentAdviceBordxPage } from './pages/claimBordx/PaymentAdviceBordxPage'
+import { PrintBordxPage } from './pages/claimBordx/PrintBordxPage'
+import { StorageDocumentPage } from './pages/claimBordx/StorageDocumentPage'
+import { StorageEnquiryPage } from './pages/claimBordx/StorageEnquiryPage'
 import { CaseTransferPage } from './pages/case/CaseTransferPage'
 import { PanelHospitalsPage } from './pages/case/PanelHospitalsPage'
 import { CaseAuditReviewPage } from './pages/case/CaseAuditReviewPage'
@@ -44,6 +79,17 @@ import { InvoiceReceiptPage } from './features/finance/invoiceReceipt/pages/Invo
 import { ReverseReceiptPage } from './features/finance/reverseReceipt/pages/ReverseReceiptPage'
 import { SuspendActivePage } from './features/finance/suspendActive/pages/SuspendActivePage'
 import { ElectronicBankingPage } from './features/finance/electronicBanking/pages/ElectronicBankingPage'
+import { WorksheetRegistrationPage } from './pages/worksheet/WorksheetRegistrationPage'
+import { InvoiceProcessingPage } from './pages/invoice/InvoiceProcessingPage'
+import { InvoiceOriginalUpdatePage } from './pages/invoice/InvoiceOriginalUpdatePage'
+import { InvoiceHospitalAccountingPage } from './pages/invoice/InvoiceHospitalAccountingPage'
+import { InvoiceMemberAccountingPage } from './pages/invoice/InvoiceMemberAccountingPage'
+import { InvoiceTrackingPage } from './pages/invoice/InvoiceTrackingPage'
+import { WorksheetAdjustmentPage } from './pages/worksheet/WorksheetAdjustmentPage'
+import { WorksheetEnquiryPage } from './pages/worksheet/WorksheetEnquiryPage'
+import { WorksheetTrackingPage } from './pages/worksheet/WorksheetTrackingPage'
+import { WorksheetSendToAccountsPage } from './pages/worksheet/WorksheetSendToAccountsPage'
+import { WorksheetSendToArPage } from './pages/worksheet/WorksheetSendToArPage'
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { session } = useAuth()
@@ -200,6 +246,390 @@ export default function App() {
           element={
             <RequireAccess position={Access.CaseAscii}>
               <CaseAsciiPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/processing"
+          element={
+            <RequireAccess position={Access.InvoiceProcessing}>
+              <InvoiceProcessingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/original-update"
+          element={
+            <RequireAccess position={Access.InvoiceOriginalUpdate}>
+              <InvoiceOriginalUpdatePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/member-accounting"
+          element={
+            <RequireAccess position={Access.InvoiceMemberAccounting}>
+              <InvoiceMemberAccountingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/hospital-accounting"
+          element={
+            <RequireAccess position={Access.InvoiceHospitalAccounting}>
+              <InvoiceHospitalAccountingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="invoice/tracking"
+          element={
+            <RequireAccess position={Access.InvoiceTracking}>
+              <InvoiceTrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/registration"
+          element={
+            <RequireAccess position={Access.WorksheetRegistration}>
+              <WorksheetRegistrationPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/adjustment"
+          element={
+            <RequireAccess position={Access.WorksheetAdjustment}>
+              <WorksheetAdjustmentPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/enquiry"
+          element={
+            <RequireAccess position={Access.WorksheetEnquiry}>
+              <WorksheetEnquiryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/insert-worksheet"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <CaseListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/remove-worksheet"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxRevisePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="contribution-billing/generate-invoice"
+          element={
+            <RequireAccess position={Access.ContributionInvoicing}>
+              <GenerateInvoicePage key="bordx" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="contribution-billing/generate-invoice-endorsement"
+          element={
+            <RequireAccess position={Access.ContributionInvoicing}>
+              <GenerateInvoicePage key="endorsement" endorsement />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="contribution-billing/mco-reinstatement"
+          element={
+            <RequireAccess position={Access.ContributionInvoicing}>
+              <McoReinstatementPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="contribution-billing/refund-listing"
+          element={
+            <RequireAccess position={Access.ContributionRefundListing}>
+              <RefundListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/enquiry-member"
+          element={
+            <RequireAccess position={Access.PaymentEnquiry}>
+              <PaymentEnquiryMemberPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/enquiry-hospital"
+          element={
+            <RequireAccess position={Access.PaymentEnquiry}>
+              <PaymentEnquiryHospitalPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/to-member"
+          element={
+            <RequireAccess position={Access.PaymentToMember}>
+              <PaymentToMemberPage key="dn" source="dn" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/to-member-auto"
+          element={
+            <RequireAccess position={Access.PaymentToMember}>
+              <PaymentToMemberPage key="auto" source="auto" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/others"
+          element={
+            <RequireAccess position={Access.PaymentOthers}>
+              <PaymentOthersPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/to-payor"
+          element={
+            <RequireAccess position={Access.PaymentPayor}>
+              <PaymentToPayorPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/to-hospital"
+          element={
+            <RequireAccess position={Access.PaymentToHospital}>
+              <PaymentToHospitalPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/pv-update"
+          element={
+            <RequireAccess position={Access.PaymentPvUpdate}>
+              <PaymentPvUpdatePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/tracking"
+          element={
+            <RequireAccess position={Access.PaymentTracking}>
+              <PaymentTrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="payment/contra-allocation"
+          element={
+            <RequireAccess position={Access.PaymentContraAllocation}>
+              <ContraAllocationPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="receipt/others"
+          element={
+            <RequireAccess position={Access.ReceiptOthers}>
+              <ReceiptOthersPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="authorize/dcu-report"
+          element={
+            <RequireAccess position={Access.AuthorizeDcuReport}>
+              <DcuReportPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="posting/invoice-hospital"
+          element={
+            <RequireAccess position={Access.PostingInvoiceHospital}>
+              <InvoiceHospitalPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="receipt/from-member"
+          element={
+            <RequireAccess position={Access.ReceiptMember}>
+              <ReceiptMemberPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="receipt/from-payor"
+          element={
+            <RequireAccess position={Access.ReceiptPayor}>
+              <ReceiptPayorPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="receipt/tracking"
+          element={
+            <RequireAccess position={Access.ReceiptTracking}>
+              <ReceiptTrackingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/hospital-report"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <HospitalReportPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/payment-advice-bordx"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <PaymentAdviceBordxPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/print-bordx"
+          element={
+            <RequireAccess position={Access.ClaimBordxPrint}>
+              <PrintBordxPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/update-bordx"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <UpdateBordxPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/storage-claim-files"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <StorageEntryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/print-recovery"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <PrintRecoveryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/outstanding-bordx"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <OutstandingBordxPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/bordx-control"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxControlPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/storage-document"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <StorageDocumentPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/storage-enquiry"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <StorageEnquiryPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/send-to-payor"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxDeliveryPage kind="to-payor" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/returned-from-payor"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxDeliveryPage kind="from-payor" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/returned-not-approved"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxReturnCasePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/approval"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxDeliveryPage kind="approval" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/send-to-accounts"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxDeliveryPage kind="to-accounts" />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/send-to-accounts"
+          element={
+            <RequireAccess position={Access.WorksheetSendToAccounts}>
+              <WorksheetSendToAccountsPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/send-to-ar"
+          element={
+            <RequireAccess position={Access.WorksheetSendToAr}>
+              <WorksheetSendToArPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="worksheet/tracking"
+          element={
+            <RequireAccess position={Access.WorksheetTracking}>
+              <WorksheetTrackingPage />
             </RequireAccess>
           }
         />
@@ -384,6 +814,38 @@ export default function App() {
           element={
             <RequireAccess position={Access.AccountTransaction}>
               <AccountTransactionScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/member"
+          element={
+            <RequireAccess position={Access.MemberMaintenance}>
+              <MemberDatesScreen />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/panel-hospitals"
+          element={
+            <RequireAccess position={Access.PanelHospitalMaintenance}>
+              <PanelHospitalMaintenancePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/company-info"
+          element={
+            <RequireAccess position={Access.CompanyInfo}>
+              <CompanyInfoPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/suspension"
+          element={
+            <RequireAccess position={Access.Suspension}>
+              <SuspensionScreen />
             </RequireAccess>
           }
         />

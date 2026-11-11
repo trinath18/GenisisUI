@@ -15,6 +15,22 @@ export function PageShell({ title, subtitle, children }: { title: string; subtit
   )
 }
 
+/**
+ * Case Tracking's search layout: the main criteria, the actions and the results on the left, and the other criteria in a sticky panel on the right (stacked under the results
+ * on a narrow screen). The panel keeps every criterion on the page, so nothing is hidden; it only stops them pushing the results down.
+ */
+export function SearchLayout({ panel, panelTitle = 'More filters', children }: { panel: ReactNode; panelTitle?: string; children: ReactNode }) {
+  return (
+    <div className="ct-layout ws-layout">
+      <div className="ct-content">{children}</div>
+      <fieldset className="ct-filters">
+        <legend>{panelTitle}</legend>
+        {panel}
+      </fieldset>
+    </div>
+  )
+}
+
 /** Sticky command bar (VB6 command-button frame). Children are the buttons; use <span className="spacer" /> to split groups. */
 export function ActionBar({ label, children }: { label: string; children: ReactNode }) {
   return (

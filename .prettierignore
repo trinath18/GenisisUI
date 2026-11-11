@@ -24,3 +24,7 @@ src/pages/case/CaseTrackingPage.tsx
 src/pages/case/caseShared.ts
 src/pages/case/useCaseEditor.tsx
 .vs
+
+# Modules merged from the team branch (src/features), not yet formatted: they are formatted when each one is next changed (remove its line in the same change)
+src/features/maintenance
+src/features/membership
