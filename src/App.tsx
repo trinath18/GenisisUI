@@ -49,6 +49,7 @@ import { BordxDeliveryPage } from './pages/claimBordx/BordxDeliveryPage'
 import { BordxReturnCasePage } from './pages/claimBordx/BordxReturnCasePage'
 import { BordxControlPage } from './pages/claimBordx/BordxControlPage'
 import { BordxRevisePage } from './pages/claimBordx/BordxRevisePage'
+import { BordxSendDatePage } from './pages/claimBordx/BordxSendDatePage'
 import { GenerateInvoicePage } from './pages/contributionBilling/GenerateInvoicePage'
 import { McoReinstatementPage } from './pages/contributionBilling/McoReinstatementPage'
 import { RefundListingPage } from './pages/contributionBilling/RefundListingPage'
@@ -318,6 +319,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ClaimBordx}>
               <CaseListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/bordx-send-date"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxSendDatePage />
             </RequireAccess>
           }
         />

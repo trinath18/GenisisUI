@@ -190,7 +190,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/claim-bordx/payment-advice-bordx', label: 'Generate Bordx No', access: Access.ClaimBordx, group: 'Payment Advice' },
         { to: '/claim-bordx/hospital-report', label: 'Hospital Report', access: Access.ClaimBordx, group: 'Payment Advice' },
         { to: '/claim-bordx/update-bordx', label: 'Update Bordx', access: Access.ClaimBordx },
-        { to: '#', label: 'Bordx Send Date', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
+        { to: '/claim-bordx/bordx-send-date', label: 'Bordx Send Date', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/send-to-payor', label: 'Send to Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/returned-from-payor', label: 'Returned From Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/returned-not-approved', label: 'Returned Fr Payor (Not App)', access: Access.ClaimBordx, group: 'Bor Delivery' },
