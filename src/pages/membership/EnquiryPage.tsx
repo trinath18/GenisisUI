@@ -14,6 +14,7 @@ import {
   accountHistoryColumns, benefitColumns, feeFields, lifetimeColumns, nonDisclosureColumns, policyTermFields, takeoverColumns, worksheetColumns,
 } from '../../features/membership/enquiry/enquiryTabColumns'
 import { Button } from '../../components/Button'
+import { adjacentFrom, memberAlerts } from '../../features/membership/enquiry/memberAlerts'
 
 type SearchBy = 'number' | 'name' | 'ic' | 'policy'
 
@@ -206,6 +207,11 @@ function MemberView({ mbmNumber }: { mbmNumber: string }) {
             <h3>
               {formatValue(d.principal.MBMNumber)} - {formatValue(d.principal.MBMName)}
             </h3>
+            {memberAlerts(d.principal, d.plan).map((a, i) => (
+              <p key={i} className={a.critical ? 'member-alert critical' : 'member-alert'} role="alert">
+                {a.text}
+              </p>
+            ))}
             <div className="tabs" role="tablist">
               {tabs.map((t) => (
                 <button key={t} role="tab" aria-selected={t === tab} className={t === tab ? 'active' : ''} onClick={() => setTab(t)}>
@@ -323,9 +329,31 @@ export function EnquiryPage() {
   })
   const singleHit = search.data?.length === 1 ? String(search.data[0].MBMNumber) : null
   const member = selected ?? singleHit
+  const [stepping, setStepping] = useState(false)
+  const [stepError, setStepError] = useState<string | null>(null)
+
+  // The desktop's Pre / Next: the membership number just before or after the one in the box (or the member shown), opened at once.
+  async function step(direction: 'previous' | 'next') {
+    const from = adjacentFrom(by === 'number' ? input : '', member)
+    if (!from) return setStepError('Please Enter Membership No')
+    setStepping(true)
+    setStepError(null)
+    try {
+      const { data } = await api.get<{ mbmNumber: string }>('/api/membership/adjacent', { params: { from, direction } })
+      setBy('number')
+      setInput(data.mbmNumber)
+      setCriteria(null)
+      setSelected(data.mbmNumber)
+    } catch (e) {
+      setStepError(errorMessage(e))
+    } finally {
+      setStepping(false)
+    }
+  }
 
   function submit(e: FormEvent) {
     e.preventDefault()
+    setStepError(null)
     setSelected(null)
     setCriteria({ by, q: input.trim() })
   }
@@ -344,7 +372,14 @@ export function EnquiryPage() {
         <Button variant="primary" type="submit" disabled={input.trim().length < 3}>
           Show
         </Button>
+        <Button variant="ghost" busy={stepping} disabled={stepping} onClick={() => void step('previous')} title="Previous membership number">
+          Pre
+        </Button>
+        <Button variant="ghost" busy={stepping} disabled={stepping} onClick={() => void step('next')} title="Next membership number">
+          Next
+        </Button>
       </form>
+      {stepError && <p className="error">{stepError}</p>}
       {input.trim().length > 0 && input.trim().length < 3 && (
         <p className="error">Enter at least 3 characters to search.</p>
       )}
