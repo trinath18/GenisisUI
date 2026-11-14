@@ -63,6 +63,31 @@ const glyphs: Record<string, ReactNode> = {
     </>
   ),
   chevLeft: <path d="M15 18l-6-6 6-6" />,
+  chevDown: <path d="M6 9l6 6 6-6" />,
+  chevUp: <path d="M18 15l-6-6-6 6" />,
+  menu: <path d="M3 6h18M3 12h18M3 18h18" />,
+  check: <path d="M20 6L9 17l-5-5" />,
+  moon: <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />,
+  sun: (
+    <>
+      <circle cx="12" cy="12" r="4" />
+      <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41" />
+    </>
+  ),
+  monitor: (
+    <>
+      <rect x="2" y="3" width="20" height="14" rx="2" />
+      <path d="M8 21h8M12 17v4" />
+    </>
+  ),
+  palette: (
+    <>
+      <path d="M12 22a10 10 0 1 1 10-10c0 2.5-2 4-4.5 4H15a2 2 0 0 0-1.5 3.3A1.6 1.6 0 0 1 12 22z" />
+      <circle cx="7.5" cy="10.5" r="1" />
+      <circle cx="12" cy="7.5" r="1" />
+      <circle cx="16.5" cy="10.5" r="1" />
+    </>
+  ),
   chevRight: <path d="M9 18l6-6-6-6" />,
 }
 
