@@ -113,12 +113,12 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       ],
     },
     {
-      // Authorize Claims of the desktop menu: DCU Tracking > Claim Report is built (the Jupiter report is the same form); Claim Pass to A/C is still to migrate and is shown disabled.
+      // Authorize Claims of the desktop menu: DCU Tracking > Claim Report is built (the Jupiter report is the same form); Claim Pass to A/C opens Worksheet > Send to A/C: no form has its name, and FrmWksSendToAC ("Claims Send To A/C") is the form that passes claims to accounts.
       label: 'Claims',
       prefix: '/authorize',
       items: [
         { to: '/authorize/dcu-report', label: 'Claim Report', access: Access.AuthorizeDcuReport, group: 'DCU Tracking' },
-        { to: '#', label: 'Claim Pass to A/C', access: 0, pending: true },
+        { to: '/worksheet/send-to-accounts', label: 'Claim Pass to A/C', access: Access.WorksheetSendToAccounts },
       ],
     },
     {
