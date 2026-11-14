@@ -82,6 +82,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/maintenance/panel-hospitals', label: 'Panel Hospital Maintenance', access: Access.PanelHospitalMaintenance },
         { to: '/maintenance/company-info', label: 'Company Info', access: Access.CompanyInfo },
         { to: '/maintenance/suspension', label: 'Suspension', access: Access.Suspension },
+        { to: '/maintenance/surgical-schedule', label: 'Surgical Schedule', access: Access.SurgicalSchedule },
         { to: '/maintenance/mma', label: 'MMA (Procedures/OPCS)', access: Access.MmaEntry },
         { to: '/maintenance/security/department', label: 'Department', access: Access.SecurityDepartment, group: 'Security' },
         { to: '/maintenance/security/role-management', label: 'Role Management', access: Access.SecurityUsers, group: 'Security' },

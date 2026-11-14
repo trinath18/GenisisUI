@@ -25,6 +25,7 @@ import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsSc
 import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
 import { MemberDatesScreen } from './features/maintenance/memberDates/pages/MemberDatesScreen'
 import { CompanyInfoPage } from './pages/maintenance/CompanyInfoPage'
+import { SurgicalSchedulePage } from './pages/maintenance/SurgicalSchedulePage'
 import { ContraAllocationPage } from './pages/payment/ContraAllocationPage'
 import { PaymentEnquiryHospitalPage } from './pages/payment/PaymentEnquiryHospitalPage'
 import { PaymentEnquiryMemberPage } from './pages/payment/PaymentEnquiryMemberPage'
@@ -839,6 +840,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.PanelHospitalMaintenance}>
               <PanelHospitalMaintenancePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/surgical-schedule"
+          element={
+            <RequireAccess position={Access.SurgicalSchedule}>
+              <SurgicalSchedulePage />
             </RequireAccess>
           }
         />
