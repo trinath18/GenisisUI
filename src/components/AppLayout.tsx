@@ -1,327 +1,111 @@
-import { Fragment, useState, type MouseEvent } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useLocation } from 'react-router-dom'
-import { Access, useAuth } from '../auth/access'
-import { Icon, type IconName } from './icons'
+import { useAuth } from '../auth/access'
+import { ThemeSwitcher } from '../theme/ThemeSwitcher'
+import { Icon } from './icons'
 import { ErrorBoundary } from './ErrorBoundary'
 import { NotifyHost } from './notify'
+import { containsRoute, menuSections, visibleMenu } from './menu'
+import type { MenuNode } from './menu'
 
-const rail: { icon: IconName; label: string; prefix?: string; to?: string; access?: number }[] = [
-  { icon: 'home', label: 'Home', to: '/', prefix: '/' },
-  { icon: 'users', label: 'Membership', to: '/membership/enquiry', prefix: '/membership', access: Access.MembershipEnquiry },
-  { icon: 'folder', label: 'Case', to: '/case/registration', prefix: '/case', access: Access.CaseRegistration },
-  { icon: 'tool', label: 'Maintenance', to: '/maintenance/plan', prefix: '/maintenance', access: Access.PlanMaintenance },
-  { icon: 'wallet', label: 'Finance', to: '/finance/sun-posting', prefix: '/finance', access: Access.FinanceSunPosting },
-  { icon: 'file', label: 'Invoice', to: '/invoice/processing', prefix: '/invoice', access: Access.InvoiceProcessing },
-  { icon: 'grid', label: 'Worksheet', to: '/worksheet/tracking', prefix: '/worksheet', access: Access.WorksheetTracking },
-  { icon: 'shield', label: 'Claims', to: '/authorize/dcu-report', prefix: '/authorize', access: Access.AuthorizeDcuReport },
-  { icon: 'list', label: 'Claim Bordx', to: '/claim-bordx/insert-worksheet', prefix: '/claim-bordx', access: Access.ClaimBordx },
-  { icon: 'wallet', label: 'Payment', to: '/payment/contra-allocation', prefix: '/payment', access: Access.PaymentContraAllocation },
-  { icon: 'calendar', label: 'Receipt', to: '/receipt/tracking', prefix: '/receipt', access: Access.ReceiptTracking },
-  { icon: 'file', label: 'Posting', to: '/posting/invoice-hospital', prefix: '/posting', access: Access.PostingInvoiceHospital },
-  {
-    icon: 'coins',
-    label: 'Contribution Billing',
-    to: '/contribution-billing/refund-listing',
-    prefix: '/contribution-billing',
-    access: Access.ContributionRefundListing,
-  },
-  { icon: 'activity', label: 'Monitoring', prefix: '#monitoring' },
-]
+const storageKey = 'genisis.menu'
+interface MenuState {
+  /** Groups the user opened or closed, by path; the others follow the page shown. */
+  open: Record<string, boolean>
+  /** The menu panel is hidden (the hamburger in the top bar). */
+  hidden: boolean
+}
 
-const sections: { label: string; prefix: string; note?: string; items: { to: string; label: string; access: number; group?: string; pending?: boolean }[] }[] =
-  [
-    {
-      label: 'Membership',
-      prefix: '/membership',
-      items: [
-        { to: '/membership/registration', label: 'Registration', access: Access.MembershipRegistration },
-        { to: '/membership/adjustment', label: 'Adjustment', access: Access.MembershipAdjustment },
-        { to: '/membership/enquiry', label: 'Enquiry', access: Access.MembershipEnquiry },
-        { to: '/membership/leaflet-card', label: 'Leaflet & Card', access: Access.MembershipEnquiry },
-        { to: '/membership/card-control', label: 'Card Sending Mode', access: Access.MembershipAdjustment },
-        { to: '/membership/reinstatement', label: 'Member Reinstatement', access: Access.MembershipAdjustment },
-        { to: '/membership/mco-pending', label: 'MCO Pending', access: Access.MembershipAdjustment },
-        { to: '/membership/deletion', label: 'Deletion', access: Access.MembershipAdjustment },
-        { to: '/membership/tracking', label: 'Tracking', access: Access.MembershipTracking },
-        { to: '/membership/pluto-upload', label: 'Upload Membership Excel (Pluto)', access: Access.MembershipUploadBordx },
-        { to: '/membership/pluto-ascii', label: 'Generate Membership ASCII (Pluto)', access: Access.MembershipUploadBordx },
-        { to: '/membership/upload-bordx', label: 'Upload Bordx', access: Access.MembershipUploadBordx },
-        { to: '/membership/temp-registration', label: 'Temp MBM Reg', access: Access.MembershipRegistration },
-        { to: '/membership/temp-adjustment', label: 'Temp MBM Adj', access: Access.MembershipAdjustment },
-      ],
-    },
-    {
-      label: 'Case',
-      prefix: '/case',
-      items: [
-        { to: '/case/registration', label: 'Registration', access: Access.CaseRegistration, group: 'Case Workflow' },
-        { to: '/case/adjustment', label: 'Adjustment', access: Access.CaseAdjustment, group: 'Case Workflow' },
-        { to: '/case/enquiry', label: 'Enquiry', access: Access.CaseEnquiry, group: 'Case Workflow' },
-        { to: '/case/tracking', label: 'Tracking', access: Access.CaseTracking, group: 'Case Workflow' },
-        { to: '/case/listing', label: 'Inpatient Case Listing', access: Access.CaseListing, group: 'Review & Listing' },
-        { to: '/case/audit-review', label: 'Audit Review', access: Access.CaseAuditReview, group: 'Review & Listing' },
-        { to: '/case/pay-claim', label: 'Pay & Claim', access: Access.CasePayClaim, group: 'Review & Listing' },
-        { to: '/case/non-disclosure', label: 'Non-Disclosure Info', access: Access.CaseNonDisclosure, group: 'Review & Listing' },
-        { to: '/case/transfer', label: 'Case Transfer', access: Access.CaseTransfer, group: 'Transfers & Reference' },
-        { to: '/case/panel-hospitals', label: 'Panel Hospitals', access: Access.PanelHospitals, group: 'Transfers & Reference' },
-        { to: '/case/mma-cpt', label: 'MMA / CPT', access: Access.MmaCpt, group: 'Transfers & Reference' },
-        { to: '/case/claim-ascii', label: 'Claim ASCII', access: Access.ClaimAscii, group: 'Exports' },
-        { to: '/case/case-ascii', label: 'Case ASCII', access: Access.CaseAscii, group: 'Exports' },
-      ],
-    },
-    {
-      label: 'Maintenance',
-      prefix: '/maintenance',
-      items: [
-        { to: '/maintenance/plan', label: 'Plan Maintenance', access: Access.PlanMaintenance },
-        { to: '/maintenance/benefits', label: 'Benefits Maintenance', access: Access.BenefitsMaintenance },
-        { to: '/maintenance/entity', label: 'Entity Maintenance', access: Access.EntityMaintenance },
-        { to: '/maintenance/accounts', label: 'Accounts', access: Access.AccountsMaintenance },
-        { to: '/maintenance/account-transaction', label: 'Account Transaction', access: Access.AccountTransaction },
-        { to: '/maintenance/member', label: 'Member', access: Access.MemberMaintenance },
-        { to: '/maintenance/panel-hospitals', label: 'Panel Hospital Maintenance', access: Access.PanelHospitalMaintenance },
-        { to: '/maintenance/company-info', label: 'Company Info', access: Access.CompanyInfo },
-        { to: '/maintenance/suspension', label: 'Suspension', access: Access.Suspension },
-        { to: '/maintenance/surgical-schedule', label: 'Surgical Schedule', access: Access.SurgicalSchedule },
-        { to: '/maintenance/mma', label: 'MMA (Procedures/OPCS)', access: Access.MmaEntry },
-        { to: '/maintenance/security/department', label: 'Department', access: Access.SecurityDepartment, group: 'Security' },
-        { to: '/maintenance/security/role-management', label: 'Role Management', access: Access.SecurityUsers, group: 'Security' },
-        { to: '/maintenance/security/user-permission', label: 'User Permission', access: Access.SecurityUsers, group: 'Security' },
-      ],
-    },
-    {
-      label: 'Invoice',
-      prefix: '/invoice',
-      items: [
-        { to: '/invoice/processing', label: 'Invoice Processing', access: Access.InvoiceProcessing },
-        { to: '/invoice/original-update', label: 'Original Invoice Update', access: Access.InvoiceOriginalUpdate },
-        { to: '/invoice/member-accounting', label: 'Invoice MBM Accounting', access: Access.InvoiceMemberAccounting },
-        { to: '/invoice/hospital-accounting', label: 'Invoice HOS Accounting', access: Access.InvoiceHospitalAccounting },
-        { to: '/invoice/tracking', label: 'Invoice Tracking', access: Access.InvoiceTracking },
-      ],
-    },
-    {
-      label: 'Worksheet',
-      prefix: '/worksheet',
-      items: [
-        { to: '/worksheet/registration', label: 'Registration', access: Access.WorksheetRegistration, group: 'Worksheet Workflow' },
-        { to: '/worksheet/adjustment', label: 'Adjustment', access: Access.WorksheetAdjustment, group: 'Worksheet Workflow' },
-        { to: '/worksheet/enquiry', label: 'Enquiry', access: Access.WorksheetEnquiry, group: 'Worksheet Workflow' },
-        { to: '/worksheet/send-to-accounts', label: 'Send to A/C', access: Access.WorksheetSendToAccounts, group: 'Accounts & Tracking' },
-        { to: '/worksheet/send-to-ar', label: 'Send to A/R', access: Access.WorksheetSendToAr, group: 'Accounts & Tracking' },
-        { to: '/worksheet/tracking', label: 'Tracking', access: Access.WorksheetTracking, group: 'Accounts & Tracking' },
-      ],
-    },
-    {
-      // Authorize Claims of the desktop menu: DCU Tracking > Claim Report is built (the Jupiter report is the same form); Claim Pass to A/C opens Worksheet > Send to A/C: no form has its name, and FrmWksSendToAC ("Claims Send To A/C") is the form that passes claims to accounts.
-      label: 'Claims',
-      prefix: '/authorize',
-      items: [
-        { to: '/authorize/dcu-report', label: 'Claim Report', access: Access.AuthorizeDcuReport, group: 'DCU Tracking' },
-        { to: '/worksheet/send-to-accounts', label: 'Claim Pass to A/C', access: Access.WorksheetSendToAccounts },
-      ],
-    },
-    {
-      // Desktop order of the Contribution Billing menu (the hidden items are not Required and not shown). Generate Invoice (Endorsement) is Generate Invoice by endorsement bordx date (its form is not in the source tree); Receipt MCO/Others is Finance > Invoice Receipt (Outstanding).
-      label: 'Contribution Billing',
-      prefix: '/contribution-billing',
-      items: [
-        { to: '/contribution-billing/generate-invoice', label: 'Generate Invoice', access: Access.ContributionInvoicing },
-        { to: '/contribution-billing/generate-invoice-endorsement', label: 'Generate Invoice (Endorsement)', access: Access.ContributionInvoicing },
-        { to: '/contribution-billing/mco-reinstatement', label: 'MCO Reinstatement', access: Access.ContributionInvoicing },
-        { to: '/contribution-billing/refund-listing', label: 'Refund Listing', access: Access.ContributionRefundListing },
-      ],
-    },
-    {
-      // Posting > Invoice: Hospital here; Member is Finance > SUN Posting (the same form, listed as another door).
-      label: 'Posting',
-      prefix: '/posting',
-      items: [
-        { to: '/posting/invoice-hospital', label: 'Hospital', access: Access.PostingInvoiceHospital, group: 'Invoice' },
-        { to: '/finance/sun-posting', label: 'Member', access: Access.FinanceSunPosting, group: 'Invoice' },
-      ],
-    },
-    {
-      // Desktop order of the Payment menu. Payment > Update Invoice is the form Invoice > Original Invoice Update (frmUpdateInvoice) and To Member > Chq. Reissue (frmPaymentMBMReissue) and Chq. Cancellation (FrmPaymentMBMReverse: a cancelled cheque is the C row Suspend / Active writes) are Finance > Suspend / Active, each listed as another door to the built screen; the forms of To Hospital, Pay2MBM,
-      // Pay2MBM(Auto), Payor, Others and PV Update (Manual) are not in the source tree and are rebuilt on the data they read and wrote (the API's docs/payment-screens.md lists the assumptions).
-      label: 'Payment',
-      prefix: '/payment',
-      items: [
-        { to: '/payment/to-hospital', label: 'To Hospital', access: Access.PaymentToHospital },
-        { to: '/payment/to-member-auto', label: 'Pay2MBM(Auto)', access: Access.PaymentToMember, group: 'To Member' },
-        { to: '/payment/to-member', label: 'Pay2MBM', access: Access.PaymentToMember, group: 'To Member' },
-        { to: '/finance/suspend-active', label: 'Chq. Cancellation', access: Access.FinanceSuspendActive, group: 'To Member' },
-        { to: '/finance/suspend-active', label: 'Chq. Reissue', access: Access.FinanceSuspendActive, group: 'To Member' },
-        { to: '/payment/to-payor', label: 'Payor', access: Access.PaymentPayor },
-        { to: '/payment/others', label: 'Others', access: Access.PaymentOthers },
-        { to: '/payment/contra-allocation', label: 'Contra Allocation', access: Access.PaymentContraAllocation },
-        { to: '/invoice/original-update', label: 'Update Invoice', access: Access.InvoiceOriginalUpdate },
-        { to: '/payment/tracking', label: 'Payment Tracking', access: Access.PaymentTracking },
-        { to: '/payment/enquiry-hospital', label: 'Payment To Hospital', access: Access.PaymentEnquiry, group: 'Enquiry' },
-        { to: '/payment/enquiry-member', label: 'Payment To Member', access: Access.PaymentEnquiry, group: 'Enquiry' },
-        { to: '/payment/pv-update', label: 'PV Update (Manual)', access: Access.PaymentPvUpdate },
-      ],
-    },
-    {
-      // Desktop order of the Receipt menu; the receipt entry forms still to migrate are shown disabled ("Payor (Manual)" is not marked Required).
-      label: 'Receipt',
-      prefix: '/receipt',
-      items: [
-        { to: '/receipt/from-member', label: 'From Member', access: Access.ReceiptMember },
-        { to: '/receipt/others', label: 'Others', access: Access.ReceiptOthers },
-        { to: '/receipt/from-payor', label: 'Payor', access: Access.ReceiptPayor },
-        { to: '/receipt/tracking', label: 'Receipt Tracking', access: Access.ReceiptTracking },
-      ],
-    },
-    {
-      label: 'Monitoring',
-      prefix: '#monitoring',
-      note: 'Not migrated yet.',
-      items: [],
-    },
-    {
-      // Desktop order of the Claim Bordx menu; items still to migrate are shown disabled. Insert Worksheet is the form Case > Inpatient Case Listing opens (FrmWksBordx).
-      label: 'Claim Bordx',
-      prefix: '/claim-bordx',
-      items: [
-        { to: '/claim-bordx/insert-worksheet', label: 'Insert Worksheet', access: Access.ClaimBordx, group: 'Worksheet' },
-        { to: '/claim-bordx/remove-worksheet', label: 'Remove Worksheet', access: Access.ClaimBordx, group: 'Worksheet' },
-        { to: '/claim-bordx/print-bordx', label: 'Print Bordx', access: Access.ClaimBordxPrint },
-        { to: '/claim-bordx/print-recovery', label: 'Print Recovery', access: Access.ClaimBordx },
-        { to: '/claim-bordx/payment-advice-bordx', label: 'Generate Bordx No', access: Access.ClaimBordx, group: 'Payment Advice' },
-        { to: '/claim-bordx/hospital-report', label: 'Hospital Report', access: Access.ClaimBordx, group: 'Payment Advice' },
-        { to: '/claim-bordx/update-bordx', label: 'Update Bordx', access: Access.ClaimBordx },
-        { to: '/claim-bordx/bordx-send-date', label: 'Bordx Send Date', access: Access.ClaimBordx, group: 'Bor Delivery' },
-        { to: '/claim-bordx/send-to-payor', label: 'Send to Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
-        { to: '/claim-bordx/returned-from-payor', label: 'Returned From Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
-        { to: '/claim-bordx/returned-not-approved', label: 'Returned Fr Payor (Not App)', access: Access.ClaimBordx, group: 'Bor Delivery' },
-        { to: '/claim-bordx/send-to-accounts', label: 'Send to A/C', access: Access.ClaimBordx, group: 'Bor Delivery' },
-        { to: '/claim-bordx/bordx-control', label: 'Bordx Control', access: Access.ClaimBordx, group: 'Monitoring' },
-        { to: '/claim-bordx/outstanding-bordx', label: 'Outstanding Bordx', access: Access.ClaimBordx, group: 'Monitoring' },
-        { to: '/claim-bordx/approval', label: 'Bordx Approval', access: Access.ClaimBordx },
-        { to: '/claim-bordx/storage-claim-files', label: 'Claim files', access: Access.ClaimBordx, group: 'Storage' },
-        { to: '/claim-bordx/storage-enquiry', label: 'Storage Enquiry', access: Access.ClaimBordx, group: 'Storage' },
-        { to: '/claim-bordx/storage-document', label: 'Document', access: Access.ClaimBordx, group: 'Storage' },
-      ],
-    },
-    {
-      // Desktop order of the Finance menu; items still to migrate are shown disabled.
-      label: 'Finance',
-      prefix: '/finance',
-      items: [
-        { to: '/finance/receipt-enquiry', label: 'Receipt Enquiry', access: Access.FinanceReceiptEnquiry },
-        { to: '/finance/invoice-receipt', label: 'Invoice Receipt (Outstanding)', access: Access.FinanceInvoiceReceipt },
-        { to: '/finance/short-payment', label: 'Short Payment Receipt', access: Access.FinanceShortPayment },
-        { to: '/finance/reverse-receipt', label: 'Reverse Receipt', access: Access.FinanceReverseReceipt },
-        { to: '/finance/receipt-manual', label: 'Notification / Suspension', access: Access.FinanceReceiptManual },
-        { to: '/finance/suspend-active', label: 'Suspend / Active', access: Access.FinanceSuspendActive },
-        { to: '/finance/electronic-banking', label: 'Electronic Banking', access: Access.FinanceElectronicBanking },
-        { to: '/finance/sun-posting', label: 'SUN Posting', access: Access.FinanceSunPosting },
-      ],
-    },
-  ]
+function loadMenuState(): MenuState {
+  try {
+    return { open: {}, hidden: false, ...(JSON.parse(localStorage.getItem(storageKey) ?? '{}') as Partial<MenuState>) }
+  } catch {
+    return { open: {}, hidden: false }
+  }
+}
 
+/** The application frame, laid out like Genesis FIS: the coloured top bar, the menu of the desktop's top menus down the left, and the page. */
 export function AppLayout() {
   const { session, logout, hasAccess } = useAuth()
   const { pathname } = useLocation()
-  const [open, setOpen] = useState(() => localStorage.getItem('nav-collapsed') !== '1')
-  const [hoverSection, setHoverSection] = useState<string | null>(null)
-  const routeSection = sections.find((s) => pathname.startsWith(s.prefix))
-  const section = hoverSection === null ? routeSection : sections.find((s) => s.prefix === hoverSection)
+  const [state, setState] = useState(loadMenuState)
+  const [narrow, setNarrow] = useState(() => window.matchMedia?.('(max-width: 900px)').matches === true)
+  // On a narrow screen the menu lies over the page: it is open for the page it was opened on, so choosing a page closes it.
+  const [drawerFor, setDrawerFor] = useState<string | null>(null)
+  const drawerOpen = drawerFor === pathname
+  const setDrawerOpen = (open: boolean) => setDrawerFor(open ? pathname : null)
+  const tree = visibleMenu(menuSections, hasAccess)
 
-  function toggleNav() {
-    setOpen((o) => {
-      localStorage.setItem('nav-collapsed', o ? '1' : '0')
-      return !o
-    })
-  }
-
-  /** Hide when the pointer leaves the rail + sidebar (but not when moving between them). */
-  function navLeave(e: MouseEvent) {
-    if (!(e.relatedTarget instanceof Element && e.relatedTarget.closest('.rail, .sidebar'))) {
-      setOpen(false)
-      setHoverSection(null)
+  const save = (next: MenuState) => {
+    setState(next)
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(next))
+    } catch {
+      // storage unavailable: keep the menu as it is for this page
     }
   }
 
-  const item = (to: string, label: string, access: number, pending?: boolean) =>
-    pending ? (
-      <span className="disabled" title={`${label} — not migrated yet`}>
-        {label}
-      </span>
-    ) : hasAccess(access) ? (
-      <NavLink to={to}>{label}</NavLink>
-    ) : (
-      <span className="disabled" title="Access Denied!">
-        {label}
-      </span>
+  useEffect(() => {
+    const query = window.matchMedia?.('(max-width: 900px)')
+    if (!query) return
+    const onChange = (e: MediaQueryListEvent) => setNarrow(e.matches)
+    query.addEventListener('change', onChange)
+    return () => query.removeEventListener('change', onChange)
+  }, [])
+
+  const menuShown = narrow ? drawerOpen : !state.hidden
+  const toggleMenu = () => (narrow ? setDrawerOpen(!drawerOpen) : save({ ...state, hidden: !state.hidden }))
+
+  const render = (node: MenuNode, path: string, depth: number) => {
+    if (node.kind === 'link') {
+      return (
+        <NavLink key={path} to={node.to} end className={`menu-link depth-${depth}`}>
+          {node.label}
+        </NavLink>
+      )
+    }
+    const isOpen = state.open[path] ?? containsRoute(node, pathname)
+    return (
+      <div key={path} className={`menu-group depth-${depth}`}>
+        <button type="button" className="menu-group-head" aria-expanded={isOpen} onClick={() => save({ ...state, open: { ...state.open, [path]: !isOpen } })}>
+          <span>{node.label}</span>
+          <Icon name={isOpen ? 'chevUp' : 'chevDown'} size={16} />
+        </button>
+        {isOpen && <div className="menu-children">{node.children.map((c) => render(c, `${path}/${c.label}`, depth + 1))}</div>}
+      </div>
     )
+  }
 
   return (
-    <div className={`shell${section ? '' : ' no-sidebar'}${!open && section ? ' nav-collapsed' : ''}`}>
-      <header className="topbar">
+    <div className={`shell${menuShown ? '' : ' menu-hidden'}${narrow ? ' narrow' : ''}`}>
+      <header className="appbar">
         <button
           type="button"
-          className="nav-toggle"
-          onClick={toggleNav}
-          title={open ? 'Hide sidebar' : 'Show sidebar'}
-          aria-label={open ? 'Hide sidebar' : 'Show sidebar'}
-          aria-expanded={open}
+          className="icon-button"
+          onClick={toggleMenu}
+          aria-label={menuShown ? 'Hide menu' : 'Show menu'}
+          title={menuShown ? 'Hide menu' : 'Show menu'}
+          aria-expanded={menuShown}
+          aria-controls="app-menu"
         >
-          <Icon name={open ? 'chevLeft' : 'chevRight'} />
+          <Icon name="menu" />
         </button>
-        <span className="brand-mark">
-          <Icon name="cross" size={14} />
-        </span>
-        <strong>Genisis</strong>
-        <span className="muted">TPA Management system</span>
+        <span className="appbar-title">Genisis</span>
+        <span className="appbar-subtitle">TPA Management system</span>
         <span className="spacer" />
-        <span>
-          {session?.user.userName} ({session?.user.userCode})
-        </span>
-        <button className="link" onClick={logout}>
-          Log out
+        <ThemeSwitcher />
+        <span className="appbar-user">{session?.user.userName}</span>
+        <button type="button" className="appbar-logout" onClick={logout}>
+          Logout
         </button>
       </header>
-      <nav className="rail" aria-label="Modules" onMouseEnter={() => setOpen(true)} onMouseLeave={navLeave}>
-        {rail.map((r) =>
-          r.to && (r.access === undefined || hasAccess(r.access)) ? (
-            <NavLink
-              key={r.label}
-              to={r.to}
-              end={r.prefix === '/'}
-              title={r.label}
-              aria-label={r.label}
-              className={r.prefix === '/' ? (pathname === '/' ? 'active' : '') : r.prefix && pathname.startsWith(r.prefix) ? 'active' : ''}
-              onMouseEnter={() => setHoverSection(r.prefix ?? null)}
-            >
-              <Icon name={r.icon} />
-            </NavLink>
-          ) : (
-            <span
-              key={r.label}
-              className="disabled"
-              title={r.to ? 'Access Denied!' : `${r.label} — not migrated yet`}
-              aria-label={r.label}
-              onMouseEnter={() => setHoverSection(r.prefix ?? null)}
-            >
-              <Icon name={r.icon} />
-            </span>
-          ),
-        )}
+      {narrow && drawerOpen && <div className="menu-scrim" onClick={() => setDrawerOpen(false)} aria-hidden="true" />}
+      <nav id="app-menu" className="app-menu" aria-label="Main menu" hidden={!menuShown}>
+        <NavLink to="/" end className="menu-link depth-0 menu-home">
+          Home
+        </NavLink>
+        {tree.map((n) => render(n, n.label, 0))}
       </nav>
-      {section && (
-        <nav className="sidebar" aria-label="Pages" onMouseEnter={() => setOpen(true)} onMouseLeave={navLeave}>
-          <h4>{section.label}</h4>
-          {section.items.map((i, n) => (
-            <Fragment key={`${section.prefix}|${i.group ?? ''}|${i.label}`}>
-              {i.group && i.group !== section.items[n - 1]?.group && <h5 className="nav-group">{i.group}</h5>}
-              {item(i.to, i.label, i.access, i.pending)}
-            </Fragment>
-          ))}
-          {section.note && <p className="muted nav-note">{section.note}</p>}
-        </nav>
-      )}
       <main className="content">
         <ErrorBoundary resetKey={pathname}>
           <Outlet />
