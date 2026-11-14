@@ -82,6 +82,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/maintenance/panel-hospitals', label: 'Panel Hospital Maintenance', access: Access.PanelHospitalMaintenance },
         { to: '/maintenance/company-info', label: 'Company Info', access: Access.CompanyInfo },
         { to: '/maintenance/suspension', label: 'Suspension', access: Access.Suspension },
+        { to: '/maintenance/surgical-schedule', label: 'Surgical Schedule', access: Access.SurgicalSchedule },
         { to: '/maintenance/mma', label: 'MMA (Procedures/OPCS)', access: Access.MmaEntry },
         { to: '/maintenance/security/department', label: 'Department', access: Access.SecurityDepartment, group: 'Security' },
         { to: '/maintenance/security/role-management', label: 'Role Management', access: Access.SecurityUsers, group: 'Security' },
@@ -112,12 +113,12 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
       ],
     },
     {
-      // Authorize Claims of the desktop menu: DCU Tracking > Claim Report is built (the Jupiter report is the same form); Claim Pass to A/C is still to migrate and is shown disabled.
+      // Authorize Claims of the desktop menu: DCU Tracking > Claim Report is built (the Jupiter report is the same form); Claim Pass to A/C opens Worksheet > Send to A/C: no form has its name, and FrmWksSendToAC ("Claims Send To A/C") is the form that passes claims to accounts.
       label: 'Claims',
       prefix: '/authorize',
       items: [
         { to: '/authorize/dcu-report', label: 'Claim Report', access: Access.AuthorizeDcuReport, group: 'DCU Tracking' },
-        { to: '#', label: 'Claim Pass to A/C', access: 0, pending: true },
+        { to: '/worksheet/send-to-accounts', label: 'Claim Pass to A/C', access: Access.WorksheetSendToAccounts },
       ],
     },
     {
@@ -190,7 +191,7 @@ const sections: { label: string; prefix: string; note?: string; items: { to: str
         { to: '/claim-bordx/payment-advice-bordx', label: 'Generate Bordx No', access: Access.ClaimBordx, group: 'Payment Advice' },
         { to: '/claim-bordx/hospital-report', label: 'Hospital Report', access: Access.ClaimBordx, group: 'Payment Advice' },
         { to: '/claim-bordx/update-bordx', label: 'Update Bordx', access: Access.ClaimBordx },
-        { to: '#', label: 'Bordx Send Date', access: Access.ClaimBordx, group: 'Bor Delivery', pending: true },
+        { to: '/claim-bordx/bordx-send-date', label: 'Bordx Send Date', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/send-to-payor', label: 'Send to Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/returned-from-payor', label: 'Returned From Payor', access: Access.ClaimBordx, group: 'Bor Delivery' },
         { to: '/claim-bordx/returned-not-approved', label: 'Returned Fr Payor (Not App)', access: Access.ClaimBordx, group: 'Bor Delivery' },

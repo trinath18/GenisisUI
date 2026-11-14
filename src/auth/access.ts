@@ -23,6 +23,8 @@ export const Access = {
   CompanyInfo: 1,
   // Maintenance > Panel Hospital Maintenance has no click handler: gated like its siblings, position 1.
   PanelHospitalMaintenance: 1,
+  // Maintenance > Surgical Schedule has no click handler and no form (rebuilt on PLNSurgOperation): gated like its siblings, position 1.
+  SurgicalSchedule: 1,
   // Contribution Billing > Refund Listing: mnuMCORefundListing, CheckAccess(21).
   ContributionRefundListing: 21,
   // Claim Bordx > Print Bordx: mnuPrintBordx, CheckAccess(17).

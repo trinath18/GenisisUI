@@ -25,6 +25,7 @@ import { AccountsScreen } from './features/maintenance/accounts/pages/AccountsSc
 import { AccountTransactionScreen } from './features/maintenance/accountTransaction/pages/AccountTransactionScreen'
 import { MemberDatesScreen } from './features/maintenance/memberDates/pages/MemberDatesScreen'
 import { CompanyInfoPage } from './pages/maintenance/CompanyInfoPage'
+import { SurgicalSchedulePage } from './pages/maintenance/SurgicalSchedulePage'
 import { ContraAllocationPage } from './pages/payment/ContraAllocationPage'
 import { PaymentEnquiryHospitalPage } from './pages/payment/PaymentEnquiryHospitalPage'
 import { PaymentEnquiryMemberPage } from './pages/payment/PaymentEnquiryMemberPage'
@@ -49,6 +50,7 @@ import { BordxDeliveryPage } from './pages/claimBordx/BordxDeliveryPage'
 import { BordxReturnCasePage } from './pages/claimBordx/BordxReturnCasePage'
 import { BordxControlPage } from './pages/claimBordx/BordxControlPage'
 import { BordxRevisePage } from './pages/claimBordx/BordxRevisePage'
+import { BordxSendDatePage } from './pages/claimBordx/BordxSendDatePage'
 import { GenerateInvoicePage } from './pages/contributionBilling/GenerateInvoicePage'
 import { McoReinstatementPage } from './pages/contributionBilling/McoReinstatementPage'
 import { RefundListingPage } from './pages/contributionBilling/RefundListingPage'
@@ -318,6 +320,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.ClaimBordx}>
               <CaseListingPage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="claim-bordx/bordx-send-date"
+          element={
+            <RequireAccess position={Access.ClaimBordx}>
+              <BordxSendDatePage />
             </RequireAccess>
           }
         />
@@ -830,6 +840,14 @@ export default function App() {
           element={
             <RequireAccess position={Access.PanelHospitalMaintenance}>
               <PanelHospitalMaintenancePage />
+            </RequireAccess>
+          }
+        />
+        <Route
+          path="maintenance/surgical-schedule"
+          element={
+            <RequireAccess position={Access.SurgicalSchedule}>
+              <SurgicalSchedulePage />
             </RequireAccess>
           }
         />
