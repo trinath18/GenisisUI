@@ -52,6 +52,6 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (!this.state.failed) return this.props.children
-    return <ErrorFallback onRetry={() => this.setState({ failed: false })} onHome={() => window.location.assign('/')} />
+    return <ErrorFallback onRetry={() => this.setState({ failed: false })} onHome={() => window.location.assign(import.meta.env.BASE_URL)} />
   }
 }

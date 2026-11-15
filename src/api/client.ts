@@ -33,7 +33,10 @@ export function saveSession(session: Session | null) {
 /** Longest a request may take (the biggest worksheet searches and exports run for a while). */
 const REQUEST_TIMEOUT_MS = 90_000
 
-export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? '', timeout: REQUEST_TIMEOUT_MS })
+/** The path the app is served under ('' at the site root, '/HIS' when built with GENISIS_BASE_PATH=/HIS/). */
+export const APP_BASE = import.meta.env.BASE_URL.replace(/\/$/, '')
+
+export const api = axios.create({ baseURL: import.meta.env.VITE_API_URL ?? APP_BASE, timeout: REQUEST_TIMEOUT_MS })
 
 api.interceptors.request.use((config) => {
   const session = loadSession()
@@ -44,7 +47,7 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(undefined, (error: AxiosError) => {
   if (error.response?.status === 401 && !error.config?.url?.includes('/api/auth/')) {
     saveSession(null)
-    window.location.assign('/login')
+    window.location.assign(`${APP_BASE}/login`)
   }
   return Promise.reject(error)
 })

@@ -4,6 +4,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  base: process.env.GENISIS_BASE_PATH ?? '/',
   test: {
     include: ['src/**/*.test.ts'],
     environment: 'node',
