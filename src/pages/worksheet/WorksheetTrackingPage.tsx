@@ -10,8 +10,9 @@ import { DataGrid } from '../../components/DataGrid'
 import type { GridColumn } from '../../components/DataGrid'
 import { ActionBar, PageShell, SearchLayout, Stat } from '../../components/Screen'
 import { Button } from '../../components/Button'
-import { downloadCsv } from '../../lib/exportCsv'
-import type { CsvColumn } from '../../lib/exportCsv'
+import { ExportMenu } from '../../components/ExportMenu'
+import { singleList } from '../../lib/exportSpec'
+import type { ExportColumn } from '../../lib/exportSpec'
 import { formatMoney } from '../../lib/format'
 import { ask, notify } from '../../lib/notifyStore'
 import { isScanCode, resolveScanCode } from '../../lib/scanCodes'
@@ -104,7 +105,8 @@ const columns: GridColumn<TrackingRow>[] = [
   { key: 'bordxed', label: 'Status', value: (r) => (r.bordxed ? 'Bordxed' : '') },
 ]
 
-const exportColumns: CsvColumn<TrackingRow>[] = columns.map((c) => ({
+const exportColumns: ExportColumn<TrackingRow>[] = columns.map((c) => ({
+  numeric: c.align === 'right',
   label: c.label,
   value: (r) => (c.value ? c.value(r) : (r[c.key as keyof TrackingRow] as string | number | null)),
 }))
@@ -200,9 +202,10 @@ export function WorksheetTrackingPage() {
     }
   }
 
-  function exportList() {
-    if (list.rows.length === 0) return notify('Report cannot be printed without any record.', 'info')
-    downloadCsv('worksheet-tracking.csv', exportColumns, list.rows)
+  /** Print to File: the list shown, as Excel, PDF or CSV. */
+  function exportSpec() {
+    if (list.rows.length === 0) return 'Report cannot be printed without any record.'
+    return singleList('worksheet-tracking', 'Worksheet Tracking', exportColumns, list.rows, `${list.rows.length} worksheet(s)`)
   }
 
   const pair = { register, errors }
@@ -305,9 +308,7 @@ export function WorksheetTrackingPage() {
             <Button variant="ghost" onClick={update} disabled={busy}>
               Update
             </Button>
-            <Button variant="ghost" onClick={exportList}>
-              Print to File
-            </Button>
+            <ExportMenu label="Print to File" spec={exportSpec} />
             <Button variant="link" onClick={clear}>
               Clear
             </Button>

@@ -11,16 +11,15 @@ import { Button } from '../../components/Button'
 import { ReadField, SelectField, TextField } from '../../components/Field'
 import { ActionBar, PageShell, Stat } from '../../components/Screen'
 import { Tabs } from '../../components/Tabs'
-import { downloadCsv } from '../../lib/exportCsv'
-import type { CsvColumn } from '../../lib/exportCsv'
+import { ExportMenu } from '../../components/ExportMenu'
 import { notify } from '../../lib/notifyStore'
 import { isScanCode, resolveScanCode } from '../../lib/scanCodes'
 import { api, errorMessage } from '../../api/client'
 import { EnquiryCaseDialog } from './EnquiryCaseDialog'
 import { AdjustmentEditor } from './AdjustmentEditor'
 import { InvoicesTab, LgTab, NotCoveredTab, PaymentPanel, RemarksTab, TopupTab, WorksheetTab } from './EnquiryTabs'
-import { amountText, claimTypeOptions, disabilityText, exGratiaOptions, showsBordxInd, summaryRows, versionOptions } from './enquiryRules'
-import type { EnquiryBenefit, EnquiryResult } from './enquiryRules'
+import { claimTypeOptions, disabilityText, exGratiaOptions, showsBordxInd, versionOptions, worksheetExport } from './enquiryRules'
+import type { EnquiryResult } from './enquiryRules'
 
 const TABS = ['Invoices & Diagnosis', 'Worksheet', 'Reimbursement Not Cover', 'Topup', 'Remarks', 'LG Listing'] as const
 
@@ -32,49 +31,6 @@ interface Request {
 
 async function load({ cas, version, claimType }: Request) {
   return (await api.get<EnquiryResult>(`/api/worksheet/enquiry/${encodeURIComponent(cas)}`, { params: { version, claimType } })).data
-}
-
-const exportColumns: CsvColumn<Record<string, string>>[] = [
-  { label: 'Benefits', value: (r) => r.benefit },
-  { label: 'Days/Mths', value: (r) => r.days },
-  { label: 'Limit', value: (r) => r.limit },
-  { label: 'Actual', value: (r) => r.actual },
-  { label: 'Approved', value: (r) => r.approved },
-  { label: 'Payable to Hosp', value: (r) => r.hospital },
-  { label: 'Due to/(frm) Mem', value: (r) => r.member },
-]
-
-/** CmdExport_Click wrote the worksheet to Excel; this is the benefit grid and the saved summary as a CSV Excel opens. */
-function exportRows(result: EnquiryResult) {
-  const line = (b: EnquiryBenefit) => ({
-    benefit: b.benefit,
-    days: b.days ?? '',
-    limit: amountText(b.limit),
-    actual: amountText(b.actual),
-    approved: amountText(b.approved),
-    hospital: amountText(b.hospital),
-    member: amountText(b.member),
-  })
-  const t = result.totals
-  const total = {
-    benefit: 'Total',
-    days: '',
-    limit: '',
-    actual: amountText(t.actual),
-    approved: amountText(t.approved),
-    hospital: amountText(t.hospital),
-    member: amountText(t.member),
-  }
-  const summary = summaryRows(result.summary, result.header).map((r) => ({
-    benefit: r.label,
-    days: '',
-    limit: '',
-    actual: '',
-    approved: r.value,
-    hospital: '',
-    member: '',
-  }))
-  return [...result.benefits.map(line), total, ...summary]
 }
 
 /** Worksheet Enquiry; with <c>adjust</c> it is Worksheet Adjustment: the payment details and remarks can be changed and saved. */
@@ -136,10 +92,6 @@ export function WorksheetEnquiryPage({ adjust = false }: { adjust?: boolean }) {
     setCaseNo(cas)
     setProblem('')
     setRequest({ cas, version: '', claimType })
-  }
-
-  function exportWorksheet() {
-    if (result) downloadCsv(`worksheet-${result.header.caseNo}-${result.selectedVersion}.csv`, exportColumns, exportRows(result))
   }
 
   const panels = result
@@ -208,9 +160,7 @@ export function WorksheetEnquiryPage({ adjust = false }: { adjust?: boolean }) {
               MBM Enq
             </Button>
           )}
-          <Button variant="ghost" disabled={!result || isMaster} onClick={exportWorksheet}>
-            Export
-          </Button>
+          <ExportMenu disabled={!result || isMaster} spec={() => (result ? worksheetExport(result) : 'Show a worksheet first.')} />
           <span className="spacer" />
           <Stat label="Versions" value={result?.versions.length ?? 0} />
           <Stat label="Invoices" value={result?.invoices.length ?? 0} />

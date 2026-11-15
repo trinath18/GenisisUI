@@ -3,6 +3,8 @@
 
 import type { Option } from '../../components/Field'
 import { formatMoney } from '../../lib/format'
+import { block } from '../../lib/exportSpec'
+import type { ExportColumn, ExportSpec } from '../../lib/exportSpec'
 
 export interface EnquiryVersion {
   claimVersion: number
@@ -323,3 +325,64 @@ export const joined = (values: readonly (string | null)[], separator = ', ') =>
     .map((v) => (v ?? '').trim())
     .filter(Boolean)
     .join(separator)
+
+/** The worksheet's benefit row as the Export button writes it, and the line of totals under the benefits. */
+interface ExportBenefitLine {
+  benefit: string
+  days: string
+  limit: string
+  actual: string
+  approved: string
+  hospital: string
+  member: string
+}
+
+/**
+ * CmdExport_Click wrote the worksheet to Excel. The export is the benefit grid with its totals, then the saved summary, under the
+ * case, version, member and hospital; the page offers it as Excel, PDF or CSV.
+ */
+export function worksheetExport(result: EnquiryResult): ExportSpec {
+  const h = result.header
+  const line = (b: EnquiryBenefit): ExportBenefitLine => ({
+    benefit: b.benefit,
+    days: b.days ?? '',
+    limit: amountText(b.limit),
+    actual: amountText(b.actual),
+    approved: amountText(b.approved),
+    hospital: amountText(b.hospital),
+    member: amountText(b.member),
+  })
+  const t = result.totals
+  const total: ExportBenefitLine = {
+    benefit: 'Total',
+    days: '',
+    limit: '',
+    actual: amountText(t.actual),
+    approved: amountText(t.approved),
+    hospital: amountText(t.hospital),
+    member: amountText(t.member),
+  }
+  const benefitColumns: ExportColumn<ExportBenefitLine>[] = [
+    { label: 'Benefits', value: (r) => r.benefit },
+    { label: 'Days/Mths', value: (r) => r.days },
+    { label: 'Limit', value: (r) => r.limit, numeric: true },
+    { label: 'Actual', value: (r) => r.actual, numeric: true },
+    { label: 'Approved', value: (r) => r.approved, numeric: true },
+    { label: 'Payable to Hosp', value: (r) => r.hospital, numeric: true },
+    { label: 'Due to/(frm) Mem', value: (r) => r.member, numeric: true },
+  ]
+  const summaryColumns: ExportColumn<SummaryRow>[] = [
+    { label: 'Item', value: (r) => r.label },
+    { label: 'Value', value: (r) => r.value, numeric: true },
+  ]
+  const who = [h.patientName ?? h.memberName, h.memberNo].filter(Boolean).join(' / ')
+  return {
+    fileName: `worksheet-${h.caseNo}-${result.selectedVersion}`,
+    title: `Worksheet ${h.caseNo} version ${result.selectedVersion}`,
+    subtitle: [who, h.hospital].filter(Boolean).join(' - ') || undefined,
+    blocks: [
+      block({ heading: 'Benefits', columns: benefitColumns, rows: [...result.benefits.map(line), total] }),
+      block({ heading: 'Summary', columns: summaryColumns, rows: summaryRows(result.summary, result.header) }),
+    ],
+  }
+}

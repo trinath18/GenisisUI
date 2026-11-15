@@ -10,8 +10,9 @@ import { DataGrid } from '../../components/DataGrid'
 import type { GridColumn } from '../../components/DataGrid'
 import { ActionBar, PageShell, SearchLayout, Stat } from '../../components/Screen'
 import { Button } from '../../components/Button'
-import { downloadCsv } from '../../lib/exportCsv'
-import type { CsvColumn } from '../../lib/exportCsv'
+import { ExportMenu } from '../../components/ExportMenu'
+import { singleList } from '../../lib/exportSpec'
+import type { ExportColumn } from '../../lib/exportSpec'
 import { formatMoney } from '../../lib/format'
 import { ask, notify } from '../../lib/notifyStore'
 import { api, errorMessage } from '../../api/client'
@@ -71,7 +72,8 @@ const columns: GridColumn<AccountsRow>[] = [
   { key: 'bordxNo', label: 'Bordx No.' },
 ]
 
-const exportColumns: CsvColumn<AccountsRow>[] = columns.map((c) => ({
+const exportColumns: ExportColumn<AccountsRow>[] = columns.map((c) => ({
+  numeric: c.align === 'right',
   label: c.label,
   value: (r) => (c.value ? c.value(r) : (r[c.key as keyof AccountsRow] as string | number | boolean | null)?.toString()),
 }))
@@ -153,9 +155,10 @@ export function WorksheetSendToAccountsPage() {
     }
   }
 
-  function exportList() {
-    if (list.rows.length === 0) return notify('Report cannot be printed without any record.', 'info')
-    downloadCsv('worksheets-send-to-accounts.csv', exportColumns, list.rows)
+  /** Print to File: the list shown, as Excel, PDF or CSV. */
+  function exportSpec() {
+    if (list.rows.length === 0) return 'Report cannot be printed without any record.'
+    return singleList('worksheets-send-to-accounts', 'Worksheet Send to A/C', exportColumns, list.rows, `${list.rows.length} worksheet(s)`)
   }
 
   const pair = { register, errors }
@@ -208,9 +211,7 @@ export function WorksheetSendToAccountsPage() {
             <Button variant="ghost" onClick={send} disabled={busy}>
               Update
             </Button>
-            <Button variant="ghost" onClick={exportList}>
-              Print to File
-            </Button>
+            <ExportMenu label="Print to File" spec={exportSpec} />
             <Button variant="link" onClick={clear}>
               Clear
             </Button>

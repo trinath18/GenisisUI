@@ -10,8 +10,9 @@ import { DataGrid } from '../../components/DataGrid'
 import type { GridColumn } from '../../components/DataGrid'
 import { ActionBar, PageShell, Stat } from '../../components/Screen'
 import { Button } from '../../components/Button'
-import { downloadCsv } from '../../lib/exportCsv'
-import type { CsvColumn } from '../../lib/exportCsv'
+import { ExportMenu } from '../../components/ExportMenu'
+import { singleList } from '../../lib/exportSpec'
+import type { ExportColumn } from '../../lib/exportSpec'
 import { ask, notify } from '../../lib/notifyStore'
 import { api, errorMessage } from '../../api/client'
 import { isoToDmy, S } from '../case/caseShared'
@@ -34,7 +35,11 @@ const columns: GridColumn<ArRow>[] = [
   { key: 'status', label: 'Status', value: (r) => (r.status === '1' ? 'Passed' : 'Not Yet Passed') },
 ]
 
-const exportColumns: CsvColumn<ArRow>[] = columns.map((c) => ({ label: c.label, value: (r) => (c.value ? c.value(r) : r[c.key as keyof ArRow]) }))
+const exportColumns: ExportColumn<ArRow>[] = columns.map((c) => ({
+  numeric: c.align === 'right',
+  label: c.label,
+  value: (r) => (c.value ? c.value(r) : r[c.key as keyof ArRow]),
+}))
 const rowKey = (r: ArRow) => r.caseNo
 
 async function load(v: ArValues) {
@@ -102,9 +107,10 @@ export function WorksheetSendToArPage() {
     }
   }
 
-  function exportList() {
-    if (list.rows.length === 0) return notify('Report cannot be printed without any record.', 'info')
-    downloadCsv('worksheets-send-to-ar.csv', exportColumns, list.rows)
+  /** Print to File: the list shown, as Excel, PDF or CSV. */
+  function exportSpec() {
+    if (list.rows.length === 0) return 'Report cannot be printed without any record.'
+    return singleList('worksheets-send-to-ar', 'Worksheet Send to A/R', exportColumns, list.rows, `${list.rows.length} worksheet(s)`)
   }
 
   return (
@@ -132,9 +138,7 @@ export function WorksheetSendToArPage() {
           <Button variant="ghost" onClick={send} disabled={busy}>
             Update
           </Button>
-          <Button variant="ghost" onClick={exportList}>
-            Print to File
-          </Button>
+          <ExportMenu label="Print to File" spec={exportSpec} />
           <Button variant="link" onClick={clear}>
             Clear
           </Button>

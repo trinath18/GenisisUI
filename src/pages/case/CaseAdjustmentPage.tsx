@@ -14,7 +14,7 @@ import { ask, notify, say } from '../../lib/notifyStore'
 import { formatDate, formatMoney, formatValue } from '../../lib/format'
 import type { Row } from '../../lib/format'
 import { useCaseEditor, memberFieldsFrom } from './useCaseEditor'
-import { CaseEditorDialogs, GeneralInfoSection, CaseDetailsSection, CaseOthersSection, TakeOverSection, BenefitSection, WarrantySection, NotesSection, PolicyTermsSection, SurgicalSection, MemberRail } from './CaseSections'
+import { CaseEditorDialogs, GeneralInfoSection, CaseDetailsSection, CaseOthersSection, TakeOverSection, BenefitSection, AuditReviewSection, NotesSection, PolicyTermsSection, SurgicalSection, MemberRail } from './CaseSections'
 import { CaseSearchDialog, GlDialog } from './CaseAdjustmentDialogs'
 import {
   claimabilities, statuses, yesNo, namedHospitals, enterRuns, enterToTab, parseDmy, days, isoToDmy, isoDmy, unTilde, dispDate, S, DEFAULTS,
@@ -22,7 +22,7 @@ import {
 import type { MemberView, Form } from './caseShared'
 import type { LetterResult } from './CaseLetters'
 
-const tabs = ['General Info', 'Case Details', 'Case Others', 'Take Over/Others', 'Benefit', 'Warranty Exclusion', 'Case Mgmt Notes', 'LG', 'Worksheet', 'Policy Terms', 'Surgical Schedule', 'Forms', 'Policy Wording'] as const
+const tabs = ['General Info', 'Case Details', 'Case Others', 'Take Over/Others', 'Benefit', 'Audit Review', 'Case Mgmt Notes', 'LG', 'Worksheet', 'Policy Terms', 'Surgical Schedule', 'Forms', 'Policy Wording'] as const
 
 interface AdjustView {
   case: Row
@@ -151,6 +151,7 @@ export function CaseAdjustmentPage() {
       txtPatientAge: S(c.CASPatientAge), cboYearDay: S(c.CASPatientDayYr),
       txtFirstDocDate: formatDate(c.CASFirstDocDate), txtSubDocDate: formatDate(c.CASSubSeqDocDate),
       cboSuppExc: cover !== '00' ? cover : '', txtSuppExc: cover !== '00' ? S(pm?.exclusion) : '',
+      txtAuditReview: unTilde(S(c.CASAuditReview)),
     })
     setCaseNo(S(c.CASNumber))
     setTab(0)
@@ -190,6 +191,7 @@ export function CaseAdjustmentPage() {
     linkCaseNo: v('TxtLinkCASNo'),
     docReceivedDate: isoDmy(v('txtDateRECDoc')),
     pendingReason: v('cboPendingReason'),
+    auditReview: v('txtAuditReview'),
   })
 
   /** cmdUpdate1_Click's checks, in the desktop order. */
@@ -207,6 +209,7 @@ export function CaseAdjustmentPage() {
     if (namedHospitals.includes(v('txtHOSCode').toUpperCase()) && !v('txtHOSName').trim()) return 'Please Enter Hospital Name or Clinic Name!'
     if (v('txtLGTime').trim() && !/^([01]\d|2[0-3]):[0-5]\d$/.test(v('txtLGTime').trim())) return 'Invalid Time Format!'
     if ([1, 2, 3, 4, 5].some((i) => v(`txtCASRemark${i}`).includes('~'))) return 'You are not allowed to use the ~ symbol in the remarks'
+    if (v('txtAuditReview').includes('~')) return 'You are not allowed to use the ~ symbol in the audit review'
     return invalidDate()
   }
 
@@ -489,7 +492,7 @@ export function CaseAdjustmentPage() {
               />
             )}
             {tab === 4 && <BenefitSection ed={ed} />}
-            {tab === 5 && <WarrantySection ed={ed} />}
+            {tab === 5 && <AuditReviewSection ed={ed} />}
             {tab === 6 && (
               <NotesSection
                 ed={ed}

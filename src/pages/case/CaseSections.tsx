@@ -353,6 +353,18 @@ export function WarrantySection({ ed }: { ed: CaseEditor }) {
   )
 }
 
+/** Adjustment tab "Audit Review" (frmCaseAdjustmentNew tab 5): the case's audit review note, which Update saves, above the exclusions. */
+export function AuditReviewSection({ ed }: { ed: CaseEditor }) {
+  const { memo } = ed
+  return (
+    <>
+      <h4>Audit Review</h4>
+      {memo('txtAuditReview', { rows: 10, max: 5000, title: 'Saved with the case when you press Update' })}
+      <WarrantySection ed={ed} />
+    </>
+  )
+}
+
 /** Tab: Non-Disclosure (registration). */
 export function NonDisclosureSection({ ed }: { ed: CaseEditor }) {
   const { ic } = ed

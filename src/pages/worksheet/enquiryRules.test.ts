@@ -1,6 +1,18 @@
 import { describe, expect, it } from 'vitest'
-import { collectedByText, disabilityText, joined, moneyOrDash, notCoveredRows, showsBordxInd, summaryRows, topupGrid, versionOptions } from './enquiryRules'
-import type { EnquiryDiagnosis, EnquiryInvoice, EnquirySummary } from './enquiryRules'
+import {
+  collectedByText,
+  disabilityText,
+  joined,
+  moneyOrDash,
+  notCoveredRows,
+  showsBordxInd,
+  summaryRows,
+  topupGrid,
+  versionOptions,
+  worksheetExport,
+} from './enquiryRules'
+import type { EnquiryDiagnosis, EnquiryInvoice, EnquiryResult, EnquirySummary } from './enquiryRules'
+import { blockRows } from '../../lib/exportSpec'
 
 describe('versionOptions (cboVersion)', () => {
   it('lists each version as n and Mn, then Master', () => {
@@ -135,5 +147,74 @@ describe('joined', () => {
   it('strings values together and leaves blanks out', () => {
     expect(joined(['A1', null, ' ', 'A2'])).toBe('A1, A2')
     expect(joined(['01/01/2021', '02/01/2021'], ',')).toBe('01/01/2021,02/01/2021')
+  })
+})
+
+describe('worksheetExport (CmdExport_Click)', () => {
+  const summary = Object.fromEntries(
+    [
+      'totalActual',
+      'totalApproved',
+      'coPayRb',
+      'totalExcess',
+      'limitExceeded',
+      'exGratia',
+      'btbg',
+      'processingFee',
+      'majorMedicalFee',
+      'mainTopup',
+      'hospitalPayorToCollect',
+      'payableToHospital',
+      'payableToMember',
+      'finalApprove',
+      'bordxAmount',
+    ].map((k) => [k, 0]),
+  )
+  const result = {
+    header: {
+      caseNo: 'AB00000001',
+      memberNo: 'ABHA0000001*01',
+      memberName: 'A MEMBER',
+      patientName: 'A PATIENT',
+      hospital: 'A HOSPITAL',
+      underwritingExcess: 0,
+      excessCollectedBy: 'M',
+      limitCollectedBy: 'P',
+      nonPayment: false,
+    },
+    selectedVersion: '2',
+    benefits: [
+      {
+        slot: 1,
+        benefitCode: 'B1',
+        category: null,
+        benefit: 'Room & Board',
+        days: '3',
+        limit: 300,
+        actual: 1234.5,
+        approved: 900,
+        hospital: 900,
+        member: null,
+      },
+    ],
+    totals: { actual: 1234.5, approved: 900, hospital: 900, member: 0 },
+    summary: { ...summary, totalActual: 1234.5 },
+  } as unknown as EnquiryResult
+
+  it('gives the benefits with their total, then the summary, under the case and version', () => {
+    const spec = worksheetExport(result)
+    expect(spec.fileName).toBe('worksheet-AB00000001-2')
+    expect(spec.title).toBe('Worksheet AB00000001 version 2')
+    expect(spec.subtitle).toBe('A PATIENT / ABHA0000001*01 - A HOSPITAL')
+    expect(spec.blocks.map((b) => b.heading)).toEqual(['Benefits', 'Summary'])
+    const [benefits, totals] = blockRows(spec)
+    expect(benefits.labels).toEqual(['Benefits', 'Days/Mths', 'Limit', 'Actual', 'Approved', 'Payable to Hosp', 'Due to/(frm) Mem'])
+    expect(benefits.numeric).toEqual([false, false, true, true, true, true, true])
+    expect(benefits.cells).toEqual([
+      ['Room & Board', '3', '300.00', '1,234.50', '900.00', '900.00', ''],
+      ['Total', '', '', '1,234.50', '900.00', '900.00', '0.00'],
+    ])
+    expect(totals.cells[0]).toEqual(['Total Actual', '1,234.50'])
+    expect(totals.cells.at(-1)).toEqual(['Non-Payment', 'No'])
   })
 })
